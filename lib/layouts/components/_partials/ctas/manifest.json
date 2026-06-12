@@ -1,0 +1,41 @@
+{
+  "name": "ctas",
+  "type": "partial",
+  "styles": [
+    "ctas.css"
+  ],
+  "scripts": [],
+  "requires": [
+    "button",
+    "text-link"
+  ],
+  "comment": "Button styles are provided by button partial, ctas.css only contains CTA-specific layout",
+  "validation": {
+    "type": "array",
+    "items": {
+      "properties": {
+        "url": {
+          "type": "string"
+        },
+        "label": {
+          "type": "string"
+        },
+        "isButton": {
+          "type": "boolean"
+        },
+        "buttonStyle": {
+          "type": "string",
+          "enum": [
+            "primary",
+            "secondary",
+            "tertiary",
+            "inverted"
+          ]
+        },
+        "isSmall": {
+          "type": "boolean"
+        }
+      }
+    }
+  }
+}

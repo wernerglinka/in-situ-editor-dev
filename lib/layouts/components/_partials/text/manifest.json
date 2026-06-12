@@ -1,0 +1,40 @@
+{
+  "name": "text",
+  "type": "partial",
+  "styles": [
+    "text.css"
+  ],
+  "scripts": [],
+  "requires": [],
+  "validation": {
+    "properties": {
+      "leadIn": {
+        "type": "string"
+      },
+      "title": {
+        "type": "string"
+      },
+      "titleTag": {
+        "type": "string",
+        "enum": [
+          "h1",
+          "h2",
+          "h3",
+          "h4",
+          "h5",
+          "h6"
+        ],
+        "default": "h2"
+      },
+      "isCentered": {
+        "type": "boolean"
+      },
+      "subTitle": {
+        "type": "string"
+      },
+      "prose": {
+        "type": "string"
+      }
+    }
+  }
+}

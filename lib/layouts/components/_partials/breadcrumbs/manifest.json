@@ -1,0 +1,28 @@
+{
+  "name": "breadcrumbs",
+  "type": "partial",
+  "styles": [
+    "breadcrumbs.css"
+  ],
+  "scripts": [],
+  "requires": [],
+  "validation": {
+    "required": [],
+    "type": "array",
+    "items": {
+      "type": "object",
+      "required": [
+        "title",
+        "path"
+      ],
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "path": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

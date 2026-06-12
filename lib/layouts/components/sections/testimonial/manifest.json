@@ -1,0 +1,52 @@
+{
+  "name": "testimonial",
+  "type": "section",
+  "styles": [
+    "testimonial.css"
+  ],
+  "scripts": [],
+  "requires": [
+    "ctas",
+    "text",
+    "image",
+    "commons"
+  ],
+  "validation": {
+    "required": [
+      "sectionType"
+    ],
+    "properties": {
+      "sectionType": {
+        "type": "string",
+        "const": "testimonial"
+      },
+      "isReverse": {
+        "type": "boolean"
+      },
+      "isDisabled": {
+        "type": "boolean"
+      },
+      "containerFields.inContainer": {
+        "type": "boolean"
+      },
+      "containerFields.isAnimated": {
+        "type": "boolean"
+      },
+      "containerFields.noMargin.top": {
+        "type": "boolean"
+      },
+      "containerFields.noMargin.bottom": {
+        "type": "boolean"
+      },
+      "containerFields.noPadding.top": {
+        "type": "boolean"
+      },
+      "containerFields.noPadding.bottom": {
+        "type": "boolean"
+      },
+      "containerFields.background.isDark": {
+        "type": "boolean"
+      }
+    }
+  }
+}

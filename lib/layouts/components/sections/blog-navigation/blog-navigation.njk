@@ -1,0 +1,31 @@
+{#
+  Blog navigation section
+  This section can be added to any blog post to show previous/next links
+  Only displays if the current page has previous or next blog posts
+
+  Updated for @metalsmith/collections v2.0:
+  - previous/next are now arrays under collection['blog']
+  - Uses permalink instead of urlPath (add leading/trailing slashes)
+#}
+
+{% set prev = collection['blog'].previous[0] if collection and collection['blog'] and collection['blog'].previous.length %}
+{% set nxt = collection['blog'].next[0] if collection and collection['blog'] and collection['blog'].next.length %}
+
+{% if prev or nxt %}
+  <nav class="blog-navigation container" aria-label="Blog post navigation">
+
+    {% if nxt %}
+      <a href="/{{ nxt.permalink }}/" class="blog-nav-link blog-nav-next">
+        <span class="blog-nav-label">« </span>
+        <span class="blog-nav-title">{{ nxt.card.title }}</span>
+      </a>
+    {% endif %}
+    {% if prev %}
+      <a href="/{{ prev.permalink }}/" class="blog-nav-link blog-nav-prev">
+        <span class="blog-nav-title">{{ prev.card.title }}</span>
+        <span class="blog-nav-label"> »</span>
+      </a>
+    {% endif %}
+
+  </nav>
+{% endif %}

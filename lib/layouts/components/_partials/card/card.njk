@@ -1,0 +1,44 @@
+{% from "components/_partials/icon/icon.njk" import icon %}
+{% from "components/_partials/text/text.njk" import text %}
+{% from "components/_partials/author-date/author-date.njk" import authorDate %}
+
+{% macro card(props) %}
+  {% if props.horizontal %}
+    <a href="{{ props.link }}">
+      <div class="image-wrapper">
+        <img src="{{ props.thumbnail }}" alt="{{ props.title }}"/>
+      </div>
+
+      <div class="text-wrapper">
+        {% set info = {
+          author: props.author,
+          date: props.date
+        } %}
+
+        <div class="author-date is-vertical">{{ authorDate(info) }}</div>
+
+        <div class="prose">{{ props.prose | safe }}</div>
+      </div>
+    </a>
+  {% else %}
+    <a href="{{ props.link }}">
+      <div class="image-wrapper">
+        <img src="{{ props.thumbnail }}" alt="{{ props.title }}"/>
+      </div>
+
+      <div class="text-wrapper flow">
+        <h3 class="title">{{ props.title }}</h3>
+
+        {% set info = {
+          author: props.author,
+          date: props.date
+        } %}
+
+        <div class="author-date is-vertical">{{ authorDate(info) }}</div>
+
+        <div class="prose">{{ props.prose | safe }}</div>
+      </div>
+    </a>
+  {% endif %}
+
+{% endmacro %}

@@ -1,0 +1,26 @@
+/**
+ * Blog Navigation Section Styles
+ *
+ * Design Tokens:
+ * - --space-l-2xl
+ */
+
+.blog-navigation {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-l-2xl);
+  flex-wrap: wrap;
+}
+
+.blog-nav-link {
+  display: inline-block;
+  text-decoration: none;
+
+  &.blog-nav-next {
+    text-align: right;
+  }
+}
+
+/** Dark Theme styles variations */
+.dark-theme .blog-navigation {
+}

@@ -1,0 +1,7 @@
+{
+  "name": "card",
+  "type": "_partials",
+  "styles": ["card.css"],
+  "scripts": [],
+  "requires": []
+}

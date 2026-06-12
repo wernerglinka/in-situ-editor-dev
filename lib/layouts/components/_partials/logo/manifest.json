@@ -1,0 +1,7 @@
+{
+  "name": "logo",
+  "type": "_partials",
+  "styles": ["logo.css"],
+  "scripts": [],
+  "requires": []
+}

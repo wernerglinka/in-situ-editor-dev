@@ -1,0 +1,57 @@
+{
+  "name": "flip-card",
+  "type": "partial",
+  "styles": [
+    "flip-card.css"
+  ],
+  "scripts": [
+    "flip-card.js"
+  ],
+  "requires": [
+    "ctas",
+    "text",
+    "icon",
+    "commons"
+  ],
+  "validation": {
+    "required": [
+      "front",
+      "back"
+    ],
+    "properties": {
+      "front": {
+        "type": "object",
+        "properties": {
+          "icon": {
+            "type": "object",
+            "properties": {
+              "icon": {
+                "type": "string"
+              },
+              "url": {
+                "type": "string"
+              }
+            }
+          },
+          "text": {
+            "type": "object"
+          },
+          "ctas": {
+            "type": "array"
+          }
+        }
+      },
+      "back": {
+        "type": "object",
+        "properties": {
+          "text": {
+            "type": "object"
+          },
+          "ctas": {
+            "type": "array"
+          }
+        }
+      }
+    }
+  }
+}

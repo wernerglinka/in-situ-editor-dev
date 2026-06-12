@@ -1,0 +1,44 @@
+{
+  "name": "footer",
+  "type": "section",
+  "styles": [
+    "footer.css"
+  ],
+  "scripts": [],
+  "requires": [],
+  "validation": {
+    "required": [
+      "sectionType"
+    ],
+    "properties": {
+      "sectionType": {
+        "type": "string",
+        "const": "footer"
+      },
+      "isDisabled": {
+        "type": "boolean"
+      },
+      "containerFields.inContainer": {
+        "type": "boolean"
+      },
+      "containerFields.isAnimated": {
+        "type": "boolean"
+      },
+      "containerFields.noMargin.top": {
+        "type": "boolean"
+      },
+      "containerFields.noMargin.bottom": {
+        "type": "boolean"
+      },
+      "containerFields.noPadding.top": {
+        "type": "boolean"
+      },
+      "containerFields.noPadding.bottom": {
+        "type": "boolean"
+      },
+      "containerFields.background.isDark": {
+        "type": "boolean"
+      }
+    }
+  }
+}

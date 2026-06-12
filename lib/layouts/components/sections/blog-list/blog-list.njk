@@ -1,0 +1,50 @@
+{# 
+  All Blogposts Renders a list of blogposts Get the relevant blogposts fields from the blog collection blogTitle, date,
+  image, path params: { 
+    blockClass: string - optional class to add to the block 
+    numberOfBlogs: number - the number of total blog posts 
+    numberOfPages: number - number of pages to show 
+    pageNumber: number - the current page number
+    pageLength: number - the number of posts to show per page 
+    pageStart: number - the index of the first post to show 
+  }
+#}
+{% from "components/_partials/author-date/author-date.njk" import authorDate %}
+{% from "components/_partials/card/card.njk" import card %}
+{% from "components/_partials/blog-pagination/blog-pagination.njk" import blogPagination %}
+
+<div class="container">
+  {% set params = section.pagingParams %}
+  {% if params.numberOfPages > 1 %}
+    {{ blogPagination(params.numberOfPages, params.pageNumber) }}
+    {% set startPage = params.pageStart %}
+    {% set endPage = startPage + params.pageLength %}
+  {% else %}
+    {% set startPage = 0 %}
+    {% set endPage = collections.blog.length %}
+  {% endif %}
+
+  <ul class="blog-list">
+    {% for blogPost in collections.blog %}
+      {% if loop.index > startPage and loop.index <= endPage %}
+        {% set thisCard = {
+          title: blogPost.card.title,
+          prose: blogPost.card.excerpt,
+          thumbnail: blogPost.card.image,
+          link: "/" ~ blogPost.permalink,
+          horizontal: false,
+          date: blogPost.card.date,
+          author: blogPost.card.author
+        } %}
+        <li class="simple-card{% if params.horizontal %} is-horizontal{% endif %}">
+          {{ card(thisCard) }}
+        </li>
+      {% endif %}
+    {% endfor %}
+  </ul>
+
+  {% if params.numberOfPages > 1 %}
+    {{ blogPagination(params.numberOfPages, params.pageNumber) }}
+  {% endif %}
+
+</div>

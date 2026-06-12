@@ -1,0 +1,26 @@
+- sectionType: blog-list
+  containerTag: section
+  disabled: false
+  id: ''
+  classes: ''
+  containerFields:
+    inContainer: false
+    isAnimated: true
+    noMargin:
+      top: false
+      bottom: false
+    noPadding:
+      top: false
+      bottom: false
+    background:
+      isDark: false
+      color: ''
+      image: ''
+      imageScreen: 'none'
+  hasPagingParams: true
+  pagingParams:
+    numberOfBlogs: ''
+    numberOfPages: ''
+    pageLength: ''
+    pageStart: ''
+    pageNumber: ''

@@ -1,0 +1,5 @@
+{
+  "componentsBasePath": "lib/layouts/components",
+  "sectionsDir": "sections",
+  "partialsDir": "_partials"
+}

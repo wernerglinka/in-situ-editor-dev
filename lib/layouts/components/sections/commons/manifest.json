@@ -1,0 +1,9 @@
+{
+  "name": "commons",
+  "type": "section",
+  "styles": [
+    "commons.css"
+  ],
+  "scripts": [],
+  "requires": []
+}
