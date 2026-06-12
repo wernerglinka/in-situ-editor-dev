@@ -1,14 +1,14 @@
 {
-  "name": "metalsmith2025-structured-content-starter",
-  "version": "0.3.1",
-  "description": "A component-based, structured content starter for Metalsmith 2025",
+  "name": "in-suit-editor",
+  "version": "0.1.0",
+  "description": "In-site section-builder editor on the Metalsmith 2025 structured-content starter, with Chrome built-in AI and Netlify Identity publishing",
   "type": "module",
   "keywords": [
     "metalsmith",
-    "starter",
-    "components",
     "structured-content",
-    "static-site-generator"
+    "editor",
+    "chrome-ai",
+    "netlify-identity"
   ],
   "author": "werner@glinka.co",
   "license": "MIT",

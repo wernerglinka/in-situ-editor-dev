@@ -16,3 +16,9 @@ package-lock.json
 # Prettier has widespread compatibility issues with Nunjucks syntax
 # Manual formatting required - see CONTRIBUTING.md for details
 *.njk
+# Vendored browser libs shipped with the admin editor
+src/assets/js/browser-fs-access/
+src/assets/js/jszip/
+src/assets/js/marked/
+src/assets/js/prismjs/
+src/assets/js/turndown/
