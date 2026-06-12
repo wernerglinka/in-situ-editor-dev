@@ -194,9 +194,12 @@ metalsmith
     menus( {
       metadataKey: 'mainMenu', // Where to store menu data
       usePermalinks: true, // Use clean URLs in menu
-      // assets/** keeps the statik()-copied tree out of the nav — on watch
-      // rebuilds it lands in the files map before menus runs.
-      navExcludePatterns: [ '404.html', 'robots.txt', 'assets/**' ] // Files to exclude from menu
+      // Opt-in menu: only pages with a `navigation` block appear. String
+      // entries in navExcludePatterns are exact-match only (no globs), so
+      // excluding leaks one by one (assets/ on watch rebuilds, stray test
+      // pages, .DS_Store) is unwinnable; a function pattern inverts the
+      // model instead.
+      navExcludePatterns: [ ( path, file ) => !( file && file.navigation ) ]
     } )
   )
 
