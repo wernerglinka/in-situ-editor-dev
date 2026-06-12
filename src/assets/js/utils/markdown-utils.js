@@ -17,8 +17,10 @@ export function escapeYamlValue(val) {
   if (val === '') {
     return "''";
   }
-  // Quote if it contains YAML-special characters or starts ambiguously
-  if (/[#:[\]{}>|&*?%@`'"]/.test(val) || /^[\s-]/.test(val) || /\s$/.test(val)) {
+  // Quote if it contains YAML-special characters, starts ambiguously, or
+  // would be type-coerced (bare dates become Date objects, which breaks
+  // collections' card.date string sort against other posts).
+  if (/[#:[\]{}>|&*?%@`'"]/.test(val) || /^[\s-]/.test(val) || /\s$/.test(val) || /^\d{4}-\d{2}-\d{2}$/.test(val)) {
     return `"${val.replace(/\\/g, '\\\\').replace(/"/g, '\\"')}"`;
   }
   return val;
