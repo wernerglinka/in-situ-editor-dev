@@ -14,12 +14,22 @@ import { cleanupOrphanedImages } from '../utils/db-storage.js';
 export async function performHousekeeping(drafts, saveDraftsFn) {
   const allValidImageIds = [];
   drafts.forEach((draft) => {
-    if (!draft.imageFiles || !draft.content) {
+    // Sections reference images by imageName/imageId; the legacy markdown
+    // body referenced them as ./<name>. Treat either as a live reference —
+    // the upstream content-only check pruned every section image and then
+    // deleted its blob from IndexedDB as "orphaned".
+    (draft.sections || []).forEach((s) => {
+      if (s.imageId) {
+        allValidImageIds.push(s.imageId);
+      }
+    });
+    if (!draft.imageFiles || draft.imageFiles.length === 0) {
       return;
     }
-    // Filter imageFiles to only those actually referenced in the content string
+    const sectionImageNames = new Set((draft.sections || []).map((s) => s.imageName).filter(Boolean));
     draft.imageFiles = draft.imageFiles.filter((img) => {
-      const isReferenced = draft.content.includes(`./${img.name}`);
+      const isReferenced =
+        sectionImageNames.has(img.name) || (draft.content || '').includes(`./${img.name}`);
       if (isReferenced) {
         allValidImageIds.push(img.id);
       }
