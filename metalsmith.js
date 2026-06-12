@@ -196,7 +196,7 @@ metalsmith
       usePermalinks: true, // Use clean URLs in menu
       // assets/** keeps the statik()-copied tree out of the nav — on watch
       // rebuilds it lands in the files map before menus runs.
-      navExcludePatterns: [ '404.html', 'robots.txt', 'admin/index.html', 'assets/**' ] // Files to exclude from menu
+      navExcludePatterns: [ '404.html', 'robots.txt', 'assets/**' ] // Files to exclude from menu
     } )
   )
 
