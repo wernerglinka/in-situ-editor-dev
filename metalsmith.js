@@ -100,17 +100,19 @@ if ( process.env.DEBUG ) {
  * These determine how Metalsmith will process our files
  */
 metalsmith
-  // Clean the destination directory before building
-  .clean( true )
+  // Clean only on production builds. In watch mode, clean(true) races
+  // Browser-Sync rebuilds into ENOTEMPTY rmdir crashes on metalsmith 2.7.0
+  // (chokidar 4): https://github.com/metalsmith/metalsmith/issues/412
+  .clean( isProduction )
   // Ignore macOS system files
   .ignore( [ '**/.DS_Store' ] )
+  // Plain directories only: chokidar 4 (metalsmith 2.7) dropped glob support,
+  // so glob patterns here silently watch nothing.
   .watch( isProduction ? false : [
-    'src/**/*',
-    'lib/layouts/**/*',
-    'lib/assets/main.css',
-    'lib/assets/main.js',
-    'lib/assets/styles/**/*',
-    'lib/data/**/*'
+    'src',
+    'lib/layouts',
+    'lib/assets',
+    'lib/data'
   ] )
   // Pass NODE_ENV to plugins
   .env( 'NODE_ENV', process.env.NODE_ENV )
@@ -192,7 +194,9 @@ metalsmith
     menus( {
       metadataKey: 'mainMenu', // Where to store menu data
       usePermalinks: true, // Use clean URLs in menu
-      navExcludePatterns: [ '404.html', 'robots.txt', 'admin/index.html' ] // Files to exclude from menu
+      // assets/** keeps the statik()-copied tree out of the nav — on watch
+      // rebuilds it lands in the files map before menus runs.
+      navExcludePatterns: [ '404.html', 'robots.txt', 'admin/index.html', 'assets/**' ] // Files to exclude from menu
     } )
   )
 
