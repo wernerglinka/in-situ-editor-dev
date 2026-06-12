@@ -44,41 +44,19 @@ export async function downloadZIP(
     classifierResults,
   );
 
+  // Mirror this repo's layout so the archive can be unzipped at the repo
+  // root: the post at src/blog/<slug>.md, images where the emitted
+  // /assets/images/blog/<slug>/ URLs and the publish Function expect them.
   const zip = new JSZip();
-  const defaultLocale = window.DEFAULT_LOCALE || 'en';
-  const folder = zip.folder(`content/${defaultLocale}/blog/${slug}`);
-
-  folder.file(`${slug}.md`, md);
+  zip.file(`src/blog/${slug}.md`, md);
 
   if (draft.imageFiles && draft.imageFiles.length > 0) {
+    const imageFolder = zip.folder(`src/assets/images/blog/${slug}`);
     for (const img of draft.imageFiles) {
       const data = await getImage(img.id);
       if (data) {
-        folder.file(img.name, data);
-        // Redundant copies for each locale
-        if (draft.translations) {
-          for (const locale of Object.keys(draft.translations)) {
-            const localeFolder = zip.folder(`content/${locale}/blog/${slug}`);
-            localeFolder.file(img.name, data);
-          }
-        }
+        imageFolder.file(img.name, data);
       }
-    }
-  }
-
-  // Add localized markdown files
-  if (draft.translations) {
-    for (const [locale, data] of Object.entries(draft.translations)) {
-      const mdLocale = generateMarkdown(
-        { ...draft, translations: undefined },
-        data.title || title,
-        data.description || description,
-        date,
-        data.tags || tagsValue,
-        data.content,
-        classifierResults,
-      );
-      zip.file(data.path, mdLocale);
     }
   }
 
