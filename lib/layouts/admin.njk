@@ -37,8 +37,11 @@
     </script>
 
     <script>
-      // Reveal the editor when ?admin=true is in the URL or localStorage flag is set.
-      // Ported from upstream _includes/layouts/base.njk.
+      // Reveal the editor for signed-in Netlify Identity users; everyone else
+      // gets a sign-in prompt. ?admin=true (or the localStorage flag it sets)
+      // remains as a back door for local dev, where Identity isn't proxied.
+      // Visibility is a courtesy either way — the publish Function is the
+      // security boundary.
       const urlParams = new URLSearchParams(window.location.search);
       const adminFromUrl = urlParams.get('admin') === 'true';
       const adminFromStorage = localStorage.getItem('admin') === 'true';
@@ -51,8 +54,35 @@
       }
 
       const isAdmin = adminFromUrl || adminFromStorage;
-      if (isAdmin) {
+      const revealEditor = () => {
         document.querySelectorAll('.admin-only').forEach((el) => (el.style.display = 'initial'));
+        const prompt = document.getElementById('admin-signin-prompt');
+        if (prompt) prompt.style.display = 'none';
+      };
+
+      if (isAdmin) {
+        revealEditor();
+      } else {
+        const prompt = document.getElementById('admin-signin-prompt');
+        if (prompt) prompt.style.display = 'block';
+
+        // The widget script is deferred, so wire up after load. The editor
+        // module calls netlifyIdentity.init(); by load time currentUser()
+        // reads the cached session, so a missed 'init' event doesn't matter.
+        window.addEventListener('load', () => {
+          const widget = window.netlifyIdentity;
+          if (!widget) return;
+          if (widget.currentUser && widget.currentUser()) revealEditor();
+          widget.on('init', (user) => {
+            if (user) revealEditor();
+          });
+          widget.on('login', () => {
+            widget.close();
+            revealEditor();
+          });
+          const btn = document.getElementById('admin-signin-prompt-btn');
+          if (btn) btn.onclick = () => widget.open('login');
+        });
       }
     </script>
 
