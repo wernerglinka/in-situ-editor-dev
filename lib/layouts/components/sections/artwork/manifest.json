@@ -1,0 +1,88 @@
+{
+  "name": "artwork",
+  "type": "section",
+  "styles": ["artwork.css"],
+  "scripts": [],
+  "requires": ["text", "image", "commons"],
+  "validation": {
+    "required": ["sectionType", "image"],
+    "properties": {
+      "sectionType": {
+        "type": "string",
+        "const": "artwork"
+      },
+      "containerFields.inContainer": {
+        "type": "boolean"
+      },
+      "containerFields.isAnimated": {
+        "type": "boolean"
+      },
+      "text.title": {
+        "type": "string"
+      },
+      "text.prose": {
+        "type": "string"
+      },
+      "image.src": {
+        "type": "string"
+      },
+      "image.alt": {
+        "type": "string"
+      },
+      "image.caption": {
+        "type": "string"
+      },
+      "artworkProperties.type": {
+        "type": "string"
+      },
+      "artworkProperties.year": {
+        "type": "number"
+      },
+      "artworkProperties.materials": {
+        "type": "string"
+      },
+      "artworkProperties.dimensions": {
+        "type": "object"
+      },
+      "artworkProperties.status": {
+        "type": "string"
+      }
+    }
+  },
+  "fields": {
+    "text": {
+      "$use": "text"
+    },
+    "image": {
+      "$use": "image"
+    },
+    "artworkProperties": {
+      "type": {
+        "widget": "text",
+        "label": "Type",
+        "default": ""
+      },
+      "year": {
+        "widget": "text",
+        "label": "Year",
+        "default": ""
+      },
+      "materials": {
+        "widget": "text",
+        "label": "Materials",
+        "default": ""
+      },
+      "dimensions": {
+        "widget": "text",
+        "label": "Dimensions",
+        "default": ""
+      },
+      "status": {
+        "widget": "text",
+        "label": "Status",
+        "default": ""
+      }
+    },
+    "$extends": ["commons"]
+  }
+}

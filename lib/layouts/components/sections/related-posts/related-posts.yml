@@ -1,0 +1,29 @@
+- sectionType: related-posts
+  containerTag: aside
+  classes: ""
+  id: ""
+  isDisabled: false
+  containerFields:
+    inContainer: true
+    isAnimated: true
+    noMargin:
+      top: false
+      bottom: false
+    noPadding:
+      top: false
+      bottom: false
+    background:
+      color: ""
+      image: ""
+      imageScreen: "none"
+  text:
+    leadIn: ""
+    title: "Related Posts"
+    titleTag: "h2"
+    subTitle: ""
+    prose: ""
+  hasCard: false
+  selections:
+    - building-pages-with-components
+    - section-anatomy
+    - how-component-bundling-works

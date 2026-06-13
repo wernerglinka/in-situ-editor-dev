@@ -1,0 +1,20 @@
+/**
+ * Audio Only Section Styles
+ *
+ * Design Tokens:
+ * - --space-m
+ */
+
+.audio-only {
+  width: 100%;
+
+  .content.container {
+    /* Needs compound selector to increase specificity */
+    display: block; /* Override flex layout */
+    text-align: center;
+  }
+
+  .ctas-wrapper {
+    margin-top: var(--space-m);
+  }
+}

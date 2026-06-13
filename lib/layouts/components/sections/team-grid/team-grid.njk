@@ -1,0 +1,138 @@
+{% from "components/_partials/text/text.njk" import text %}
+{% from "components/_partials/image/image.njk" import image %}
+
+<div class="container content">
+  {% if section.text | hasText %}
+    <div class="team-header flow">
+      {{ text(section.text) }}
+    </div>
+  {% endif %}
+
+  {# Get team members from external data source #}
+  {% if section.team.source %}
+    {% set members = data.team[section.team.source] %}
+  {% endif %}
+
+  {% if members %}
+    {% set layout = section.team.layout or "grid" %}
+
+    <ul class="team-list is-{{ layout }}" role="list">
+      {% for member in members %}
+        {% set memberId = "member-" ~ loop.index %}
+        <li class="team-member">
+          {% if member.image | hasImage %}
+            <div class="member-photo">
+              {{ image(member.image) }}
+            </div>
+          {% endif %}
+
+          <div class="member-info">
+            {% if member.name %}
+              <h3 class="member-name">{{ member.name }}</h3>
+            {% endif %}
+
+            {% if member.role %}
+              <p class="member-role">{{ member.role }}</p>
+            {% endif %}
+
+            {% if member.bio and layout === "grid" %}
+              <p class="member-bio">
+                {{- member.bio -}}
+                {%- if member.extendedBio -%}
+                  ...<a href="#" class="text-link"
+                      data-dialog-target="{{ memberId }}-dialog"
+                      aria-haspopup="dialog">More</a>
+                {%- endif -%}
+              </p>
+            {% endif %}
+
+            {% if member.social %}
+              <ul class="member-social" role="list">
+                {% for link in member.social %}
+                  <li>
+                    <a href="{{ link.url }}"
+                       target="_blank"
+                       rel="noopener noreferrer"
+                       aria-label="{{ member.name }} on {{ link.platform }}">
+                      {% if link.platform === "twitter" or link.platform === "x" %}
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"></path></svg>
+                      {% elif link.platform === "linkedin" %}
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
+                      {% elif link.platform === "github" %}
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
+                      {% elif link.platform === "email" %}
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                      {% elif link.platform === "website" %}
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+                      {% else %}
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
+                      {% endif %}
+                    </a>
+                  </li>
+                {% endfor %}
+              </ul>
+            {% endif %}
+          </div>
+        </li>
+
+        {# Dialog for extended bio (grid layout only) #}
+        {% if member.extendedBio and layout === "grid" %}
+          <dialog id="{{ memberId }}-dialog" class="member-dialog" aria-labelledby="{{ memberId }}-title">
+            <div class="dialog-content">
+              <span class="dialog-close" role="button" tabindex="0" aria-label="Close dialog">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+              </span>
+
+              <div class="dialog-header">
+                {% if member.image | hasImage %}
+                  <div class="dialog-photo">
+                    {{ image(member.image) }}
+                  </div>
+                {% endif %}
+                <div class="dialog-intro">
+                  <h3 id="{{ memberId }}-title" class="dialog-name">{{ member.name }}</h3>
+                  {% if member.role %}
+                    <p class="dialog-role">{{ member.role }}</p>
+                  {% endif %}
+                </div>
+              </div>
+
+              <div class="dialog-body">
+                {{ member.extendedBio | safe }}
+              </div>
+
+              {% if member.social %}
+                <ul class="dialog-social" role="list">
+                  {% for link in member.social %}
+                    <li>
+                      <a href="{{ link.url }}"
+                         target="_blank"
+                         rel="noopener noreferrer"
+                         aria-label="{{ member.name }} on {{ link.platform }}">
+                        {% if link.platform === "twitter" or link.platform === "x" %}
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"></path></svg>
+                        {% elif link.platform === "linkedin" %}
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
+                        {% elif link.platform === "github" %}
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
+                        {% elif link.platform === "email" %}
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                        {% elif link.platform === "website" %}
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+                        {% else %}
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
+                        {% endif %}
+                      </a>
+                    </li>
+                  {% endfor %}
+                </ul>
+              {% endif %}
+            </div>
+          </dialog>
+        {% endif %}
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>No team members found</p>
+  {% endif %}
+</div>

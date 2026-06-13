@@ -1,0 +1,10 @@
+{% from "components/_partials/search/search.njk" import search %}
+{% from "components/_partials/text/text.njk" import text %}
+
+<div class="content container">
+  <div class="text flow">
+    {{ text(section.text) }}
+  </div>
+
+  {{ search(section) }}
+</div>

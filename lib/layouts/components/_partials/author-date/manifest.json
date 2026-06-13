@@ -1,9 +1,7 @@
 {
   "name": "author-date",
   "type": "partial",
-  "styles": [
-    "author-date.css"
-  ],
+  "styles": ["author-date.css"],
   "scripts": [],
   "requires": [],
   "validation": {
@@ -11,14 +9,10 @@
     "properties": {
       "author": {
         "oneOf": [
-          {
-            "type": "string"
-          },
+          { "type": "string" },
           {
             "type": "array",
-            "items": {
-              "type": "string"
-            }
+            "items": { "type": "string" }
           }
         ]
       },

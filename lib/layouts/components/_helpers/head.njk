@@ -1,10 +1,11 @@
 <head>
-  <meta name="verify-v1" content="{{ site.validate.google }}" />
-  <meta name="msvalidate.01" content="{{ site.validate.ms }}" />
-  <meta name="generator" value="metalsmith" />
+  <title>{{ metadata.site.title }}</title>
+  <meta name="description" content="{{ metadata.site.description }}" />
+  <meta name="author" content="Werner Glinka" />
+  <meta name="generator" content="metalsmith" />
 
-  <link rel="canonical" href="{{ metadata.site.url }}/" />
-
+  <meta name="google-site-verification" content="QqNO2zBa-MXZeMNSn4xIVhnalhd84ADMLE6uwLIy4Ms" />
+  
   <meta charset="utf-8" />
   <meta httpEquiv="x-ua-compatible" content="ie=edge" />
   <meta name="HandheldFriendly" content="True" />
@@ -12,11 +13,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta httpEquiv="cleartype" content="on" />
   <meta httpEquiv="Accept-CH" content="DPR, Viewport-Width, Width" />
-
-  <title>{{ metadata.site.title }}</title>
-  <meta name="description" content="{{ metadata.site.description }}" />
-  <meta name="author" content="Werner Glinka" />
-  <meta name="generator" content="metalsmith" />
 
   {# Icons #} {# generated at
   https://realfavicongenerator.net/favicon_result?file_id=p1ftthvcomq191neufes1ch51poc6#.YivO7hDMJqs #}
@@ -27,6 +23,8 @@
   <link rel="mask-icon" href="/assets/icons/safari-pinned-tab.svg" color="#5bbad5" />
   <meta name="msapplication-TileColor" content="#da532c" />
   <meta name="theme-color" content="#ffffff" />
+
+  <link rel="canonical" href="{{ metadata.site.url }}/" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />

@@ -1,0 +1,28 @@
+- sectionType: pricing-table
+  containerTag: section
+  classes: ""
+  id: ""
+  isDisabled: false
+  containerFields:
+    inContainer: true
+    isAnimated: true
+    noMargin:
+      top: false
+      bottom: false
+    noPadding:
+      top: false
+      bottom: false
+    background:
+      color: ""
+      image: ""
+      imageScreen: "none"
+      isDark: false
+  text:
+    leadIn: ""
+    title: "Choose Your Plan"
+    titleTag: "h2"
+    subTitle: ""
+    prose: "Select the plan that best fits your needs."
+  tiers:
+    source: "pricing-example"
+    layout: "cards"

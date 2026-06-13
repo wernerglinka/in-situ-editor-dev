@@ -1,0 +1,125 @@
+{
+  "name": "podcast",
+  "type": "section",
+  "styles": ["podcast.css"],
+  "scripts": ["podcast.js", "rss-parser.js"],
+  "requires": ["ctas", "commons"],
+  "context": ["data.podcasts"],
+  "validation": {
+    "required": ["sectionType", "podcast"],
+    "properties": {
+      "sectionType": {
+        "type": "string",
+        "const": "podcast"
+      },
+      "containerFields.inContainer": {
+        "type": "boolean"
+      },
+      "containerFields.isAnimated": {
+        "type": "boolean"
+      },
+      "podcast": {
+        "type": "string",
+        "description": "Name of the podcast JSON file in data/podcasts/"
+      },
+      "options.maxEpisodes": {
+        "type": "number",
+        "default": 50,
+        "description": "Maximum number of episodes to fetch from RSS feed"
+      },
+      "options.initialEpisodes": {
+        "type": "number",
+        "default": 5,
+        "description": "Number of episodes to show initially before 'Load More' button"
+      },
+      "options.showEpisodeList": {
+        "type": "boolean",
+        "default": true
+      },
+      "options.showHeader": {
+        "type": "boolean",
+        "default": true,
+        "description": "Show the podcast header with title, description, and cover image"
+      },
+      "options.autoplay": {
+        "type": "boolean",
+        "default": false
+      },
+      "options.theme": {
+        "type": "string",
+        "enum": ["light", "dark", "auto"],
+        "default": "auto"
+      },
+      "options.themeColor": {
+        "type": "string",
+        "default": "#007aff"
+      },
+      "ctas": {
+        "type": "array",
+        "items": {
+          "properties": {
+            "isButton": {
+              "type": "boolean"
+            },
+            "buttonStyle": {
+              "type": "string",
+              "enum": ["primary", "secondary", "tertiary", "inverted"]
+            },
+            "isSmall": {
+              "type": "boolean"
+            }
+          }
+        }
+      }
+    }
+  },
+  "fields": {
+    "podcast": {
+      "widget": "text",
+      "label": "Podcast feed URL or ID",
+      "default": ""
+    },
+    "options": {
+      "maxEpisodes": {
+        "widget": "text",
+        "label": "Max episodes",
+        "default": "10"
+      },
+      "initialEpisodes": {
+        "widget": "text",
+        "label": "Initial episodes",
+        "default": "5"
+      },
+      "showEpisodeList": {
+        "widget": "checkbox",
+        "label": "Show episode list",
+        "default": true
+      },
+      "showHeader": {
+        "widget": "checkbox",
+        "label": "Show header",
+        "default": true
+      },
+      "autoplay": {
+        "widget": "checkbox",
+        "label": "Autoplay",
+        "default": false
+      },
+      "theme": {
+        "widget": "select",
+        "label": "Theme",
+        "enum": ["light", "dark"],
+        "default": "light"
+      },
+      "themeColor": {
+        "widget": "text",
+        "label": "Theme color",
+        "default": ""
+      }
+    },
+    "ctas": {
+      "$use": "ctas"
+    },
+    "$extends": ["commons"]
+  }
+}

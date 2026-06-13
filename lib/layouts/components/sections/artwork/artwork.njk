@@ -1,0 +1,78 @@
+{% from "components/_partials/text/text.njk" import text %}
+{% from "components/_partials/image/image.njk" import image %}
+
+{% set isDE = lang == 'de' %}
+
+<div class="content container">
+  {% if section.image %}
+    {% if section.text %}
+      <div class="artwork-header flow">
+        {{ text(section.text)}}
+      </div>
+    {% endif %}
+
+    <div class="media">
+      {{ image(section.image) }}
+    </div>
+
+    {% if section.artworkProperties %}
+      {% set props = section.artworkProperties %}
+      <dl class="props-list">
+
+        {% if props.type %}
+          <div class="row">
+            <dt>{{ 'Typ' if isDE else 'Type' }}</dt>
+            <dd>{{ props.type }}</dd>
+          </div>
+        {% endif %}
+
+        {% if props.year %}
+          <div class="row">
+            <dt>{{ 'Jahr' if isDE else 'Year' }}</dt>
+            <dd>{{ props.year }}</dd>
+          </div>
+        {% endif %}
+
+        {% if props.materials %}
+          <div class="row">
+            <dt>{{ 'Materialien' if isDE else 'Materials' }}</dt>
+            <dd>{{ props.materials }}</dd>
+          </div>
+        {% endif %}
+
+        {% if props.dimensions %}
+          {% set dims = props.dimensions %}
+          {% if isDE %}
+            {% set _w = dims.width * 2.54 %}
+            {% set _h = dims.height * 2.54 %}
+            {% set _d = dims.depth * 2.54 %}
+            {% set displayUnit = 'cm' %}
+          {% else %}
+            {% set _w = dims.width %}
+            {% set _h = dims.height %}
+            {% set _d = dims.depth %}
+            {% set displayUnit = dims.unit | default('in') %}
+          {% endif %}
+          <div class="row">
+            <dt>{{ 'Maße' if isDE else 'Dimensions' }}</dt>
+            <dd>
+              {{- _w | round -}}w
+              {%- if _h %} &times; {{ _h | round }}h {% endif -%}
+              {%- if _d %} &times; {{ _d | round }}d {% endif -%}
+              &nbsp;{{ displayUnit }}
+            </dd>
+          </div>
+        {% endif %}
+
+        {% if props.status and props.status | lower == 'available' %}
+          <div class="row">
+            <dt>Status</dt>
+            <dd class="status status--available">{{ 'Verfügbar' if isDE else 'Available' }}</dd>
+          </div>
+        {% endif %}
+
+      </dl>
+    {% endif %}
+
+  {% endif %}
+</div>

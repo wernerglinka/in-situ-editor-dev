@@ -1,0 +1,25 @@
+- sectionType: image-grid
+  containerTag: section
+  classes: ""
+  id: ""
+  isDisabled: false
+  isAnimated: true
+  containerFields:
+    inContainer: true
+    noMargin:
+      top: true
+      bottom: true
+    noPadding:
+      top: false
+      bottom: false
+    background:
+      color: ""
+      image: ""
+      imageScreen: "none"
+  dataSource: sample-artworks
+  text:
+    title: "Sample Gallery"
+    titleTag: "h3"
+  settings:
+    gap: "6"
+    targetRowHeight: "180"

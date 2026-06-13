@@ -1,0 +1,55 @@
+{
+  "name": "image-compare",
+  "type": "section",
+  "styles": ["image-compare.css"],
+  "scripts": ["image-compare.js"],
+  "requires": ["image", "icon", "commons"],
+  "validation": {
+    "required": ["sectionType"],
+    "properties": {
+      "sectionType": {
+        "type": "string",
+        "const": "image-compare"
+      },
+      "imageBefore": {
+        "type": "object",
+        "properties": {
+          "src": {
+            "type": "string"
+          },
+          "alt": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          }
+        },
+        "required": ["src", "alt"]
+      },
+      "imageAfter": {
+        "type": "object",
+        "properties": {
+          "src": {
+            "type": "string"
+          },
+          "alt": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          }
+        },
+        "required": ["src", "alt"]
+      }
+    }
+  },
+  "fields": {
+    "imageBefore": {
+      "$use": "image"
+    },
+    "imageAfter": {
+      "$use": "image"
+    },
+    "$extends": ["commons"]
+  }
+}

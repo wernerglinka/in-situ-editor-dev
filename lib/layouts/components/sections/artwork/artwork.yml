@@ -1,0 +1,37 @@
+- sectionType: artwork
+  containerTag: section
+  classes: ''
+  id: ''
+  isDisabled: false
+  isAnimated: true
+  containerFields:
+    inContainer: false
+    noMargin:
+      top: false
+      bottom: true
+    noPadding:
+      top: false
+      bottom: true
+    background:
+      color: ''
+      image: ''
+      imageScreen: 'none'
+  text:
+    leadIn: ''
+    title: 'Object 2026.03.005'
+    titleTag: 'h1'
+    subTitle: ''
+  image:
+    src: '/assets/images/sample6.jpg'
+    alt: 'Artwork title'
+    caption: ''
+  artworkProperties:
+    type: 'Assemblage'
+    year: 2026
+    materials: 'Wire mesh, wood panel, ash, urethane, shredded paper'
+    status: 'available'
+    dimensions:
+      width: 9
+      height: 24
+      depth: 1
+      unit: 'in'

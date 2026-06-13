@@ -1,0 +1,41 @@
+/**
+ * Compound Section Styles
+ *
+ * Design Tokens:
+ * - --space-s
+ * - --space-m-l
+ */
+
+.compound {
+  .text {
+    max-width: clamp(45ch, 65ch, 80ch); /* Fluid reading width */
+    margin-inline: auto; /* Center the text block */
+
+    h1,
+    h2,
+    h3,
+    .sub-title {
+      margin-bottom: var(--space-s);
+
+      & + div {
+        margin-top: 0;
+      }
+    }
+
+    pre {
+      margin: 2em 0;
+    }
+
+    .ctas {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+      gap: var(--space-m-l);
+
+      * {
+        margin: 0;
+      }
+    }
+  }
+}

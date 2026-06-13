@@ -1,0 +1,141 @@
+/**
+ * Image Compare Section Styles
+ *
+ * Design Tokens:
+ * - --space-xs-s
+ * - --glass-background-light
+ * - --glass-backdrop-filter
+ * - --glass-box-shadow
+ * - --glass-background
+ * - --contrast-text-on-dark
+ * - --space-l
+ * - --space-m
+ */
+
+.image-compare {
+  --handle-size: var(--space-l);
+
+  .container.content {
+    flex-direction: row;
+    justify-content: center;
+  }
+
+  padding: 0 var(--space-xs-s);
+
+  .image-comparison-container {
+    position: relative;
+    margin: 0 auto;
+    align-self: center;
+    flex-basis: auto;
+    flex: 0 0 auto;
+    max-width: 100%;
+  }
+
+  .image-status {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    color: var(--contrast-text-on-dark);
+    padding: var(--space-s);
+    opacity: 0;
+    transform: translateY(20px);
+    transition: transform 0.5s ease-in-out 0.7s, opacity 0.5s ease-in-out 0.7s;
+
+    &.is-hidden {
+      visibility: hidden;
+    }
+  }
+
+  .is-visible .image-status {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .after-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 100%;
+    overflow: hidden;
+    // backface-visibility: hidden; and transform: translateZ(0); is used to
+    // create a new stacking context, which can help to improve the performance
+    // of CSS animations and transitions.
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    
+    img {
+      position: absolute;
+      left: 0;
+      top: 0;
+      display: block;
+      height: 100%;
+      width: auto;
+      max-width: none;
+    }
+
+    .image-status {
+      right: auto;
+      left: 0;
+    }
+  }
+  
+  .is-visible .after-image {
+    width: 50%;
+    animation: show-after 0.5s;
+  }
+
+  .comparison-handle {
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: var(--handle-size);
+    width: var(--handle-size);
+    left: calc(50% - var(--handle-size) / 2);
+    top: calc(50% - var(--handle-size) / 2);
+    border-radius: 50%;
+    background-color: var(--glass-background-light);
+    backdrop-filter: var(--glass-backdrop-filter);
+    box-shadow: var(--glass-box-shadow);
+    cursor: move;
+    opacity: 0;
+    transform: translate3d(0, 0, 0) scale(0);
+
+    &.is-dragged {
+      background-color: var(--glass-background);
+    }
+
+    .icon-wrapper {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: var(--space-l);
+      height: var(--space-l);
+    }
+
+    svg {
+      width: var(--space-m);
+      height: var(--space-m);
+    }
+  }
+  
+  .is-visible .comparison-handle {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+    transition: transform 0.5s ease-in-out 0.7s, opacity 0s 0.7s;
+  }
+
+}
+
+@keyframes show-after {
+  0% {
+    width: 0;
+  }
+  60% {
+    width: 55%;
+  }
+  100% {
+    width: 50%;
+  }
+}

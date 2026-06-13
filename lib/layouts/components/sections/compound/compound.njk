@@ -1,0 +1,24 @@
+{% from "components/_helpers/render-section.njk" import renderSection %}
+{% from "components/_helpers/build-container-attributes.njk" import buildContainerAttributes %}
+
+{# loop through all compound sections and render them #}
+{% for section in section.compoundSections %}
+  {# don't render section is disabled in frontmatter #}
+  {% if not section.isDisabled %}
+
+    {# section wrapper may be article, aside, section or div depending on section.containerTag setting #}
+    <{{ section.containerTag }} class="content">
+
+      {# section content #}
+      {{ renderSection(section, navigation.breadcrumbs, data, collections, previous, next, urlPath) }}
+
+      {% set containerTag = section.containerTag %}
+    </{{ containerTag }}>
+
+  {% endif %}
+{% else %}
+  <p class="error-message" role="alert" aria-live="polite">
+    <span class="sr-only">Notice: </span>
+    There are no compound sections available
+  </p>
+{% endfor %}

@@ -1,0 +1,21 @@
+{% from "components/_partials/image/image.njk" import image %}
+{% from "components/_partials/icon/icon.njk" import icon %}
+
+{#
+  This section displays an image comparison slider with before and after images.
+  It includes labels for "Before" and "After" states and a draggable handle for comparison.
+#}
+
+<div class="container content">
+  <div class="image-comparison-container is-visible">
+    {{ image(section.imageBefore) }}		
+    <span class="image-status before">Before</span>
+
+    <div class="after-image">
+      {{ image(section.imageAfter) }}
+      <span class="image-status after">After</span>
+    </div>
+
+    <span class="comparison-handle">{{ icon({ icon:'arrow-left-right', url:"" })}}</span>
+  </div>
+</div>

@@ -1,0 +1,98 @@
+/**
+ * Artwork Section Styles
+ *
+ * Design Tokens:
+ * - --glass-border-radius
+ * - --space-xs
+ * - --space-s
+ * - --space-m
+ * - --color-text-muted
+ * - --color-border-light
+ * - --color-text
+ * - --color-primary
+ * - --step--1
+ * - --font-p
+ * - --font-s
+ */
+
+.section-wrapper.artwork .content {
+  display: block; /* Override flex layout */
+}
+
+.artwork {
+  .artwork-header,
+  .media,
+  .props-list {
+    max-width: clamp(45ch, 65ch, 80ch);
+    margin-inline: auto;
+  }
+
+  .artwork-header {
+    margin-top: var(--space-m);
+    border-top: 1px solid var(--color-border-light);
+    padding-top: var(--space-m);
+
+    .title {
+      font-size: var(--font-p);
+      font-weight: 600;
+      margin-bottom: var(--space-s);
+    }
+    .sub-title {
+      font-style: italic;
+      margin: 0 0 var(--space-s);
+    }
+  }
+
+  .media {
+    img {
+      width: auto;
+      height: auto;
+      max-width: 500px;
+      max-height: 600px;
+      justify-self: center;
+    }
+
+    .caption {
+      margin-top: var(--space-xs);
+      font-style: italic;
+      color: var(--color-text-muted);
+      font-size: var(--step--1);
+    }
+  }
+
+  .props-list {
+    border-top: 1px solid var(--color-border-light);
+
+    .row {
+      display: grid;
+      grid-template-columns: 8rem 1fr;
+      gap: 0 var(--space-s);
+      padding-block: calc(var(--space-s) / 2);
+      border-bottom: 1px solid var(--color-border-light);
+
+      dt {
+        font-size: var(--font-s);
+        font-weight: bold;
+        color: var(--color-text);
+      }
+
+      dd {
+        font-size: var(--font-s);
+        color: var(--color-text);
+        margin: 0;
+      }
+    }
+
+    .status {
+      text-transform: capitalize;
+    }
+
+    .status--available {
+      color: var(--color-primary, currentColor);
+    }
+  }
+}
+
+/** Dark Theme styles variations */
+.dark-theme .artwork {
+}

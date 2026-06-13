@@ -151,11 +151,13 @@ header {
     /* Cluster pattern for misc items */
     display: flex;
     align-items: center;
-    gap: var(--space-s);
+    /* Fluid gap: shrinks on small screens, grows on larger */
+    gap: clamp(var(--space-3xs), 2vw, var(--space-s));
 
     /* Reset button styles for header buttons - higher specificity than global button styles */
     button.none,
     button.theme-toggle,
+    button.language-toggle,
     button.search-icon-toggle,
     button[type='submit'] {
       background: transparent;

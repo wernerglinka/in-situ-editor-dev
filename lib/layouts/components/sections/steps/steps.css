@@ -1,0 +1,233 @@
+/**
+ * Steps Section Styles
+ *
+ * Design Tokens:
+ * - --space-2xs, --space-xs, --space-s, --space-m, --space-l, --space-xl
+ * - --space-s-m, --space-m-l, --space-l-2xl
+ * - --color-border-light
+ * - --color-text, --color-text-dark, --color-text-light
+ * - --color-background, --color-background-light
+ * - --color-primary
+ * - --font-xs, --font-s, --font-p, --font-h4, --font-h5
+ */
+
+.steps {
+  .container.content {
+    display: block;
+  }
+
+  .steps-header {
+    text-align: center;
+    margin-block-end: var(--space-l-2xl);
+  }
+
+  /* Steps List */
+  .steps-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    counter-reset: step-counter;
+  }
+
+  /* Horizontal Layout */
+  .steps-list.is-horizontal {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
+    gap: var(--space-l);
+  }
+
+  /* Vertical Layout */
+  .steps-list.is-vertical {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-l);
+    max-width: 40rem;
+    margin-inline: auto;
+
+    .step-item {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: var(--space-m);
+      text-align: left;
+    }
+
+    .step-marker {
+      margin-block-end: 0;
+    }
+
+    .step-content {
+      padding-block-start: var(--space-2xs);
+    }
+  }
+
+  /* Cards Layout - boxed horizontal */
+  .steps-list.is-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+    gap: var(--space-l);
+
+    .step-item {
+      background: var(--color-background);
+      border: 1px solid var(--color-border-light);
+      border-radius: 0.5rem;
+      padding: var(--space-l);
+    }
+  }
+
+  /* Step Item */
+  .step-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    counter-increment: step-counter;
+    position: relative;
+  }
+
+  /* Step Marker */
+  .step-marker {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-xs);
+    margin-block-end: var(--space-m);
+  }
+
+  /* Step Number */
+  .step-number {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    background: var(--color-primary);
+    color: white;
+    font-size: var(--font-h5);
+    font-weight: 700;
+    border-radius: 50%;
+  }
+
+  /* Step Icon */
+  .step-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-primary);
+
+    svg {
+      width: 1.75rem;
+      height: 1.75rem;
+    }
+  }
+
+  /* When showing numbers with icons, icon goes below number */
+  .has-numbers .step-icon {
+    margin-block-start: var(--space-xs);
+  }
+
+  /* Icon only (no numbers) - make icon larger and in circle */
+  .steps-list:not(.has-numbers) {
+    .step-icon {
+      width: 3.5rem;
+      height: 3.5rem;
+      background: var(--color-background-light);
+      border-radius: 50%;
+
+      svg {
+        width: 1.75rem;
+        height: 1.75rem;
+      }
+    }
+  }
+
+  /* Step Content */
+  .step-title {
+    font-size: var(--font-h5);
+    margin: 0;
+    margin-block-end: var(--space-2xs);
+    line-height: 1.3;
+  }
+
+  .step-description {
+    font-size: var(--font-s);
+    color: var(--color-text-dark);
+    margin: 0;
+    line-height: 1.5;
+  }
+}
+
+/* Connector lines between horizontal steps */
+.steps.has-connectors .steps-list.is-horizontal {
+  .step-item:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    top: 1.25rem;
+    left: calc(50% + 2rem);
+    right: calc(-50% + 2rem);
+    height: 2px;
+    background: var(--color-border-light);
+  }
+}
+
+/* Connector lines between vertical steps */
+.steps.has-connectors .steps-list.is-vertical {
+  .step-item {
+    position: relative;
+  }
+
+  /* Line between steps */
+  .step-item:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    left: 1.25rem;
+    top: 3rem;
+    bottom: calc(-1 * var(--space-l) + 0.5rem);
+    width: 2px;
+    background: var(--color-border-light);
+  }
+
+  .step-marker {
+    position: relative;
+    z-index: 1;
+    width: 2.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  /* Line from number to icon within the marker */
+  .step-marker::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 2.5rem;
+    bottom: 0;
+    width: 2px;
+    background: var(--color-border-light);
+    transform: translateX(-50%);
+    z-index: -1;
+  }
+
+  .step-number {
+    background: var(--color-primary);
+  }
+
+  .step-icon {
+    background: white;
+    border-radius: 50%;
+    padding: var(--space-xs);
+  }
+}
+
+/* Alternate style - outlined numbers */
+.steps.is-outlined {
+  .step-number {
+    background: transparent;
+    color: var(--color-primary);
+    border: 2px solid var(--color-primary);
+  }
+
+  &.has-connectors .steps-list.is-vertical .step-number {
+    background: white;
+  }
+}

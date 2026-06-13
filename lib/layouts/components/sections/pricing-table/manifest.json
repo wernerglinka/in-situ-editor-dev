@@ -1,0 +1,70 @@
+{
+  "name": "pricing-table",
+  "type": "section",
+  "styles": ["pricing-table.css"],
+  "scripts": [],
+  "requires": ["ctas", "text", "icon", "commons"],
+  "context": ["data.pricing"],
+  "validation": {
+    "required": ["sectionType"],
+    "properties": {
+      "sectionType": {
+        "type": "string",
+        "const": "pricing-table"
+      },
+      "isDisabled": {
+        "type": "boolean"
+      },
+      "containerFields.inContainer": {
+        "type": "boolean"
+      },
+      "containerFields.isAnimated": {
+        "type": "boolean"
+      },
+      "containerFields.noMargin.top": {
+        "type": "boolean"
+      },
+      "containerFields.noMargin.bottom": {
+        "type": "boolean"
+      },
+      "containerFields.noPadding.top": {
+        "type": "boolean"
+      },
+      "containerFields.noPadding.bottom": {
+        "type": "boolean"
+      },
+      "containerFields.background.isDark": {
+        "type": "boolean"
+      },
+      "tiers.source": {
+        "type": "string"
+      },
+      "tiers.layout": {
+        "type": "string",
+        "enum": ["cards", "comparison"]
+      }
+    }
+  },
+  "fields": {
+    "text": {
+      "$use": "text"
+    },
+    "tiers": {
+      "source": {
+        "widget": "text",
+        "label": "Data source (file in lib/data)",
+        "default": ""
+      },
+      "layout": {
+        "widget": "select",
+        "label": "Layout",
+        "enum": ["grid", "columns"],
+        "default": "grid"
+      }
+    },
+    "ctas": {
+      "$use": "ctas"
+    },
+    "$extends": ["commons"]
+  }
+}

@@ -1,0 +1,139 @@
+/**
+ * Code Section Styles
+ *
+ * Design Tokens:
+ * - --space-s-m
+ * - --space-2xs-xs
+ * - --color-text
+ * - --space-lg
+ * - --space-xs
+ * - --space-s
+ * - --font-sm
+ * - --code-background
+ * - --code-text-color
+ * - --color-text-light
+ * - --color-primary
+ * - --color-success
+ */
+
+.code {
+  .code-block {
+    margin: var(--space-lg) 0;
+    border-radius: var(--space-xs);
+    overflow: hidden;
+
+    pre[class*='language-'] {
+      padding: var(--space-s-m);
+      border-radius: var(--space-2xs-xs);
+      overflow: hidden;
+      font-size: 0.8em;
+    }
+
+    /* Override Prism theme font sizes for all theme variants */
+    &[class*='theme-'] pre[class*='language-'],
+    &[class*='theme-'] code[class*='language-'] {
+      font-size: 0.8em;
+    }
+  }
+
+  .code-header {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    padding: var(--space-xs) var(--space-s);
+
+    .code-info {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: var(--space-s);
+    }
+
+    .filename {
+      font-weight: 600;
+      color: var(--color-text);
+    }
+
+    .theme {
+      font-style: italic;
+    }
+  }
+
+  .filename {
+    color: var(--color-text);
+  }
+
+  .code-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-xs);
+    margin-left: auto;
+  }
+
+  .language-label {
+    background: var(--code-background);
+    color: var(--code-text-color);
+    padding: var(--space-3xs) var(--space-2xs);
+    border-radius: var(--space-3xs);
+    font-size: var(--font-xs);
+    font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+
+  .copy-button {
+    background: none;
+    border: none;
+    padding: 0;
+    width: var(--space-lg);
+    height: var(--space-lg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: none;
+
+    svg {
+      transition: stroke 0.5s ease-in-out;
+      stroke: var(--color-text-light);
+    }
+  }
+
+  .copy-button:hover {
+    svg {
+      stroke: var(--color-primary);
+    }
+  }
+
+  .copy-button.copied {
+    background: var(--color-success);
+    border-color: var(--color-success);
+    color: var(--contrast-text-on-dark);
+  }
+
+  .copy-button.copied svg {
+    display: none;
+  }
+
+  .copy-button.copied::after {
+    content: '✓';
+    font-size: 14px;
+  }
+}
+
+/* Override the rich-text pre margins for this component */
+
+/* Default theme (from rich-text.css) should only apply to theme-default */
+.code-block.theme-default pre {
+  background: transparent;
+}
+
+/* For themed code blocks, let the theme determine the background */
+.code-block:not(.theme-default) pre[class*='language-'] {
+  /* Background will be set by the dynamically loaded theme CSS */
+}
+
+/* Dark theme support */
+.dark-theme .code {
+}

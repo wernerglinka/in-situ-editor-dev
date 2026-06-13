@@ -1,0 +1,122 @@
+{
+  "name": "maps",
+  "type": "section",
+  "styles": ["maps.css"],
+  "scripts": ["maps.js"],
+  "requires": ["ctas", "text", "commons"],
+  "context": ["data.maps"],
+  "modules": {
+    "providers": ["leaflet.js", "openlayers.js"],
+    "helpers": ["load-script.js", "load-styles.js", "maps-utils.js", "icon-loader.js"]
+  },
+  "validation": {
+    "required": ["sectionType", "mapProvider", "mapData"],
+    "properties": {
+      "sectionType": {
+        "type": "string",
+        "const": "maps"
+      },
+      "mapProvider": {
+        "type": "string",
+        "enum": ["leaflet", "openlayers"],
+        "default": "leaflet"
+      },
+      "mapData": {
+        "type": "string"
+      },
+      "height": {
+        "type": "string"
+      },
+      "isDisabled": {
+        "type": "boolean"
+      },
+      "containerFields.inContainer": {
+        "type": "boolean"
+      },
+      "containerFields.isAnimated": {
+        "type": "boolean"
+      },
+      "containerFields.noMargin.top": {
+        "type": "boolean"
+      },
+      "containerFields.noMargin.bottom": {
+        "type": "boolean"
+      },
+      "containerFields.noPadding.top": {
+        "type": "boolean"
+      },
+      "containerFields.noPadding.bottom": {
+        "type": "boolean"
+      },
+      "containerFields.background.isDark": {
+        "type": "boolean"
+      },
+      "containerFields.background.imageScreen": {
+        "type": "string",
+        "enum": ["light", "dark", "none"]
+      },
+      "text.titleTag": {
+        "type": "string",
+        "enum": ["h1", "h2", "h3", "h4", "h5", "h6"],
+        "default": "h2"
+      },
+      "ctas": {
+        "type": "array",
+        "items": {
+          "properties": {
+            "isButton": {
+              "type": "boolean"
+            },
+            "buttonStyle": {
+              "type": "string",
+              "enum": ["primary", "secondary", "tertiary", "inverted"]
+            },
+            "isSmall": {
+              "type": "boolean"
+            }
+          }
+        }
+      }
+    }
+  },
+  "fields": {
+    "text": {
+      "$use": "text"
+    },
+    "mapProvider": {
+      "widget": "select",
+      "label": "Map provider",
+      "enum": ["leaflet", "google"],
+      "default": "leaflet"
+    },
+    "mapData": {
+      "widget": "text",
+      "label": "Map data source (optional)",
+      "default": ""
+    },
+    "height": {
+      "widget": "text",
+      "label": "Map height (e.g. 400px)",
+      "default": ""
+    },
+    "latitude": {
+      "widget": "text",
+      "label": "Latitude",
+      "default": ""
+    },
+    "longitude": {
+      "widget": "text",
+      "label": "Longitude",
+      "default": ""
+    },
+    "zoom": {
+      "widget": "text",
+      "label": "Zoom",
+      "default": ""
+    },
+    "ctas": {
+      "$use": "ctas"
+    },
+    "$extends": ["commons"]
+  }
+}

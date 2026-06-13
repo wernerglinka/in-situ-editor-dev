@@ -1,0 +1,64 @@
+{
+  "name": "calendar",
+  "type": "section",
+  "styles": ["calendar.css"],
+  "scripts": ["calendar.js"],
+  "requires": ["text", "commons"],
+  "context": ["data.calendars"],
+  "modules": {
+    "providers": ["google-calendar.js"],
+    "helpers": ["date-utils.js", "event-transformer.js"]
+  },
+  "validation": {
+    "required": ["sectionType"],
+    "properties": {
+      "sectionType": {
+        "type": "string",
+        "const": "calendar"
+      },
+      "calendars": {
+        "type": "object",
+        "properties": {
+          "source": {
+            "type": "string",
+            "description": "Data source file name in lib/data/calendars/"
+          }
+        }
+      },
+      "text": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "prose": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  },
+  "fields": {
+    "text": {
+      "$use": "text"
+    },
+    "calendars": {
+      "source": {
+        "widget": "text",
+        "label": "Data source (optional)",
+        "default": ""
+      },
+      "apiKey": {
+        "widget": "text",
+        "label": "Google API key (optional)",
+        "default": ""
+      },
+      "calendarId": {
+        "widget": "text",
+        "label": "Calendar ID (optional)",
+        "default": ""
+      }
+    },
+    "$extends": ["commons"]
+  }
+}

@@ -1,0 +1,21 @@
+- sectionType: compound
+  containerTag: section
+  classes: ''
+  id: ''
+  description: 'Compound section example'
+  isDisabled: false
+  containerFields:
+    inContainer: true
+    isAnimated: false
+    noMargin:
+      top: false
+      bottom: false
+    noPadding:
+      top: false
+      bottom: false
+    background:
+      color: ''
+      image: ''
+      imageScreen: 'none'
+  
+  # Configuration to be defined

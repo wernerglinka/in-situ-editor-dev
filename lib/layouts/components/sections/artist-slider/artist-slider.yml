@@ -1,0 +1,18 @@
+- sectionType: artist-slider
+  containerFields:
+    inContainer: false
+    isAnimated: false
+    noMargin:
+      top: true
+      bottom: true
+    noPadding:
+      top: true
+      bottom: true
+    background:
+      isDark: true
+  artworks:
+    source: example-artworks
+    imageFolder: artworks
+  cycleTime: 5000
+  showDots: true
+  scrollTarget: '#first-section'

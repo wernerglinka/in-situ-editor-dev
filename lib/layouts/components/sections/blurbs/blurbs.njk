@@ -1,0 +1,103 @@
+{% from "components/_partials/ctas/ctas.njk" import ctas %}
+{% from "components/_partials/text/text.njk" import text %}
+{% from "components/_partials/icon/icon.njk" import icon %}
+{% from "components/_partials/image/image.njk" import image %}
+
+
+<div class="container content">
+  {% if section.text | hasText %}
+    <div class="blurbs-header flow">
+      {{ text(section.text) }}
+    </div>
+  {% endif %}
+
+  {# get the blurbs from the section.blurbs.source if defined #}
+  {% if section.blurbs.source %}
+    {% set blurbs = data.blurbs[section.blurbs.source] %}
+  {% else %}
+    <p>No Blurbs found</p>
+  {% endif %}
+
+  {% if blurbs %}
+    {% if section.blurbs.layout === "inline" %}
+      <ul class="blurb-list is-inline {% if section.isReverse %}is-reverse{% endif %}">
+        {% for blurb in blurbs %}
+          <li class="blurb flow">
+            {% if blurb.decoration %}
+              <div class="decoration">
+                {% if blurb.decoration.image | hasImage %}
+                  {{ image(blurb.decoration.image) }}
+                {% endif %}
+                {% if blurb.decoration | hasIcon %}
+                  {{ icon(blurb.decoration) }}
+                {% endif %}
+              </div>
+            {% endif %}
+            {% if blurb.text | hasText %}
+              <div class="info flow">
+                {{ text(blurb.text) }}
+              </div>
+            {% endif %}
+          </li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+
+    {% if section.blurbs.layout === "featurePlus" %}
+      <div class="blurbs-with-feature {% if section.isReverse %}is-reverse{% endif %}">
+        
+        {% for blurb in blurbs %}
+          {% if blurb.featured %}
+            <div class="blurb is-feature flow">
+              {% if blurb.decoration %}
+
+                <div class="decoration">
+                  {% if blurb.decoration.image | hasImage %}
+                    {{ image(blurb.decoration.image) }}
+                  {% endif %}
+                  {% if blurb.decoration | hasIcon %}
+                    {{ icon(blurb.decoration) }}
+                  {% endif %}
+                </div>
+              {% endif %}
+              {% if blurb.text | hasText %}
+                <div class="info flow">
+                  {{ text(blurb.text) }}
+                </div>
+              {% endif %}
+            </div>
+          {% endif %}
+        {% endfor %}
+        
+        <ul class="blurb-list is-grid">
+          {% for blurb in blurbs %}
+            {% if not blurb.featured %}
+              <li class="blurb flow">
+                {% if blurb.decoration %}
+                  <div class="decoration">
+                    {% if blurb.decoration.image | hasImage %}
+                      {{ image(blurb.decoration.image) }}
+                    {% endif %}
+                    {% if blurb.decoration | hasIcon %}
+                      {{ icon(blurb.decoration) }}
+                    {% endif %}
+                  </div>
+                {% endif %}
+                {% if blurb.text | hasText %}
+                  <div class="info flow">
+                    {{ text(blurb.text) }}
+                  </div>
+                {% endif %}
+              </li>
+            {% endif %}
+          {% endfor %}
+        </ul>
+
+    {% endif %}
+  {% endif %}
+
+  {% if section.ctas | hasCtas %}
+    {{ ctas(section.ctas) }}
+  {% endif %}
+
+</div>

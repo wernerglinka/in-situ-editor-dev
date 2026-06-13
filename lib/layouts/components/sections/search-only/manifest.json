@@ -1,0 +1,81 @@
+{
+  "name": "search-only",
+  "type": "section",
+  "styles": ["search-only.css"],
+  "scripts": [],
+  "requires": ["search", "text", "commons"],
+  "validation": {
+    "required": ["sectionType"],
+    "properties": {
+      "sectionType": {
+        "type": "string",
+        "const": "search-only"
+      },
+      "containerFields.inContainer": {
+        "type": "boolean"
+      },
+      "containerFields.isAnimated": {
+        "type": "boolean"
+      },
+      "text.title": {
+        "type": "string"
+      },
+      "text.subtitle": {
+        "type": "string"
+      },
+      "placeholder": {
+        "type": "string",
+        "default": "Search..."
+      },
+      "settings.maxResults": {
+        "type": "number",
+        "default": 20
+      },
+      "settings.showRelevanceScore": {
+        "type": "boolean",
+        "default": true
+      },
+      "settings.enableHighlighting": {
+        "type": "boolean",
+        "default": true
+      },
+      "settings.minCharacters": {
+        "type": "number",
+        "default": 2
+      }
+    }
+  },
+  "fields": {
+    "text": {
+      "$use": "text"
+    },
+    "placeholder": {
+      "widget": "text",
+      "label": "Search placeholder",
+      "default": ""
+    },
+    "settings": {
+      "maxResults": {
+        "widget": "text",
+        "label": "Max results",
+        "default": "10"
+      },
+      "minCharacters": {
+        "widget": "text",
+        "label": "Minimum characters",
+        "default": "3"
+      },
+      "showRelevanceScore": {
+        "widget": "checkbox",
+        "label": "Show relevance score",
+        "default": false
+      },
+      "enableHighlighting": {
+        "widget": "checkbox",
+        "label": "Enable highlighting",
+        "default": true
+      }
+    },
+    "$extends": ["commons"]
+  }
+}

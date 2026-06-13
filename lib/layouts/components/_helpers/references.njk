@@ -1,0 +1,45 @@
+{% from "components/_partials/icon/icon.njk" import icon %}
+
+{% set thisIcon = { url: '', icon: "file", title: "File Icon" } %}
+
+{% set partials = collections['partials'] %}
+{% set sections = collections['sections'] %}
+
+{% set isPartialsSection = '/references/partials' in urlPath %}
+{% set isSectionsSection = '/references/sections' in urlPath %}
+<div class="js-accordion" {% if isPartialsSection %}data-expand-index="0"{% elif isSectionsSection %}data-expand-index="1"{% else %}data-expand-index="0"{% endif %}>
+  <h3>Documentation</h3>
+  <h4 class="accordion-header js-accordion-header">Partials</h4>
+  <ul class="references-list accordion-panel js-accordion-panel">
+    <li {% if urlPath == '/references/partials/' %}class="active"{% endif %}>
+      <a href="/references/partials/">
+        About Partials
+      </a>
+    </li>
+    {% for item in partials %}
+      {% set itemPath = '/' ~ item.permalink ~ '/' %}
+      <li {% if itemPath == urlPath %}class="active"{% endif %}>
+        <a href="/{{ item.permalink }}">
+          {{ item.card.title }}
+        </a>
+      </li>
+    {% endfor %}
+  </ul>
+
+  <h4 class="accordion-header js-accordion-header">Sections</h4>
+  <ul class="references-list accordion-panel js-accordion-panel">
+    <li {% if urlPath == '/references/sections/' %}class="active"{% endif %}>
+      <a href="/references/sections/">
+        About Sections
+      </a>
+    </li>
+    {% for item in sections %}
+      {% set itemPath = '/' ~ item.permalink ~ '/' %}
+      <li {% if itemPath == urlPath %}class="active"{% endif %}>
+        <a href="/{{ item.permalink }}">
+          {{ item.card.title }}
+        </a>
+      </li>
+    {% endfor %}
+  </ul>
+</div>

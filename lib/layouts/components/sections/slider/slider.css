@@ -45,7 +45,7 @@
     z-index: 1;
     height: 100%;
     list-style: none;
-    overflow: hidden;
+    overflow: clip;  /* clip instead of hidden prevents scrollIntoView() from scrolling this container */
 
     li {
       position: absolute;

@@ -1,0 +1,23 @@
+- sectionType: lottie-only
+  containerTag: section
+  classes: ""
+  id: ""
+  isDisabled: false
+  isAnimated: true
+  containerFields:
+    inContainer: true
+    noMargin:
+      top: true
+      bottom: true
+    noPadding:
+      top: false
+      bottom: false
+    background:
+      color: ""
+      image: ""
+      imageScreen: "none"
+  lottie:
+    src: "/assets/animations/sample.json"
+    autoplay: true
+    loop: true
+    alt: "Lottie animation description"

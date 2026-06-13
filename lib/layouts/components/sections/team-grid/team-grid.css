@@ -1,0 +1,312 @@
+/**
+ * Team Grid Section Styles
+ *
+ * Design Tokens:
+ * - --space-2xs, --space-xs, --space-s, --space-m, --space-l, --space-xl
+ * - --space-s-m, --space-m-l, --space-l-2xl
+ * - --color-border-light
+ * - --color-text, --color-text-dark, --color-text-light
+ * - --color-background, --color-background-light
+ * - --color-primary
+ * - --font-xs, --font-s, --font-p, --font-h4, --font-h5
+ */
+
+.team-grid {
+  .container.content {
+    display: block;
+  }
+
+  .team-header {
+    text-align: center;
+    margin-block-end: var(--space-l-2xl);
+  }
+
+  /* Grid Layout */
+  .team-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: var(--space-m-l);
+  }
+
+  .team-list.is-grid {
+    /* Intrinsic responsive grid - flows from 1 to 4 columns */
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
+  }
+
+  .team-list.is-compact {
+    /* Tighter grid for compact layout */
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 10rem), 1fr));
+    gap: var(--space-s-m);
+  }
+
+  /* Team Member Card */
+  .team-member {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .member-photo {
+    margin-block-end: var(--space-s);
+
+    img {
+      width: 100%;
+      aspect-ratio: 1;
+      object-fit: cover;
+      border-radius: 50%;
+    }
+  }
+
+  .is-compact .member-photo img {
+    max-width: 8rem;
+    margin-inline: auto;
+  }
+
+  .member-info {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2xs);
+  }
+
+  .member-name {
+    font-size: var(--font-h5);
+    margin: 0;
+    line-height: 1.2;
+  }
+
+  .is-compact .member-name {
+    font-size: var(--font-p);
+  }
+
+  .member-role {
+    font-size: var(--font-s);
+    color: var(--color-text-dark);
+    margin: 0;
+  }
+
+  .is-compact .member-role {
+    font-size: var(--font-xs);
+  }
+
+  .member-bio {
+    font-size: var(--font-s);
+    margin: 0;
+    margin-block-start: var(--space-xs);
+  }
+
+  /* Social Links */
+  .member-social {
+    display: flex;
+    justify-content: center;
+    gap: var(--space-xs);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    margin-block-start: var(--space-s);
+
+    li {
+      display: flex;
+    }
+
+    a {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 2rem;
+      height: 2rem;
+      color: var(--color-text-dark);
+      transition: color var(--transition-base);
+
+      &:hover {
+        color: var(--color-primary);
+      }
+    }
+
+    svg {
+      width: 1.25rem;
+      height: 1.25rem;
+    }
+  }
+
+  .is-compact .member-social {
+    gap: var(--space-2xs);
+    margin-block-start: var(--space-xs);
+
+    a {
+      width: 1.5rem;
+      height: 1.5rem;
+    }
+
+    svg {
+      width: 1rem;
+      height: 1rem;
+    }
+  }
+}
+
+/* Member Dialog (uses native <dialog> element) */
+.member-dialog {
+  position: fixed;
+  max-width: min(90vw, 32rem);
+  max-height: 85vh;
+  padding: 0;
+  border: none;
+  border-radius: var(--space-xs);
+  box-shadow: var(--color-shadow);
+  background: var(--color-background);
+  opacity: 0;
+  transform: scale(0.95);
+  transition:
+    opacity 300ms ease-out,
+    transform 300ms ease-out,
+    display 300ms ease-out allow-discrete;
+
+  &[open] {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  &::backdrop {
+    background: rgb(0 0 0 / 0%);
+    backdrop-filter: blur(0);
+    transition:
+      background 300ms ease-out,
+      backdrop-filter 300ms ease-out,
+      display 300ms ease-out allow-discrete;
+  }
+
+  &[open]::backdrop {
+    background: rgb(0 0 0 / 60%);
+    backdrop-filter: blur(4px);
+  }
+}
+
+/* Define starting style for entry animation */
+@starting-style {
+  .member-dialog[open] {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+
+  .member-dialog[open]::backdrop {
+    background: rgb(0 0 0 / 0%);
+    backdrop-filter: blur(0);
+  }
+}
+
+.member-dialog .dialog-content {
+    position: relative;
+    padding: var(--space-m-l);
+    overflow-y: auto;
+    max-height: 85vh;
+  }
+
+  .dialog-close {
+    position: absolute;
+    top: var(--space-s);
+    right: var(--space-s);
+    width: 2rem;
+    height: 2rem;
+    padding: 0;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: var(--color-text-dark);
+    transition: color var(--transition-base);
+
+    &:hover {
+      color: var(--color-primary);
+    }
+
+    svg {
+      width: 1.5rem;
+      height: 1.5rem;
+    }
+  }
+
+  .dialog-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-m);
+    margin-block-end: var(--space-m);
+  }
+
+  .dialog-photo {
+    flex-shrink: 0;
+    width: 5rem;
+    height: 5rem;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+    }
+  }
+
+  .dialog-intro {
+    text-align: left;
+  }
+
+  .dialog-name {
+    font-size: var(--font-h4);
+    margin: 0;
+    line-height: 1.2;
+  }
+
+  .dialog-role {
+    font-size: var(--font-s);
+    color: var(--color-text-dark);
+    margin: 0;
+    margin-block-start: var(--space-2xs);
+  }
+
+  .dialog-body {
+    font-size: var(--font-p);
+    line-height: 1.6;
+    text-align: left;
+
+    p {
+      margin: 0;
+
+      & + p {
+        margin-block-start: var(--space-s);
+      }
+    }
+  }
+
+  .dialog-social {
+    display: flex;
+    gap: var(--space-xs);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    margin-block-start: var(--space-m);
+    padding-block-start: var(--space-m);
+    border-block-start: 1px solid var(--color-border-light);
+
+    li {
+      display: flex;
+    }
+
+    a {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 2rem;
+      height: 2rem;
+      color: var(--color-text-dark);
+      transition: color var(--transition-base);
+
+      &:hover {
+        color: var(--color-primary);
+      }
+    }
+
+    svg {
+      width: 1.25rem;
+      height: 1.25rem;
+    }
+  }

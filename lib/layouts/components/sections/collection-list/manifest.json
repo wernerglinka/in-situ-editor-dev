@@ -4,11 +4,8 @@
   "styles": ["collection-list.css"],
   "scripts": [],
   "requires": ["commons"],
+  "context": ["collections"],
   "requiredPlugins": ["metalsmith-sectioned-blog-pagination"],
-  "fields": {
-    "collectionName": { "widget": "text", "label": "Collection name (e.g. blog)", "default": "" },
-    "$extends": ["commons"]
-  },
   "validation": {
     "required": ["sectionType", "collectionName"],
     "properties": {
@@ -39,5 +36,13 @@
         "type": "boolean"
       }
     }
+  },
+  "fields": {
+    "collectionName": {
+      "widget": "text",
+      "label": "Collection name (e.g. blog)",
+      "default": ""
+    },
+    "$extends": ["commons"]
   }
 }

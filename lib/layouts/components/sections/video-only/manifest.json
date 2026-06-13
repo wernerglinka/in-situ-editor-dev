@@ -1,0 +1,61 @@
+{
+  "name": "video-only",
+  "type": "section",
+  "styles": ["video-only.css"],
+  "scripts": ["video-only.js"],
+  "requires": ["ctas", "video", "commons"],
+  "validation": {
+    "required": ["sectionType", "video"],
+    "properties": {
+      "sectionType": {
+        "type": "string",
+        "const": "video-only"
+      },
+      "containerFields.inContainer": {
+        "type": "boolean"
+      },
+      "containerFields.isAnimated": {
+        "type": "boolean"
+      },
+      "video.id": {
+        "type": "string"
+      },
+      "video.src": {
+        "type": "string",
+        "enum": ["youtube", "vimeo", "cloudinary"]
+      },
+      "video.tn": {
+        "type": "string"
+      },
+      "video.inline": {
+        "type": "boolean"
+      },
+      "ctas": {
+        "type": "array",
+        "items": {
+          "properties": {
+            "isButton": {
+              "type": "boolean"
+            },
+            "buttonStyle": {
+              "type": "string",
+              "enum": ["primary", "secondary", "tertiary", "inverted"]
+            },
+            "isSmall": {
+              "type": "boolean"
+            }
+          }
+        }
+      }
+    }
+  },
+  "fields": {
+    "video": {
+      "$use": "video"
+    },
+    "ctas": {
+      "$use": "ctas"
+    },
+    "$extends": ["commons"]
+  }
+}

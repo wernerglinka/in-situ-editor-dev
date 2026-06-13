@@ -5,8 +5,8 @@
  * nunjucks-components library schema at generate time.
  *
  * Section state shapes:
- *   { type: 'text-only',   title, prose }
- *   { type: 'media-image', imageName, imageId, alt, caption }
+ *   { type: 'rich-text',   title, prose }
+ *   { type: 'multi-media', imageName, imageId, alt, caption }
  *   { type: 'banner',      title, prose, ctaLabel, ctaUrl }
  */
 
@@ -15,8 +15,8 @@ import { processImage } from './image-handler.js';
 
 /** Labels shown in the card header per section type. */
 const TYPE_LABELS = {
-  'text-only': 'Text',
-  'media-image': 'Image',
+  'rich-text': 'Text',
+  'multi-media': 'Image',
   banner: 'CTA Banner'
 };
 
@@ -35,12 +35,12 @@ let currentDraft = null;
  */
 function newSection(type) {
   switch (type) {
-    case 'media-image':
+    case 'multi-media':
       return { type, imageName: '', imageId: '', alt: '', caption: '' };
     case 'banner':
       return { type, title: '', prose: '', ctaLabel: '', ctaUrl: '' };
     default:
-      return { type: 'text-only', title: '', prose: '' };
+      return { type: 'rich-text', title: '', prose: '' };
   }
 }
 
@@ -74,8 +74,8 @@ function boundField(section, field, label, opts = {}) {
 }
 
 /**
- * Renders the image picker (button + thumbnail) for a media-image section.
- * @param {Object} section - The media-image section state.
+ * Renders the image picker (button + thumbnail) for a multi-media section.
+ * @param {Object} section - The multi-media section state.
  * @return {HTMLElement} The picker element.
  */
 function imagePicker(section) {
@@ -187,7 +187,7 @@ function renderCard(section, index) {
 
   const body = document.createElement('div');
   body.className = 'section-card-body';
-  if (section.type === 'text-only') {
+  if (section.type === 'rich-text') {
     body.append(
       boundField(section, 'title', 'Title', { placeholder: 'Section title' }),
       boundField(section, 'prose', 'Prose (Markdown)', {
@@ -196,7 +196,7 @@ function renderCard(section, index) {
         placeholder: 'Write this section in Markdown...'
       })
     );
-  } else if (section.type === 'media-image') {
+  } else if (section.type === 'multi-media') {
     body.append(
       imagePicker(section),
       boundField(section, 'alt', 'Alt text', { placeholder: 'Describe the image' }),
@@ -244,7 +244,7 @@ export function loadSections(draft) {
   currentDraft = draft;
   if (!Array.isArray(draft.sections)) {
     draft.sections =
-      draft.content && draft.content.trim() ? [ { type: 'text-only', title: '', prose: draft.content } ] : [];
+      draft.content && draft.content.trim() ? [ { type: 'rich-text', title: '', prose: draft.content } ] : [];
   }
   sections = draft.sections;
   render();

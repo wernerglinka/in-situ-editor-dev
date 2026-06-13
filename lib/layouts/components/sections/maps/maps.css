@@ -1,0 +1,259 @@
+/**
+ * Maps Section Styles
+ *
+ * Design Tokens:
+ * - --space-l
+ * - --border-radius
+ * - --shadow-m
+ * - --color-primary
+ * - --font-size-s
+ * - --font-size-m
+ * - --font-size-xs
+ * - --space-m
+ */
+
+.maps {
+  container-type: inline-size;
+  container-name: maps;
+}
+
+.maps:not(.in-container) {
+  padding: 0;
+}
+
+.maps .content {
+  --map-default-height: 400px;
+
+  display: block;
+  width: 100%;
+
+  .text,
+  .ctas {
+    max-width: clamp(45ch, 65ch, 80ch);
+    margin-inline: auto;
+  }
+}
+
+.maps .text {
+  margin-bottom: var(--space-l);
+}
+
+.js-leaflet-map,
+.js-openlayers-map {
+  width: 100%;
+  height: var(--map-default-height);
+  margin-bottom: var(--space-m);
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  box-shadow: var(--shadow-m);
+}
+
+.js-leaflet-map > div,
+.js-openlayers-map > div {
+  width: 100%;
+  height: 100%;
+  min-height: inherit;
+}
+
+/* Unified SVG marker styling for both providers */
+.custom-div-icon,
+.ol-marker-icon {
+  background: transparent !important;
+  border: none !important;
+}
+
+.custom-div-icon svg,
+.ol-marker-icon svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 2px 4px rgb(0 0 0 / 20%));
+  transition: transform 0.2s ease;
+}
+
+/* Hover effects for markers */
+.custom-div-icon:hover svg,
+.ol-marker-icon:hover svg {
+  transform: scale(1.1);
+}
+
+/* Ensure consistent marker positioning */
+.leaflet-marker-icon.custom-div-icon {
+  margin-left: -24px !important;
+  margin-top: -62px !important;
+}
+
+/* OpenLayers popup styling */
+.ol-popup {
+  position: absolute;
+  background-color: white;
+  box-shadow: 0 4px 12px rgb(0 0 0 / 15%);
+  padding: 15px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  bottom: 12px;
+  left: -50px;
+  min-width: 200px;
+  max-width: 300px;
+  z-index: 1000;
+}
+
+.ol-popup::after,
+.ol-popup::before {
+  top: 100%;
+  border: solid transparent;
+  content: ' ';
+  height: 0;
+  width: 0;
+  position: absolute;
+  pointer-events: none;
+}
+
+.ol-popup::after {
+  border-top-color: white;
+  border-width: 10px;
+  left: 48px;
+  margin-left: -10px;
+}
+
+.ol-popup::before {
+  border-top-color: #ccc;
+  border-width: 11px;
+  left: 48px;
+  margin-left: -11px;
+}
+
+/* Map container loading state */
+.js-leaflet-map.loading,
+.js-openlayers-map.loading {
+  background: linear-gradient(
+    -45deg,
+    #f0f0f0 25%,
+    transparent 25%,
+    transparent 50%,
+    #f0f0f0 50%,
+    #f0f0f0 75%,
+    transparent 75%,
+    transparent
+  );
+  background-size: 20px 20px;
+  animation: loading-pattern 1s linear infinite;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #666;
+  font-size: var(--font-size-s, 0.875rem);
+}
+
+@keyframes loading-pattern {
+  0% {
+    background-position: 0 0;
+  }
+
+  100% {
+    background-position: 20px 20px;
+  }
+}
+
+/* Error state styling */
+.js-leaflet-map.error,
+.js-openlayers-map.error {
+  background-color: #fee;
+  border: 2px dashed #fcc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #c66;
+  font-size: var(--font-size-s, 0.875rem);
+  text-align: center;
+  padding: var(--space-m, 1rem);
+}
+
+/* OpenLayers popup close button styling */
+.ol-popup-closer {
+  text-decoration: none;
+  position: absolute;
+  top: 8px;
+  right: 12px;
+  font-size: 18px;
+  color: #666;
+  font-weight: bold;
+  line-height: 1;
+  padding: 4px;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+}
+
+.ol-popup-closer:hover {
+  color: #000;
+  background-color: rgb(0 0 0 / 10%);
+}
+
+.ol-popup-closer:focus {
+  outline: 2px solid var(--color-primary, #007acc);
+  outline-offset: 2px;
+}
+
+/* Unified popup styling for both providers - Leaflet style preferred */
+.leaflet-popup-content h4,
+.ol-popup-content h4 {
+  margin: 0 0 8px;
+  color: var(--color-primary, #007acc);
+  font-size: var(--font-size-m, 1.125rem);
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.leaflet-popup-content p,
+.ol-popup-content p {
+  margin: 0 0 8px;
+  font-size: var(--font-size-s, 0.875rem);
+  line-height: 1.4;
+  color: var(--text-color, #333);
+}
+
+.leaflet-popup-content a,
+.ol-popup-content a {
+  display: block;
+  font-size: var(--font-size-xs, 0.75rem);
+  text-transform: uppercase;
+  text-align: right;
+  color: var(--color-primary, #007acc);
+  text-decoration: none;
+  font-weight: 500;
+  border: none;
+  margin-top: 8px;
+  transition: all 0.5s ease-in-out;
+}
+
+.leaflet-popup-content a:hover,
+.ol-popup-content a:hover {
+  border: none;
+  text-decoration: none;
+  transform: scale(1.05);
+}
+
+.leaflet-popup-content a:focus,
+.ol-popup-content a:focus {
+  outline: 2px solid var(--color-primary, #007acc);
+  outline-offset: 2px;
+}
+
+/* CTA wrapper styling */
+.ctas-wrapper {
+  margin-top: var(--space-m);
+}
+
+/* Responsive design */
+@container maps (max-width: 768px) {
+  .js-leaflet-map,
+  .js-openlayers-map {
+    height: 300px;
+  }
+
+  .ol-popup {
+    min-width: 180px;
+    max-width: 250px;
+    padding: 12px;
+  }
+}

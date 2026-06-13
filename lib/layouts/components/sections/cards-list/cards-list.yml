@@ -1,0 +1,47 @@
+- sectionType: cards-list
+  containerTag: article
+  classes: ""
+  id: ""
+  isDisabled: false
+  isAnimated: true
+  inContainer: true
+  containerFields:
+    inContainer: false
+    noMargin:
+      top: true
+      bottom: true
+    noPadding:
+      top: false
+      bottom: false
+    background:
+      color: ""
+      image: ""
+      imageScreen: "none"
+  text:
+    title: "Card Grid"
+    titleTag: "h2"
+    prose: "A collection of cards displaying various content."
+  cards:
+    - link: ""
+      background:
+        hasImage: false
+        pattern: ""
+        isDark: false
+      image:
+        src: "/assets/images/sample8.jpg"
+        alt: "Card image"
+      icon:
+        url: ""
+        icon: ""
+        title: ""
+      text:
+        leadIn: "Lead In"
+        title: "Card Title"
+        titleTag: "h3"
+        subTitle: "Card Subtitle"
+        prose: "Card description text goes here."
+      ctas:
+        - url: "/example"
+          label: "Learn More"
+          isButton: true
+          buttonStyle: "primary"

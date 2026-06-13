@@ -1,0 +1,35 @@
+- sectionType: accordion
+  containerTag: section
+  classes: ""
+  id: ""
+  isDisabled: false
+  containerFields:
+    inContainer: true
+    isAnimated: true
+    noMargin:
+      top: false
+      bottom: false
+    noPadding:
+      top: false
+      bottom: false
+    background:
+      color: ""
+      image: ""
+      imageScreen: "none"
+  text:
+    leadIn: ""
+    title: "Frequently Asked Questions"
+    titleTag: "h2"
+    subTitle: ""
+    prose: "Find answers to common questions about Nunjucks Components."
+  faqs:
+    scope: "all"  # "all" or "selections"
+    source: "faqs"  # data source in lib/data/faqs.json
+    selections:  # used when scope is "selections"
+      - "How do I get started with Nunjucks Components?"
+      - "What is the structure of a component?"
+      - "Can I create custom components?"
+  expandFirst: false  # whether to expand the first item by default
+  allowMultiple: false  # whether multiple items can be expanded at once
+  hasCenteredContent: false
+  ctas: []

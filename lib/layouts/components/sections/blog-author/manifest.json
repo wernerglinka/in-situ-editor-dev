@@ -1,24 +1,12 @@
 {
   "name": "blog-author",
   "type": "section",
-  "styles": [
-    "blog-author.css"
-  ],
+  "styles": ["blog-author.css"],
   "scripts": [],
-  "requires": [
-    "text",
-    "image",
-    "commons"
-  ],
-  "fields": {
-    "name": { "widget": "text", "label": "Author name (must match an entry in data/author)", "default": "" },
-    "isReverse": { "widget": "checkbox", "label": "Reverse layout", "default": false },
-    "$extends": ["commons"]
-  },
+  "requires": ["text", "image", "commons"],
+  "context": ["data.author"],
   "validation": {
-    "required": [
-      "sectionType"
-    ],
+    "required": ["sectionType"],
     "properties": {
       "sectionType": {
         "type": "string",
@@ -52,5 +40,18 @@
         "type": "boolean"
       }
     }
+  },
+  "fields": {
+    "name": {
+      "widget": "text",
+      "label": "Author name (must match an entry in data/author)",
+      "default": ""
+    },
+    "isReverse": {
+      "widget": "checkbox",
+      "label": "Reverse layout",
+      "default": false
+    },
+    "$extends": ["commons"]
   }
 }

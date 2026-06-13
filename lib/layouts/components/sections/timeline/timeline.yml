@@ -1,0 +1,48 @@
+- sectionType: timeline
+  containerTag: section
+  classes: ""
+  id: ""
+  isDisabled: false
+  containerFields:
+    inContainer: true
+    isAnimated: true
+    noMargin:
+      top: false
+      bottom: false
+    noPadding:
+      top: false
+      bottom: false
+    background:
+      color: ""
+      image: ""
+      imageScreen: "none"
+  text:
+    leadIn: ""
+    title: "Our Journey"
+    titleTag: "h2"
+    subTitle: "Key milestones in our history"
+    prose: ""
+  timeline:
+    layout: "vertical"
+    alternating: true
+    events:
+      - year: "2020"
+        title: "Company Founded"
+        description: "Started with a vision to transform the industry."
+        icon: "rocket"
+      - year: "2021"
+        title: "First Major Release"
+        description: "Launched our flagship product to market."
+        icon: "package"
+      - year: "2022"
+        title: "Series A Funding"
+        description: "Raised $10M to accelerate growth."
+        icon: "trending-up"
+      - year: "2023"
+        title: "Global Expansion"
+        description: "Opened offices in Europe and Asia."
+        icon: "globe"
+      - year: "2024"
+        title: "100K Users"
+        description: "Reached a major milestone in user adoption."
+        icon: "users"

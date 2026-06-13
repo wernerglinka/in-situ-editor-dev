@@ -1,0 +1,95 @@
+{
+  "name": "manual-card",
+  "type": "partial",
+  "styles": ["manual-card.css"],
+  "scripts": [],
+  "requires": ["text", "ctas", "image", "icon"],
+  "validation": {
+    "required": [],
+    "properties": {
+      "isHorizontal": {
+        "type": "boolean"
+      },
+      "image": {
+        "type": "object"
+      },
+      "background": {
+        "type": "object",
+        "properties": {
+          "hasImage": {
+            "type": "boolean"
+          },
+          "pattern": {
+            "type": "string"
+          },
+          "isDark": {
+            "type": "boolean"
+          }
+        }
+      },
+      "text": {
+        "type": "object"
+      },
+      "ctas": {
+        "type": "array"
+      },
+      "link": {
+        "type": "string"
+      },
+      "classes": {
+        "type": "string"
+      },
+      "icon": {
+        "type": "object"
+      }
+    }
+  },
+  "fields": {
+    "isHorizontal": {
+      "widget": "checkbox",
+      "label": "Horizontal layout",
+      "default": false
+    },
+    "image": {
+      "$use": "image"
+    },
+    "background": {
+      "hasImage": {
+        "widget": "checkbox",
+        "label": "Use image as background",
+        "default": false
+      },
+      "isDark": {
+        "widget": "checkbox",
+        "label": "Dark card",
+        "default": false
+      },
+      "pattern": {
+        "widget": "text",
+        "label": "Background pattern (optional)",
+        "default": ""
+      }
+    },
+    "text": {
+      "$use": "text"
+    },
+    "ctas": {
+      "$use": "ctas"
+    },
+    "link": {
+      "widget": "text",
+      "label": "Card link URL (optional, overrides CTAs)",
+      "default": ""
+    },
+    "classes": {
+      "widget": "text",
+      "label": "CSS classes (optional)",
+      "default": ""
+    },
+    "icon": {
+      "widget": "text",
+      "label": "Icon name (optional)",
+      "default": ""
+    }
+  }
+}

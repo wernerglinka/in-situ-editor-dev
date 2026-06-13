@@ -1,0 +1,37 @@
+{
+  "name": "cards-list",
+  "type": "section",
+  "styles": ["cards-list.css"],
+  "scripts": [],
+  "requires": ["text", "manual-card", "commons"],
+  "validation": {
+    "required": ["sectionType"],
+    "properties": {
+      "sectionType": {
+        "type": "string",
+        "const": "cards-list"
+      }
+    }
+  },
+  "fields": {
+    "text": {
+      "$use": "text"
+    },
+    "hasHorizontalCards": {
+      "widget": "checkbox",
+      "label": "Horizontal cards",
+      "default": false
+    },
+    "cards": {
+      "widget": "array",
+      "label": "Cards",
+      "items": {
+        "$extends": ["manual-card"]
+      }
+    },
+    "ctas": {
+      "$use": "ctas"
+    },
+    "$extends": ["commons"]
+  }
+}

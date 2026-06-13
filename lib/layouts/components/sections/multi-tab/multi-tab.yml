@@ -1,0 +1,39 @@
+- sectionType: multi-tab
+  containerTag: section
+  classes: ''
+  id: ''
+  isDisabled: false
+  isAnimated: true
+  containerFields:
+    inContainer: true
+    noMargin:
+      top: true
+      bottom: true
+    noPadding:
+      top: false
+      bottom: false
+    background:
+      color: ''
+      image: ''
+      imageScreen: 'none'
+  text:
+    title: 'Section Title'
+    titleTag: 'h2'
+  defaultTab: 'first'
+  tabs:
+    - key: 'first'
+      label: 'First Tab'
+      pane:
+        sectionType: rich-text
+        text:
+          title: 'First Pane'
+          titleTag: 'h3'
+          prose: 'Content for the first tab pane.'
+    - key: 'second'
+      label: 'Second Tab'
+      pane:
+        sectionType: rich-text
+        text:
+          title: 'Second Pane'
+          titleTag: 'h3'
+          prose: 'Content for the second tab pane.'

@@ -1,0 +1,83 @@
+{
+  "name": "image-grid",
+  "type": "section",
+  "styles": ["image-grid.css"],
+  "scripts": ["image-grid.js"],
+  "requires": ["commons", "text", "icon"],
+  "validation": {
+    "required": ["sectionType", "dataSource"],
+    "properties": {
+      "sectionType": {
+        "type": "string",
+        "const": "image-grid"
+      },
+      "isDisabled": {
+        "type": "boolean"
+      },
+      "hasCenteredContent": {
+        "type": "boolean"
+      },
+      "containerFields.inContainer": {
+        "type": "boolean"
+      },
+      "containerFields.isAnimated": {
+        "type": "boolean"
+      },
+      "containerFields.noMargin.top": {
+        "type": "boolean"
+      },
+      "containerFields.noMargin.bottom": {
+        "type": "boolean"
+      },
+      "containerFields.noPadding.top": {
+        "type": "boolean"
+      },
+      "containerFields.noPadding.bottom": {
+        "type": "boolean"
+      },
+      "containerFields.background.isDark": {
+        "type": "boolean"
+      },
+      "text": {
+        "type": "object"
+      },
+      "dataSource": {
+        "type": "string"
+      },
+      "settings.gap": {
+        "type": "string"
+      },
+      "settings.targetRowHeight": {
+        "type": "string"
+      }
+    }
+  },
+  "fields": {
+    "text": {
+      "$use": "text"
+    },
+    "hasCenteredContent": {
+      "widget": "checkbox",
+      "label": "Center text",
+      "default": false
+    },
+    "dataSource": {
+      "widget": "text",
+      "label": "Data source (file in lib/data)",
+      "default": ""
+    },
+    "settings": {
+      "gap": {
+        "widget": "text",
+        "label": "Gap (px)",
+        "default": "6"
+      },
+      "targetRowHeight": {
+        "widget": "text",
+        "label": "Target row height (px)",
+        "default": "200"
+      }
+    },
+    "$extends": ["commons"]
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "name": "collection-links",
+  "type": "aside",
+  "styles": ["collection-links.css"],
+  "scripts": [],
+  "requires": ["commons"],
+  "context": ["collection"],
+  "plugins": ["@metalsmith/collections"],
+  "validation": {
+    "required": ["sectionType"],
+    "properties": {
+      "sectionType": {
+        "type": "string",
+        "const": "collection-links"
+      },
+      "isDisabled": {
+        "type": "boolean"
+      }
+    }
+  },
+  "fields": {
+    "collectionName": {
+      "widget": "text",
+      "label": "Collection name",
+      "default": "blog"
+    },
+    "$extends": ["commons"]
+  }
+}

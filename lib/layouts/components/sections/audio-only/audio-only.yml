@@ -1,0 +1,29 @@
+- sectionType: audio-only
+  containerTag: section
+  classes: ""
+  id: ""
+  isDisabled: false
+  isAnimated: true
+  containerFields:
+    inContainer: false
+    noMargin:
+      top: false
+      bottom: false
+    noPadding:
+      top: true
+      bottom: true
+    background:
+      isDark: true
+      color: ""
+      image: ""
+      imageScreen: "none"
+  audio:
+    ogg: "/assets/audio/sample.ogg"
+    mpeg: "/assets/audio/sample.mp3"
+    bgImage: "/assets/images/sample.jpg"
+    alt: "Audio player background"
+  ctas:
+    - url: "#"
+      label: "Learn More"
+      isButton: true
+      buttonStyle: "tertiary"

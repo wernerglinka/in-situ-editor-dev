@@ -15,7 +15,8 @@ card:
   thumbnail: /assets/images/blog/hello-from-metalsmith/test-image.png
 tags: []
 sections:
-  - sectionType: media-image
+  - sectionType: multi-media
+    mediaType: image
     containerTag: section
     classes: ''
     id: ''
@@ -68,7 +69,7 @@ sections:
         label: Read the blog
         isButton: true
         buttonStyle: primary
-  - sectionType: text-only
+  - sectionType: rich-text
     containerTag: section
     classes: ''
     id: ''

@@ -11,10 +11,10 @@
  * - --font-h2
  */
 
-.testimonial {
+.section-wrapper.testimonial {
   --threshold: 25ch !important;
 
-  padding: var(--space-l-2xl);
+  padding: var(--space-s-m);
   overflow: hidden;
 
   .quotee {
@@ -91,7 +91,7 @@
     text-align: center;
 
     p {
-      font-size: inherit;
+      font-size: var(--font-h2);
     }
   }
 }

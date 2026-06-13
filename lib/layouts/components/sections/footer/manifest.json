@@ -1,15 +1,11 @@
 {
   "name": "footer",
   "type": "section",
-  "styles": [
-    "footer.css"
-  ],
+  "styles": ["footer.css"],
   "scripts": [],
   "requires": [],
   "validation": {
-    "required": [
-      "sectionType"
-    ],
+    "required": ["sectionType"],
     "properties": {
       "sectionType": {
         "type": "string",

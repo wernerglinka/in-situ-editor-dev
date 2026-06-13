@@ -1,0 +1,74 @@
+{
+  "name": "stats",
+  "type": "section",
+  "styles": ["stats.css"],
+  "requires": ["text", "icon", "commons"],
+  "description": "Display impact numbers and key metrics in a visually striking grid layout",
+  "example": {
+    "sectionType": "stats",
+    "text": {
+      "title": "Our Impact",
+      "subTitle": "Numbers that matter"
+    },
+    "stats": {
+      "layout": "grid",
+      "items": [
+        {
+          "value": "10K+",
+          "label": "Active Users",
+          "icon": "users"
+        },
+        {
+          "value": "99.9%",
+          "label": "Uptime",
+          "icon": "activity"
+        },
+        {
+          "value": "50M",
+          "label": "API Requests",
+          "icon": "zap"
+        }
+      ]
+    }
+  },
+  "fields": {
+    "text": {
+      "$use": "text"
+    },
+    "stats": {
+      "layout": {
+        "widget": "select",
+        "label": "Layout",
+        "enum": ["grid", "inline"],
+        "default": "grid"
+      },
+      "items": {
+        "widget": "array",
+        "label": "Stats",
+        "items": {
+          "icon": {
+            "widget": "text",
+            "label": "Icon (optional)",
+            "default": ""
+          },
+          "value": {
+            "widget": "text",
+            "label": "Value",
+            "default": ""
+          },
+          "label": {
+            "widget": "text",
+            "label": "Label",
+            "default": ""
+          },
+          "description": {
+            "widget": "text",
+            "label": "Description (optional)",
+            "default": ""
+          }
+        }
+      }
+    },
+    "$extends": ["commons"]
+  }
+}

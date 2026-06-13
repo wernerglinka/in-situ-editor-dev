@@ -1,0 +1,67 @@
+{
+  "name": "team-grid",
+  "type": "section",
+  "styles": ["team-grid.css"],
+  "scripts": ["team-grid.js"],
+  "requires": ["text", "image", "text-link", "commons"],
+  "context": ["data.team"],
+  "validation": {
+    "required": ["sectionType"],
+    "properties": {
+      "sectionType": {
+        "type": "string",
+        "const": "team-grid"
+      },
+      "isDisabled": {
+        "type": "boolean"
+      },
+      "containerFields.inContainer": {
+        "type": "boolean"
+      },
+      "containerFields.isAnimated": {
+        "type": "boolean"
+      },
+      "containerFields.noMargin.top": {
+        "type": "boolean"
+      },
+      "containerFields.noMargin.bottom": {
+        "type": "boolean"
+      },
+      "containerFields.noPadding.top": {
+        "type": "boolean"
+      },
+      "containerFields.noPadding.bottom": {
+        "type": "boolean"
+      },
+      "containerFields.background.isDark": {
+        "type": "boolean"
+      },
+      "team.source": {
+        "type": "string"
+      },
+      "team.layout": {
+        "type": "string",
+        "enum": ["grid", "compact"]
+      }
+    }
+  },
+  "fields": {
+    "text": {
+      "$use": "text"
+    },
+    "team": {
+      "source": {
+        "widget": "text",
+        "label": "Data source (file in lib/data)",
+        "default": ""
+      },
+      "layout": {
+        "widget": "select",
+        "label": "Layout",
+        "enum": ["grid", "list"],
+        "default": "grid"
+      }
+    },
+    "$extends": ["commons"]
+  }
+}

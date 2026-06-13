@@ -1,0 +1,32 @@
+# Search Section Component Example
+# This shows how to add search functionality to a page
+
+# Basic search section
+sectionType: search
+text:
+  title: "Search Components"
+  subtitle: "Find components, features, and documentation"
+  placeholder: "Search components and documentation..."
+settings:
+  showCategories: true
+  maxResults: 20
+  resultTypes: ['page', 'section']
+
+# Alternative minimal configuration
+# sectionType: search
+# text:
+#   placeholder: "Search..."
+
+# Advanced configuration example
+# sectionType: search
+# text:
+#   title: "Find What You Need"
+#   subtitle: "Search through all component documentation"
+#   placeholder: "Type to search components, guides, examples..."
+# settings:
+#   showCategories: true
+#   maxResults: 15
+#   resultTypes: ['page', 'section']
+#   showRelevanceScore: true
+#   enableHighlighting: true
+#   minCharacters: 2

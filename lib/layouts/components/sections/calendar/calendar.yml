@@ -1,0 +1,28 @@
+- sectionType: calendar
+  containerTag: section
+  classes: ""
+  id: ""
+  isDisabled: false
+  isAnimated: true
+  containerFields:
+    inContainer: false
+    noMargin:
+      top: true
+      bottom: true
+    noPadding:
+      top: false
+      bottom: false
+    background:
+      color: ""
+      image: ""
+      imageScreen: "none"
+  calendars:
+    apiKey: "YOUR_GOOGLE_CALENDAR_API_KEY"
+    calendars:
+      - id: "en.usa#holiday@group.v.calendar.google.com"
+        name: "US Holidays"
+        category: "holiday"
+  text:
+    title: "Event Calendar"
+    titleTag: "h2"
+    prose: "View upcoming events and important dates."

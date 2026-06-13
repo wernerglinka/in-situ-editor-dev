@@ -1,0 +1,28 @@
+- sectionType: podcast
+  containerTag: section
+  classes: ""
+  id: ""
+  isDisabled: false
+  isAnimated: true
+  containerFields:
+    inContainer: false
+    noMargin:
+      top: true
+      bottom: false
+    noPadding:
+      top: false
+      bottom: false
+    background:
+      color: ""
+      image: ""
+      imageScreen: "none"
+  podcast: "podcast-feed-name"
+  options:
+    showEpisodeList: true
+    autoplay: false
+    theme: "dark"
+  ctas:
+    - url: ""
+      label: ""
+      isButton: true
+      buttonStyle: "primary"

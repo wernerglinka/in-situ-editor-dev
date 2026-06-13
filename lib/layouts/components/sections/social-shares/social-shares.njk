@@ -1,0 +1,90 @@
+{% from "components/_partials/text/text.njk" import text %}
+
+{#
+  Social Shares section
+
+  Renders a row of social share buttons that link to platform share endpoints
+  for the current page. The shared URL is built automatically from
+  data.site.url + urlPath (the current page's path).
+
+  Platforms default to bluesky, linkedin, facebook, twitter, mail. Authors may
+  provide a subset via section.share.platforms, or add arbitrary extra
+  networks via section.share.custom (each item must supply name, icon, label,
+  and a url template — see README).
+#}
+
+{% set shareUrl = data.site.url ~ urlPath %}
+{% set shareTitle = section.share.title or "" %}
+{% set shareComment = section.share.comment or "" %}
+
+{% set encodedUrl = shareUrl | urlencode %}
+{% set encodedTitle = shareTitle | urlencode %}
+{% set encodedComment = shareComment | urlencode %}
+
+{% set platforms = section.share.platforms or ["bluesky", "linkedin", "facebook", "twitter", "mail"] %}
+
+<div class="container content">
+  {% if section.text | hasText %}
+    <div class="text flow {% if section.hasCenteredContent %}is-centered{% endif %}">
+      {{ text(section.text) }}
+    </div>
+  {% endif %}
+
+  <ul class="social-shares-list">
+    {% for platform in platforms %}
+
+      {% if platform === "bluesky" %}
+        <li class="bluesky">
+          <a href="https://bsky.app/intent/compose?text={{ encodedComment }}%20{{ encodedUrl }}" aria-label="Share on Bluesky" target="_blank" rel="noopener noreferrer">
+            {% include "icons/bluesky.njk" %}
+          </a>
+        </li>
+      {% endif %}
+
+      {% if platform === "linkedin" %}
+        <li class="linkedin">
+          <a href="https://www.linkedin.com/shareArticle?url={{ encodedUrl }}&title={{ encodedTitle }}" aria-label="Share on LinkedIn" target="_blank" rel="noopener noreferrer">
+            {% include "icons/linkedin.njk" %}
+          </a>
+        </li>
+      {% endif %}
+
+      {% if platform === "facebook" %}
+        <li class="facebook">
+          <a href="https://www.facebook.com/sharer/sharer.php?u={{ encodedUrl }}&quote={{ encodedComment }}" aria-label="Share on Facebook" target="_blank" rel="noopener noreferrer">
+            {% include "icons/facebook.njk" %}
+          </a>
+        </li>
+      {% endif %}
+
+      {% if platform === "twitter" %}
+        <li class="twitter">
+          <a href="https://twitter.com/intent/tweet?url={{ encodedUrl }}&text={{ encodedComment }}" aria-label="Share on X (Twitter)" target="_blank" rel="noopener noreferrer">
+            {% include "icons/twitter.njk" %}
+          </a>
+        </li>
+      {% endif %}
+
+      {% if platform === "mail" %}
+        <li class="mail">
+          <a href="mailto:?subject={{ encodedTitle }}&body={{ encodedComment }}%20{{ encodedUrl }}" aria-label="Share via Email">
+            {% include "icons/mail.njk" %}
+          </a>
+        </li>
+      {% endif %}
+
+    {% endfor %}
+
+    {# optional custom platforms; url is treated as a pre-built template string #}
+    {% for item in section.share.custom %}
+      <li class="custom {{ item.name }}">
+        <a href="{{ item.url
+          | replace('{url}', encodedUrl)
+          | replace('{title}', encodedTitle)
+          | replace('{comment}', encodedComment) }}" aria-label="{{ item.label }}" target="_blank" rel="noopener noreferrer">
+          {% include "icons/" + item.icon + ".njk" ignore missing %}
+        </a>
+      </li>
+    {% endfor %}
+  </ul>
+</div>

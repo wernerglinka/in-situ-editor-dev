@@ -4,7 +4,7 @@ A call-to-action banner section that can use either a background image or color.
 
 ## Features
 
-- **Flexible Layout**: Supports text-only, image-only, or combined layouts
+- **Flexible Layout**: Supports rich-text, image-only, or combined layouts
 - **Background Options**: Use either background images with customizable screen overlays or solid background colors
 - **Container Control**: Configure full viewport width or restrict to content width
 - **CTA Support**: Multiple call-to-action buttons or links with customizable styles
@@ -159,7 +159,7 @@ A call-to-action banner section that can use either a background image or color.
     titleTag: 'h3'
 
 # Then, the accordion content
-- sectionType: text-only
+- sectionType: rich-text
   containerTag: article
   classes: 'accordion-content is-closed'
   containerFields:
@@ -225,4 +225,4 @@ Key CSS classes for customization:
 3. **Configure isDark correctly**: Set `isDark: true` when using dark backgrounds for proper text colors
 4. **Keep CTAs focused**: Limit to 1-2 primary actions per banner
 5. **Test responsively**: Verify banner appearance across different viewport sizes
-6. **Accordion usage**: When using as accordion header, keep prose empty and pair with a `text-only` section with `accordion-content is-closed` classes
+6. **Accordion usage**: When using as accordion header, keep prose empty and pair with a `rich-text` section with `accordion-content is-closed` classes

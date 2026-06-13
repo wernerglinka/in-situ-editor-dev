@@ -1,0 +1,161 @@
+{% from "components/_partials/ctas/ctas.njk" import ctas %}
+{% from "components/_partials/text/text.njk" import text %}
+{% from "components/_partials/icon/icon.njk" import icon %}
+
+<div class="container content">
+  {% if section.text | hasText %}
+    <div class="pricing-header flow">
+      {{ text(section.text) }}
+    </div>
+  {% endif %}
+
+  {# Get tiers from external data source #}
+  {% if section.tiers.source %}
+    {% set tiers = data.pricing[section.tiers.source] %}
+  {% endif %}
+
+  {% if tiers %}
+    {% set layout = section.tiers.layout or "cards" %}
+
+    {% if layout === "cards" %}
+      <ul class="tier-list is-cards" role="list">
+        {% for tier in tiers %}
+          <li class="tier{% if tier.isFeatured %} is-featured{% endif %}">
+            {% if tier.isFeatured and tier.featuredLabel %}
+              <span class="featured-badge">{{ tier.featuredLabel }}</span>
+            {% endif %}
+
+            <div class="tier-header flow">
+              {% if tier.icon | hasIcon %}
+                <div class="tier-icon">
+                  {{ icon(tier) }}
+                </div>
+              {% endif %}
+              {% if tier.name %}
+                <h3 class="tier-name">{{ tier.name }}</h3>
+              {% endif %}
+              {% if tier.description %}
+                <p class="tier-description">{{ tier.description }}</p>
+              {% endif %}
+            </div>
+
+            {% if tier.price %}
+              <div class="tier-price">
+                {% if tier.price.prefix %}
+                  <span class="price-prefix">{{ tier.price.prefix }}</span>
+                {% endif %}
+                <span class="price-amount">{{ tier.price.amount }}</span>
+                {% if tier.price.suffix %}
+                  <span class="price-suffix">{{ tier.price.suffix }}</span>
+                {% endif %}
+              </div>
+            {% endif %}
+
+            {% if tier.features %}
+              <ul class="tier-features" role="list">
+                {% for feature in tier.features %}
+                  <li class="feature{% if feature.isExcluded %} is-excluded{% endif %}">
+                    <span class="feature-icon" aria-hidden="true">
+                      {% if feature.isExcluded %}
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                      {% else %}
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                      {% endif %}
+                    </span>
+                    <span class="feature-text">{{ feature.text }}</span>
+                  </li>
+                {% endfor %}
+              </ul>
+            {% endif %}
+
+            {% if tier.ctas | hasCtas %}
+              <div class="tier-ctas">
+                {{ ctas(tier.ctas) }}
+              </div>
+            {% endif %}
+          </li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+
+    {% if layout === "comparison" %}
+      <div class="tier-comparison">
+        <table role="table">
+          <thead>
+            <tr>
+              <th scope="col" class="feature-column">Features</th>
+              {% for tier in tiers %}
+                <th scope="col" class="tier-column{% if tier.isFeatured %} is-featured{% endif %}">
+                  <div class="tier-header flow">
+                    {% if tier.isFeatured and tier.featuredLabel %}
+                      <span class="featured-badge">{{ tier.featuredLabel }}</span>
+                    {% endif %}
+                    {% if tier.name %}
+                      <span class="tier-name">{{ tier.name }}</span>
+                    {% endif %}
+                    {% if tier.price %}
+                      <div class="tier-price">
+                        {% if tier.price.prefix %}
+                          <span class="price-prefix">{{ tier.price.prefix }}</span>
+                        {% endif %}
+                        <span class="price-amount">{{ tier.price.amount }}</span>
+                        {% if tier.price.suffix %}
+                          <span class="price-suffix">{{ tier.price.suffix }}</span>
+                        {% endif %}
+                      </div>
+                    {% endif %}
+                  </div>
+                </th>
+              {% endfor %}
+            </tr>
+          </thead>
+          <tbody>
+            {# Build feature rows from first tier's features as the source of truth #}
+            {% for feature in tiers[0].features %}
+              {% set featureIndex = loop.index0 %}
+              <tr>
+                <td class="feature-name">{{ feature.text }}</td>
+                {% for tier in tiers %}
+                  <td class="feature-value{% if tier.isFeatured %} is-featured{% endif %}">
+                    {% set tierFeature = tier.features[featureIndex] %}
+                    {% if tierFeature.isExcluded %}
+                      <span class="is-excluded" aria-label="Not included">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                      </span>
+                    {% elif tierFeature.value %}
+                      <span>{{ tierFeature.value }}</span>
+                    {% else %}
+                      <span class="is-included" aria-label="Included">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                      </span>
+                    {% endif %}
+                  </td>
+                {% endfor %}
+              </tr>
+            {% endfor %}
+          </tbody>
+          <tfoot>
+            <tr>
+              <td></td>
+              {% for tier in tiers %}
+                <td class="tier-cta{% if tier.isFeatured %} is-featured{% endif %}">
+                  {% if tier.ctas | hasCtas %}
+                    {{ ctas(tier.ctas) }}
+                  {% endif %}
+                </td>
+              {% endfor %}
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    {% endif %}
+  {% else %}
+    <p>No pricing tiers found</p>
+  {% endif %}
+
+  {% if section.ctas | hasCtas %}
+    <div class="section-ctas">
+      {{ ctas(section.ctas) }}
+    </div>
+  {% endif %}
+</div>

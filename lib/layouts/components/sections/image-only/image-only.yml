@@ -1,0 +1,27 @@
+- sectionType: image-only
+  containerTag: section
+  classes: ""
+  id: ""
+  isDisabled: false
+  isAnimated: true
+  containerFields:
+    inContainer: false
+    noMargin:
+      top: true
+      bottom: true
+    noPadding:
+      top: false
+      bottom: false
+    background:
+      color: ""
+      image: ""
+      imageScreen: "none"
+  image:
+    src: "/assets/images/sample.jpg"
+    alt: "Image description for accessibility"
+    caption: "Optional caption for the image"
+  ctas:
+    - url: "#"
+      label: "View Gallery"
+      isButton: true
+      buttonStyle: "primary"

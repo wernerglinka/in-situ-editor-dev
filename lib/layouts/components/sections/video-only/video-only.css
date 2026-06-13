@@ -1,0 +1,31 @@
+/**
+ * Video Only Section Styles
+ *
+ * Design Tokens:
+ * - --glass-border-radius
+ */
+
+.video-only {
+  .content {
+    display: block; /* Override flex layout */
+    text-align: center;
+  }
+
+  .media {
+    max-width: 100%;
+    margin-inline: auto;
+
+    .video {
+      border-radius: var(--glass-border-radius);
+      overflow: hidden;
+    }
+  }
+
+  &.inline-example .media {
+    height: 25rem;
+  }
+}
+
+/** Dark Theme styles variations */
+.dark-theme .video-only {
+}

@@ -1,0 +1,91 @@
+{#
+  Related Posts section
+  Renders a curated list of items from any collection as either a simple text
+  list (title + description + link) or a grid of cards. Author-specified order
+  is preserved.
+
+  Section properties:
+  - selections: array of strings - Slugs (last permalink segment) of items to list.
+  - hasCard: boolean (optional) - Render as cards instead of a text list. Default: false.
+    Cards only render when every resolved post has a `card` object; otherwise the
+    section falls back to the simple text list.
+  - text: object (optional) - Standard text partial props (leadIn/title/subTitle/prose).
+
+  Items are resolved across ALL registered collections. The first collection
+  containing a matching slug wins, so the same slug is never rendered twice.
+
+  Text-list entries read `post.card.title` / `post.card.description` when present
+  and fall back to top-level `blogTitle` (or `title`) and `excerpt` — this keeps
+  the component working on projects that don't use the `card` convention.
+
+  Compatible with @metalsmith/collections v2.0
+#}
+
+{% from "components/_partials/text/text.njk" import text %}
+{% from "components/_partials/collection-card/collection-card.njk" import collectionCard %}
+
+{# Resolve selections into matching posts, preserving author-specified order #}
+{% set resolved = [] %}
+{% set resolvedPermalinks = [] %}
+{% if collections and section.selections %}
+  {% for slug in section.selections %}
+    {% for collectionName, posts in collections %}
+      {% for post in posts %}
+        {% if post.permalink
+              and post.permalink.split('/') | last == slug
+              and post.permalink not in resolvedPermalinks %}
+          {% set resolved = (resolved.push(post), resolved) %}
+          {% set resolvedPermalinks = (resolvedPermalinks.push(post.permalink), resolvedPermalinks) %}
+        {% endif %}
+      {% endfor %}
+    {% endfor %}
+  {% endfor %}
+{% endif %}
+
+{# Fall back to text list if any resolved post is missing its card object #}
+{% set renderCards = section.hasCard %}
+{% if renderCards %}
+  {% for post in resolved %}
+    {% if not post.card %}{% set renderCards = false %}{% endif %}
+  {% endfor %}
+{% endif %}
+
+{% if resolved.length %}
+  <div class="content container{% if renderCards %} has-card-list{% endif %}">
+    {% if section.text %}
+      {{ text(section.text) }}
+    {% endif %}
+
+    {% if renderCards %}
+      <ul class="related-posts-list is-cards">
+        {% for post in resolved %}
+          <li
+            class="related-post collection-card{% if post.card.pattern %} has-pattern{% endif %}"
+            {% if post.card.pattern %}style="background: var(--{{ post.card.pattern }})"{% endif %}
+          >
+            {% set cardProps = post.card | merge({
+              link: post.permalink,
+              thumbnail: post.card.thumbnail or post.card.image
+            }) %}
+            {{ collectionCard(cardProps) }}
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <ul class="related-posts-list">
+        {% for post in resolved %}
+          {% set postTitle = post.card.title or post.blogTitle or post.title %}
+          {% set postDescription = post.card.description or post.excerpt %}
+          <li class="related-post">
+            <a href="/{{ post.permalink }}/" class="related-post-link">
+              <span class="related-post-title">{{ postTitle }}</span>
+              {% if postDescription %}
+                <span class="related-post-description">{{ postDescription }}</span>
+              {% endif %}
+            </a>
+          </li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+  </div>
+{% endif %}

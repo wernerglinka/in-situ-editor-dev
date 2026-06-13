@@ -1,0 +1,128 @@
+{# Calendar Section Component #}
+{# Displays Google Calendar events in a monthly grid view #}
+
+{% from "components/_partials/text/text.njk" import text %}
+{% from "components/_partials/button/button.njk" import button %}
+
+{# Load calendar configuration #}
+{# Priority: inline config > data source file #}
+{% if section.calendars.apiKey %}
+  {# Inline configuration in YAML #}
+  {% set calendarConfig = section.calendars %}
+{% elif section.calendars.source %}
+  {# External data file #}
+  {% set calendarConfig = data.calendars[section.calendars.source] %}
+{% else %}
+  {% set calendarConfig = null %}
+{% endif %}
+
+<div class="container"
+     data-component="calendar"
+     {% if calendarConfig %}
+     data-calendar-config='{{ calendarConfig | dump | safe }}'
+     {% endif %}>
+
+  {# Header with optional title and prose #}
+  {% if section.text | hasText %}
+    <div class="header">
+      <div class="text flow">
+        {{ text(section.text) }}
+      </div>
+    </div>
+  {% endif %}
+
+  {# Calendar controls and month navigation #}
+  <div class="controls">
+    {{ button({
+      icon: 'chevron-left',
+      ariaLabel: 'Previous month',
+      dataAction: 'prev-month',
+      buttonStyle: 'none'
+    }) }}
+
+    <h2 class="month-title" data-calendar-title>
+      Loading...
+    </h2>
+
+    <div class="controls-right">
+      {{ button({
+        label: 'Today',
+        ariaLabel: 'Go to today',
+        dataAction: 'today',
+        buttonStyle: 'primary',
+        isSmall: true
+      }) }}
+
+      {{ button({
+        icon: 'chevron-right',
+        ariaLabel: 'Next month',
+        dataAction: 'next-month',
+        buttonStyle: 'none'
+      }) }}
+    </div>
+
+    
+  </div>
+
+  {# Loading state #}
+  <div class="loading" data-calendar-loading>
+    <p>Loading calendar events...</p>
+  </div>
+
+  {# Error state #}
+  <div class="error" data-calendar-error style="display: none;">
+    <p>Calendar temporarily unavailable. Please try again later.</p>
+  </div>
+
+  {# Calendar grid container (populated by JavaScript) #}
+  <div class="grid" data-calendar-grid>
+    {# Weekday headers #}
+    <div class="weekdays">
+      <div class="weekday">Sun</div>
+      <div class="weekday">Mon</div>
+      <div class="weekday">Tue</div>
+      <div class="weekday">Wed</div>
+      <div class="weekday">Thu</div>
+      <div class="weekday">Fri</div>
+      <div class="weekday">Sat</div>
+    </div>
+
+    {# Days grid (populated by JavaScript) #}
+    <div class="days" data-calendar-days>
+      {# Will be populated with day cells via JavaScript #}
+    </div>
+  </div>
+
+  {# List view (populated by JavaScript, shown when container < 768px) #}
+  <div class="list" data-calendar-list>
+    {# Will be populated with list items via JavaScript #}
+  </div>
+
+  {# Event details modal/panel #}
+  <div class="event-details"
+       data-event-details
+       style="display: none;"
+       role="dialog"
+       aria-labelledby="event-details-title">
+    <div class="event-details-content">
+      <div class="close-button-wrapper">
+        {{ button({
+          icon: 'x',
+          ariaLabel: 'Close event details',
+          dataAction: 'close-details',
+          buttonStyle: 'tertiary',
+          isSmall: true
+        }) }}
+      </div>
+      <h3 id="event-details-title" data-event-title></h3>
+      <div data-event-time class="event-time"></div>
+      <div data-event-location class="event-location"></div>
+      <div data-event-description class="event-description"></div>
+      <div data-event-calendar class="event-calendar"></div>
+      <a data-event-link class="event-link" target="_blank" rel="noopener noreferrer">
+        View in Google Calendar
+      </a>
+    </div>
+  </div>
+
+</div>

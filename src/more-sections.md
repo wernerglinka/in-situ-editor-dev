@@ -53,7 +53,7 @@ sections:
       alt: ''
       caption: ''
 
-  - sectionType: text-only
+  - sectionType: rich-text
     containerTag: article
     classes: ''
     id: ''
@@ -110,7 +110,7 @@ sections:
       scope: 'all'
       selections: []
 
-  - sectionType: composed
+  - sectionType: columns
     containerTag: section
     classes: 'text-image-cta'
     id: 'section-id'
@@ -157,7 +157,7 @@ sections:
                 isButton: true
                 buttonStyle: 'primary'
 
-  - sectionType: composed
+  - sectionType: columns
     containerTag: section
     classes: 'image-gallery'
     id: 'section-id'

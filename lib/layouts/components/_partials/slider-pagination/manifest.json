@@ -1,15 +1,11 @@
 {
   "name": "slider-pagination",
   "type": "partial",
-  "styles": [
-    "slider-pagination.css"
-  ],
+  "styles": ["slider-pagination.css"],
   "scripts": [],
   "requires": [],
   "validation": {
-    "required": [
-      "slides"
-    ],
+    "required": ["slides"],
     "properties": {
       "slides": {
         "type": "array",
@@ -19,9 +15,7 @@
             "text": {
               "type": "object",
               "properties": {
-                "title": {
-                  "type": "string"
-                }
+                "title": { "type": "string" }
               }
             }
           }

@@ -1,0 +1,42 @@
+{% from "components/_partials/text/text.njk" import text %}
+
+<div class="container content">
+  {% if section.text | hasText %}
+    <div class="steps-header flow">
+      {{ text(section.text) }}
+    </div>
+  {% endif %}
+
+  {% if section.steps.items %}
+    {% set layout = section.steps.layout or "horizontal" %}
+    {% set showNumbers = section.steps.showNumbers if section.steps.showNumbers is defined else true %}
+
+    <ol class="steps-list is-{{ layout }}{% if showNumbers %} has-numbers{% endif %}" role="list">
+      {% for step in section.steps.items %}
+        <li class="step-item">
+          <div class="step-marker">
+            {% if showNumbers %}
+              <span class="step-number">{{ loop.index }}</span>
+            {% endif %}
+            {% if step.icon %}
+              <span class="step-icon">
+                {% include "icons/" + step.icon + ".njk" ignore missing %}
+              </span>
+            {% endif %}
+          </div>
+
+          <div class="step-content">
+            {% if step.title %}
+              <h3 class="step-title">{{ step.title }}</h3>
+            {% endif %}
+            {% if step.description %}
+              <p class="step-description">{{ step.description }}</p>
+            {% endif %}
+          </div>
+        </li>
+      {% endfor %}
+    </ol>
+  {% else %}
+    <p>No steps found</p>
+  {% endif %}
+</div>

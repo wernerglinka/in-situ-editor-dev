@@ -118,9 +118,10 @@ const containerDefaults = (overrides = {}) => ({
  * @return {Object} Library-schema section object.
  */
 function toLibrarySection(s, slug) {
-  if (s.type === 'media-image') {
+  if (s.type === 'multi-media') {
     return {
-      sectionType: 'media-image',
+      sectionType: 'multi-media',
+      mediaType: 'image',
       ...containerDefaults(),
       image: {
         src: s.imageName ? `/assets/images/blog/${slug}/${s.imageName}` : '',
@@ -162,7 +163,7 @@ function toLibrarySection(s, slug) {
   }
 
   return {
-    sectionType: 'text-only',
+    sectionType: 'rich-text',
     ...containerDefaults(),
     text: {
       leadIn: '',
@@ -201,11 +202,11 @@ export function generateMarkdown(draft, title, description, date, tagsValue, con
 
   let editorSections = Array.isArray(draft.sections) ? draft.sections : null;
   if (!editorSections && content && content.trim()) {
-    editorSections = [ { type: 'text-only', title: '', prose: content } ];
+    editorSections = [ { type: 'rich-text', title: '', prose: content } ];
   }
 
   // First section image doubles as the card thumbnail and social image.
-  const firstImage = (editorSections || []).find((s) => s.type === 'media-image' && s.imageName);
+  const firstImage = (editorSections || []).find((s) => s.type === 'multi-media' && s.imageName);
   const thumbnail = firstImage ? `/assets/images/blog/${slug}/${firstImage.imageName}` : '';
 
   const doc = {

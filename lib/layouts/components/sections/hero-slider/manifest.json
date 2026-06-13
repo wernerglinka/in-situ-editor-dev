@@ -1,0 +1,153 @@
+{
+  "name": "hero-slider",
+  "type": "section",
+  "scripts": ["hero-slider.js"],
+  "styles": ["hero-slider.css"],
+  "requires": ["ctas", "text", "image", "video", "commons"],
+  "validation": {
+    "required": ["sectionType"],
+    "properties": {
+      "sectionType": {
+        "type": "string",
+        "const": "hero-slider"
+      },
+      "autoplay": {
+        "type": "boolean",
+        "default": false
+      },
+      "autoPlayDelay": {
+        "type": "number",
+        "default": 5000
+      },
+      "isDisabled": {
+        "type": "boolean"
+      },
+      "containerFields.inContainer": {
+        "type": "boolean"
+      },
+      "containerFields.isAnimated": {
+        "type": "boolean"
+      },
+      "containerFields.noMargin.top": {
+        "type": "boolean"
+      },
+      "containerFields.noMargin.bottom": {
+        "type": "boolean"
+      },
+      "containerFields.noPadding.top": {
+        "type": "boolean"
+      },
+      "containerFields.noPadding.bottom": {
+        "type": "boolean"
+      },
+      "containerFields.background.isDark": {
+        "type": "boolean"
+      },
+      "containerFields.background.imageScreen": {
+        "type": "string",
+        "enum": ["light", "dark", "none"]
+      },
+      "slides": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "navLabel": {
+              "type": "string"
+            },
+            "isReverse": {
+              "type": "boolean"
+            },
+            "text.titleTag": {
+              "type": "string",
+              "enum": ["h1", "h2", "h3", "h4", "h5", "h6"],
+              "default": "h1"
+            },
+            "ctas": {
+              "type": "array",
+              "items": {
+                "properties": {
+                  "isButton": {
+                    "type": "boolean"
+                  },
+                  "buttonStyle": {
+                    "type": "string",
+                    "enum": ["primary", "secondary", "tertiary", "inverted"]
+                  },
+                  "isSmall": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            },
+            "background.isDark": {
+              "type": "boolean"
+            },
+            "background.imageScreen": {
+              "type": "string",
+              "enum": ["none", "light", "dark"],
+              "default": "none"
+            }
+          }
+        }
+      }
+    }
+  },
+  "fields": {
+    "autoplay": {
+      "widget": "checkbox",
+      "label": "Autoplay",
+      "default": false
+    },
+    "autoPlayDelay": {
+      "widget": "text",
+      "label": "Autoplay delay (ms)",
+      "default": "5000"
+    },
+    "slides": {
+      "widget": "array",
+      "label": "Slides",
+      "items": {
+        "isReverse": {
+          "widget": "checkbox",
+          "label": "Reverse layout",
+          "default": false
+        },
+        "text": {
+          "$use": "text"
+        },
+        "image": {
+          "$use": "image"
+        },
+        "ctas": {
+          "$use": "ctas"
+        },
+        "background": {
+          "image": {
+            "$use": "image"
+          },
+          "video": {
+            "$use": "video"
+          },
+          "color": {
+            "widget": "text",
+            "label": "Background color",
+            "default": ""
+          },
+          "imageScreen": {
+            "widget": "select",
+            "label": "Background image screen",
+            "enum": ["light", "dark", "none"],
+            "default": "none"
+          },
+          "isDark": {
+            "widget": "checkbox",
+            "label": "Dark background",
+            "default": false
+          }
+        }
+      }
+    },
+    "$extends": ["commons"]
+  }
+}

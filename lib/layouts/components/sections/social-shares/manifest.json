@@ -1,0 +1,139 @@
+{
+  "name": "social-shares",
+  "type": "section",
+  "styles": ["social-shares.css"],
+  "scripts": [],
+  "requires": ["commons", "text"],
+  "validation": {
+    "required": ["sectionType"],
+    "properties": {
+      "sectionType": {
+        "type": "string",
+        "const": "social-shares"
+      },
+      "isDisabled": {
+        "type": "boolean"
+      },
+      "hasCenteredContent": {
+        "type": "boolean"
+      },
+      "containerFields.inContainer": {
+        "type": "boolean"
+      },
+      "containerFields.isAnimated": {
+        "type": "boolean"
+      },
+      "containerFields.noMargin.top": {
+        "type": "boolean"
+      },
+      "containerFields.noMargin.bottom": {
+        "type": "boolean"
+      },
+      "containerFields.noPadding.top": {
+        "type": "boolean"
+      },
+      "containerFields.noPadding.bottom": {
+        "type": "boolean"
+      },
+      "containerFields.background.isDark": {
+        "type": "boolean"
+      },
+      "text": {
+        "type": "object"
+      },
+      "share.title": {
+        "type": "string"
+      },
+      "share.comment": {
+        "type": "string"
+      },
+      "share.platforms": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "enum": ["bluesky", "linkedin", "facebook", "twitter", "mail"]
+        }
+      },
+      "share.custom": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "icon": {
+              "type": "string"
+            },
+            "label": {
+              "type": "string"
+            },
+            "url": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  },
+  "fields": {
+    "text": {
+      "$use": "text"
+    },
+    "hasCenteredContent": {
+      "widget": "checkbox",
+      "label": "Center text",
+      "default": false
+    },
+    "share": {
+      "title": {
+        "widget": "text",
+        "label": "Share title",
+        "default": ""
+      },
+      "comment": {
+        "widget": "text",
+        "label": "Share comment",
+        "default": ""
+      },
+      "platforms": {
+        "widget": "array",
+        "label": "Platforms",
+        "items": {
+          "name": {
+            "widget": "text",
+            "label": "Platform",
+            "default": ""
+          }
+        }
+      },
+      "custom": {
+        "widget": "array",
+        "label": "Custom networks",
+        "items": {
+          "name": {
+            "widget": "text",
+            "label": "Name",
+            "default": ""
+          },
+          "icon": {
+            "widget": "text",
+            "label": "Icon",
+            "default": ""
+          },
+          "label": {
+            "widget": "text",
+            "label": "Label",
+            "default": ""
+          },
+          "url": {
+            "widget": "text",
+            "label": "URL template",
+            "default": ""
+          }
+        }
+      }
+    },
+    "$extends": ["commons"]
+  }
+}

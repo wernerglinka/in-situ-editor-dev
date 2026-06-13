@@ -1,0 +1,49 @@
+{
+  "name": "related-posts",
+  "type": "section",
+  "styles": ["related-posts.css"],
+  "scripts": [],
+  "requires": ["text", "collection-card", "commons"],
+  "context": ["collections"],
+  "plugins": ["@metalsmith/collections"],
+  "validation": {
+    "required": ["sectionType"],
+    "properties": {
+      "sectionType": {
+        "type": "string",
+        "const": "related-posts"
+      },
+      "hasCard": {
+        "type": "boolean"
+      },
+      "selections": {
+        "type": "array"
+      },
+      "isDisabled": {
+        "type": "boolean"
+      }
+    }
+  },
+  "fields": {
+    "text": {
+      "$use": "text"
+    },
+    "hasCard": {
+      "widget": "checkbox",
+      "label": "Render as cards",
+      "default": false
+    },
+    "selections": {
+      "widget": "array",
+      "label": "Post slugs",
+      "items": {
+        "slug": {
+          "widget": "text",
+          "label": "Slug",
+          "default": ""
+        }
+      }
+    },
+    "$extends": ["commons"]
+  }
+}

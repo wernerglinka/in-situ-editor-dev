@@ -56,7 +56,7 @@ sections:
       alt: ''
       caption: ''
 
-  - sectionType: text-only
+  - sectionType: rich-text
     containerTag: article
     classes: ''
     id: 'first-section'
@@ -88,7 +88,7 @@ sections:
         isButton: true
         buttonStyle: 'primary'
 
-  - sectionType: text-only
+  - sectionType: rich-text
     containerTag: article
     classes: ''
     id: 'first-section'
@@ -262,7 +262,7 @@ sections:
             isButton: false
             buttonStyle: 'primary'
 
-  - sectionType: text-only
+  - sectionType: rich-text
     containerTag: article
     classes: ''
     id: 'first-section'
@@ -325,7 +325,7 @@ sections:
       company: 'New York Yankees'
       logo: '/assets/images/new-york-yankees-logo.svg'
 
-  - sectionType: text-only
+  - sectionType: rich-text
     containerTag: article
     classes: ''
     id: 'first-section'

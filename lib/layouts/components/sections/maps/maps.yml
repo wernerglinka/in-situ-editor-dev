@@ -1,0 +1,33 @@
+- sectionType: mapping
+  containerTag: section
+  classes: ''
+  id: ''
+  isDisabled: false
+  containerFields:
+    inContainer: true
+    isAnimated: true
+    noMargin:
+      top: false
+      bottom: false
+    noPadding:
+      top: false
+      bottom: false
+    background:
+      color: ''
+      image: ''
+      imageScreen: 'none'
+  text:
+    leadIn: ''
+    title: 'Interactive Map'
+    titleTag: 'h2'
+    subTitle: ''
+    prose: 'Explore locations on our interactive map.'
+    isCentered: false
+  mapProvider: 'leaflet' # 'leaflet' or 'openlayers'
+  mapData: 'nyc-clustering-demo' # references lib/data/maps/nyc-clustering-demo.json
+  height: '500px' # optional custom height (defaults to 400px)
+  ctas:
+    - url: '/contact'
+      label: 'Get Directions'
+      isButton: true
+      buttonStyle: 'primary'

@@ -1,38 +1,11 @@
 {
   "name": "slider",
   "type": "section",
-  "styles": [
-    "slider.css"
-  ],
-  "scripts": [
-    "slider.js"
-  ],
-  "requires": [
-    "ctas",
-    "text",
-    "image",
-    "commons",
-    "slider-pagination"
-  ],
-  "fields": {
-    "config": { "widget": "select", "label": "Slider mode", "enum": ["", "isTabs"], "default": "" },
-    "text": { "$use": "text" },
-    "slides": {
-      "widget": "array",
-      "label": "Slides",
-      "items": {
-        "image": { "$use": "image" },
-        "text": { "$use": "text", "titleTag": { "default": "h3" } },
-        "ctas": { "$use": "ctas" },
-        "slideClasses": { "widget": "text", "label": "Slide CSS classes (optional)", "default": "" }
-      }
-    },
-    "$extends": ["commons"]
-  },
+  "styles": ["slider.css"],
+  "scripts": ["slider.js"],
+  "requires": ["ctas", "text", "image", "commons", "slider-pagination"],
   "validation": {
-    "required": [
-      "sectionType"
-    ],
+    "required": ["sectionType"],
     "properties": {
       "sectionType": {
         "type": "string",
@@ -64,21 +37,11 @@
       },
       "config": {
         "type": "string",
-        "enum": [
-          "",
-          "isTabs"
-        ]
+        "enum": ["", "isTabs"]
       },
       "text.titleTag": {
         "type": "string",
-        "enum": [
-          "h1",
-          "h2",
-          "h3",
-          "h4",
-          "h5",
-          "h6"
-        ],
+        "enum": ["h1", "h2", "h3", "h4", "h5", "h6"],
         "default": "h2"
       },
       "slides": {
@@ -87,14 +50,7 @@
           "properties": {
             "text.titleTag": {
               "type": "string",
-              "enum": [
-                "h1",
-                "h2",
-                "h3",
-                "h4",
-                "h5",
-                "h6"
-              ],
+              "enum": ["h1", "h2", "h3", "h4", "h5", "h6"],
               "default": "h3"
             },
             "ctas": {
@@ -106,12 +62,7 @@
                   },
                   "buttonStyle": {
                     "type": "string",
-                    "enum": [
-                      "primary",
-                      "secondary",
-                      "tertiary",
-                      "inverted"
-                    ]
+                    "enum": ["primary", "secondary", "tertiary", "inverted"]
                   },
                   "isSmall": {
                     "type": "boolean"
@@ -123,5 +74,40 @@
         }
       }
     }
+  },
+  "fields": {
+    "config": {
+      "widget": "select",
+      "label": "Slider mode",
+      "enum": ["", "isTabs"],
+      "default": ""
+    },
+    "text": {
+      "$use": "text"
+    },
+    "slides": {
+      "widget": "array",
+      "label": "Slides",
+      "items": {
+        "image": {
+          "$use": "image"
+        },
+        "text": {
+          "$use": "text",
+          "titleTag": {
+            "default": "h3"
+          }
+        },
+        "ctas": {
+          "$use": "ctas"
+        },
+        "slideClasses": {
+          "widget": "text",
+          "label": "Slide CSS classes (optional)",
+          "default": ""
+        }
+      }
+    },
+    "$extends": ["commons"]
   }
 }

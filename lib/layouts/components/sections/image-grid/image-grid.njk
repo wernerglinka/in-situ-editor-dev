@@ -1,0 +1,74 @@
+{% from "components/_partials/text/text.njk" import text %}
+
+{#
+  Image Grid Section - Justified Gallery Layout
+
+  Displays a justified gallery where images in each row share the same height
+  but have varying widths based on their aspect ratios. Row heights may differ.
+
+  Data is loaded from a JSON file specified by dataSource.
+  Aspect ratios are calculated automatically from loaded images.
+  Items with a link property show an arrow icon and are clickable.
+#}
+
+{% set imageList = data[section.dataSource] %}
+{% set gap = section.settings.gap if section.settings and section.settings.gap else "6" %}
+{% set targetRowHeight = section.settings.targetRowHeight if section.settings and section.settings.targetRowHeight else "200" %}
+
+<div class="container content">
+  {# Render optional title/text block #}
+  {% if section.text | hasText %}
+    <div class="text flow {% if section.hasCenteredContent %}is-centered{% endif %}">
+      {{ text(section.text) }}
+    </div>
+  {% endif %}
+
+  {% if imageList and imageList | length > 0 %}
+    <div
+      class="image-grid js-image-grid"
+      data-gap="{{ gap }}"
+      data-target-row-height="{{ targetRowHeight }}"
+    >
+      {% for item in imageList %}
+        <div class="image-grid-item{% if item.link %} has-link{% endif %}">
+          {% if item.link %}
+            <a href="{{ item.link }}" class="image-grid-link" aria-label="{{ item.title }}">
+          {% endif %}
+
+          <figure class="image-grid-figure">
+            <img
+              src="{{ item.image }}"
+              alt="{{ item.title }}"
+              loading="lazy"
+              data-no-responsive
+            >
+            <figcaption class="image-grid-overlay">
+              <div class="image-grid-details">
+                {% if item.title %}
+                  <span class="image-grid-title">{{ item.title }}</span>
+                {% endif %}
+                {% if item.details %}
+                  <span class="image-grid-info">{{ item.details }}</span>
+                {% endif %}
+                {% if item.date %}
+                  <span class="image-grid-date">{{ item.date }}</span>
+                {% endif %}
+              </div>
+              {% if item.link %}
+                <div class="image-grid-icon" aria-hidden="true">
+                  {% include "icons/arrow-left.njk" %}
+                </div>
+              {% endif %}
+            </figcaption>
+          </figure>
+
+          {% if item.link %}
+            </a>
+          {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p class="image-grid-empty">No images found in data source "{{ section.dataSource }}".</p>
+  {% endif %}
+</div>

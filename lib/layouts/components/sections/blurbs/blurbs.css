@@ -1,0 +1,172 @@
+/**
+ * Blurbs Section Styles
+ *
+ * Design Tokens:
+ * - --space-s-m
+ * - --color-border-light
+ * - --space-m
+ * - --space-2xl
+ * - --space-m-l
+ * - --space-l-2xl
+ * - --space-xl
+ * - --font-h5
+ * - --font-p
+ */
+
+.blurbs {
+  .container.content {
+    display: block;
+
+    img {
+      aspect-ratio: 1;
+    }
+  }
+
+  .blurbs-header {
+    text-align: center;
+    margin-block-end: var(--space-s-m);
+  }
+
+  .blurb-list.is-inline {
+    margin: 0;
+    padding: var(--space-s-m) 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-m-l);
+
+    .blurb {
+      flex: 1 1 300px;
+      border: 1px solid var(--color-border-light);
+      padding: var(--space-m);
+
+      .decoration {
+        padding-block: var(--space-s-m);
+
+        .icon-wrapper {
+          width: auto;
+          height: var(--space-2xl);
+          display: flex;
+          justify-content: center;
+
+          svg {
+            height: 100%;
+            width: auto;
+          }
+        }
+      }
+
+      .info {
+        text-align: center;
+      }
+    }
+  }
+
+  .blurb-list + .ctas {
+    display: flex;
+    justify-content: center;
+  }
+
+  .blurbs-with-feature {
+    display: grid;
+    gap: var(--space-m-l);
+    margin-block-start: var(--space-l-2xl);
+    align-items: start;
+
+    /* Intrinsic responsive grid - automatically switches between 1 and 2 columns */
+    /* min() ensures items stack when container is narrow */
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 25rem), 1fr));
+
+    .is-feature {
+      .decoration {
+        padding-block-end: var(--space-s-m);
+
+        img {
+          width: 100%;
+          height: auto;
+          object-fit: cover;
+        }
+
+        .icon-wrapper {
+          width: auto;
+          height: var(--space-2xl);
+          display: flex;
+          justify-content: center;
+
+          svg {
+            height: 100%;
+            width: auto;
+          }
+        }
+      }
+
+      .info {
+        /* Center text for better universal layout */
+        text-align: center;
+      }
+    }
+
+    .is-grid {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      display: grid;
+      gap: var(--space-s-m);
+
+      /* Intrinsic responsive grid - automatically flows from 1 to 2 columns */
+      /* The minmax with min() creates natural breakpoint around 15rem */
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+
+      .blurb {
+        padding: 0;
+
+        .decoration {
+          padding-block-end: var(--space-s-m);
+          display: flex;
+          justify-content: center;
+
+          .img {
+            width: auto;
+            height: var(--space-xl);
+          }
+
+          .icon-wrapper {
+            width: auto;
+            height: var(--space-xl);
+            display: flex;
+            justify-content: center;
+
+            svg {
+              height: 100%;
+              width: auto;
+            }
+          }
+        }
+
+        .info {
+          text-align: center;
+
+          /* Use existing fluid font sizes from design tokens */
+          h3 {
+            font-size: var(--font-h5);
+          }
+
+          p {
+            font-size: var(--font-p);
+          }
+        }
+      }
+    }
+
+    /* Handle reverse layout using CSS logical properties */
+    &.is-reverse {
+      /* Use flexbox direction for reversing without media queries */
+      /* Grid items will respect visual order */
+      direction: rtl;
+
+      > * {
+        /* Reset direction for content */
+        direction: ltr;
+      }
+    }
+  }
+}

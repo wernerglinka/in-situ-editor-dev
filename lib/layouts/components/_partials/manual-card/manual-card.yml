@@ -1,0 +1,71 @@
+# Example configuration for manual-card component
+
+# Basic card with image in decoration and text
+basicCard:
+  image:
+    src: '/assets/images/sample.jpg'
+    alt: 'Sample image'
+  text:
+    title: 'Card Title'
+    prose: 'Card description text goes here.'
+  ctas:
+    - url: '#'
+      label: 'Learn More'
+      isExternal: false
+
+# Card with background image and icon
+backgroundImageCard:
+  hasImageBackground: true
+  image:
+    src: '/assets/images/hero-bg.jpg'
+    alt: 'Background image'
+  icon: 'star'
+  text:
+    title: 'Featured Content'
+    prose: 'This card has a background image with an icon overlay.'
+  ctas:
+    - url: '#'
+      label: 'Explore'
+
+# Horizontal layout card
+horizontalCard:
+  isHorizontal: true
+  image:
+    src: '/assets/images/feature.jpg'
+    alt: 'Feature image'
+  text:
+    title: 'Horizontal Layout'
+    prose: 'This card displays content horizontally.'
+  ctas:
+    - url: '#'
+      label: 'View Details'
+
+# Card with link wrapper (entire card clickable)
+linkedCard:
+  link: '/path/to/destination'
+  image:
+    src: '/assets/images/sample.jpg'
+    alt: 'Sample image'
+  text:
+    title: 'Clickable Card'
+    prose: 'Entire card is clickable. CTAs are ignored when link is present.'
+
+# Icon-only card with pattern background
+iconCard:
+  icon: 'award'
+  pattern: 'dots'
+  text:
+    title: 'Achievement'
+    prose: 'Card with icon decoration and pattern background.'
+  ctas:
+    - url: '#'
+      label: 'Learn More'
+
+# Text-only card
+textOnlyCard:
+  text:
+    title: 'Simple Text Card'
+    prose: 'This card has only text content, no decoration.'
+  ctas:
+    - url: '#'
+      label: 'Read More'

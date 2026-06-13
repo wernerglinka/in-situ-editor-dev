@@ -1,0 +1,43 @@
+- sectionType: stats
+  containerTag: aside
+  classes: ""
+  id: ""
+  isDisabled: false
+  containerFields:
+    inContainer: true
+    isAnimated: true
+    noMargin:
+      top: false
+      bottom: false
+    noPadding:
+      top: true
+      bottom: false
+    background:
+      color: ""
+      image: ""
+      imageScreen: "none"
+  text:
+    leadIn: ""
+    title: "Our Impact"
+    titleTag: "h2"
+    subTitle: "Numbers that speak for themselves"
+    prose: ""
+  stats:
+    layout: "grid"
+    items:
+      - value: "10K+"
+        label: "Active Users"
+        icon: "users"
+        description: "Developers building with our tools"
+      - value: "99.9%"
+        label: "Uptime"
+        icon: "activity"
+        description: "Rock-solid reliability"
+      - value: "50M"
+        label: "API Requests"
+        icon: "zap"
+        description: "Processed every month"
+      - value: "24/7"
+        label: "Support"
+        icon: "headphones"
+        description: "Always here to help"

@@ -1,0 +1,48 @@
+/**
+ * Page Transition Styles
+ *
+ * SWUP adds these classes to the <html> element during transitions:
+ * - is-changing: Added when transition starts, removed when complete
+ * - is-animating: Added during animation phase, removed after content replace
+ * - is-leaving: Added during leave animation
+ * - is-rendering: Added during enter animation
+ */
+
+/* Transition container - the main content area */
+main.transition-fade {
+  transition: opacity 0.3s ease-in-out;
+  opacity: 1;
+}
+
+/* Fade out during leave phase */
+html.is-animating main.transition-fade {
+  opacity: 0;
+}
+
+/* Optional: Prevent scrolling during transition */
+html.is-changing {
+  overflow: hidden;
+}
+
+/* Optional: Loading indicator */
+.swup-progress-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: var(--color-accent, #3498db);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s ease;
+  z-index: 9999;
+}
+
+html.is-changing .swup-progress-bar {
+  transform: scaleX(0.8);
+}
+
+html.is-rendering .swup-progress-bar {
+  transform: scaleX(1);
+  transition: transform 0.1s ease;
+}

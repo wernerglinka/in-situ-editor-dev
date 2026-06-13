@@ -1,0 +1,98 @@
+- sectionType: hero-slider
+  containerTag: section
+  classes: ''
+  id: ''
+  isDisabled: false
+  containerFields:
+    inContainer: false
+    isAnimated: false
+    noMargin:
+      top: true
+      bottom: true
+    noPadding:
+      top: true
+      bottom: true
+    background:
+      color: ''
+      image: ''
+      imageScreen: 'none'
+  autoplay: true
+  autoPlayDelay: 5000
+  slides:
+    - navLabel: 'Welcome'
+      isReverse: false
+      text:
+        leadIn: 'Welcome to our site'
+        title: 'Amazing Hero Slider'
+        titleTag: 'h1'
+        subTitle: 'Engage your visitors with stunning visuals'
+        prose: 'Create beautiful, responsive hero sections with multiple slides, background media, and smooth transitions.'
+        isCentered: true
+      ctas:
+        - url: '/get-started'
+          label: 'Get Started'
+          isButton: true
+          buttonStyle: 'primary'
+        - url: '/learn-more'
+          label: 'Learn More'
+          isButton: true
+          buttonStyle: 'secondary'
+      image:
+        src: '/assets/images/hero-slide-1.jpg'
+        alt: 'Hero image showing our product'
+        caption: ''
+      background:
+        color: '#1a1a1a'
+        isDark: true
+        image:
+          src: '/assets/images/hero-bg-1.jpg'
+          alt: 'Background image'
+        imageScreen: 'dark'
+    - navLabel: 'Features'
+      isReverse: true
+      text:
+        leadIn: 'Powerful Features'
+        title: 'Built for Performance'
+        titleTag: 'h2'
+        subTitle: 'Lightning fast and optimized'
+        prose: 'Our component system ensures optimal performance with lazy loading, efficient animations, and smart resource management.'
+        isCentered: true
+      ctas:
+        - url: '/features'
+          label: 'Explore Features'
+          isButton: true
+          buttonStyle: 'primary'
+      image:
+        src: '/assets/images/hero-slide-2.jpg'
+        alt: 'Feature showcase image'
+        caption: ''
+      background:
+        color: '#2c3e50'
+        isDark: true
+        video:
+          inline: true
+          src: 'youtube'
+          id: 'dQw4w9WgXcQ'
+          tn: '/assets/images/video-thumb.jpg'
+        imageScreen: 'light'
+    - navLabel: 'About'
+      isReverse: false
+      text:
+        leadIn: ''
+        title: 'Why Choose Us'
+        titleTag: 'h2'
+        subTitle: 'Experience the difference'
+        prose: 'We combine modern design principles with robust functionality to deliver exceptional user experiences.'
+        isCentered: true
+      ctas:
+        - url: '/contact'
+          label: 'Contact Us'
+          isButton: true
+          buttonStyle: 'primary'
+      background:
+        color: '#ffffff'
+        isDark: false
+        image:
+          src: '/assets/images/hero-bg-3.jpg'
+          alt: 'About section background'
+        imageScreen: 'none'

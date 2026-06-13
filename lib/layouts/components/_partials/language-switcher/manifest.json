@@ -1,0 +1,12 @@
+{
+  "name": "language-switcher",
+  "type": "partial",
+  "styles": ["language-switcher.css"],
+  "scripts": ["language-switcher.js"],
+  "requires": ["icon"],
+  "context": ["data.languages"],
+  "validation": {
+    "required": [],
+    "properties": {}
+  }
+}

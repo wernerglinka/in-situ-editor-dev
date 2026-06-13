@@ -1,0 +1,146 @@
+/**
+ * Stats Section Styles
+ *
+ * Design Tokens:
+ * - --space-2xs, --space-xs, --space-s, --space-m, --space-l, --space-xl
+ * - --space-s-m, --space-m-l, --space-l-2xl
+ * - --color-border-light
+ * - --color-text, --color-text-dark, --color-text-light
+ * - --color-background, --color-background-light
+ * - --color-primary
+ * - --font-xs, --font-s, --font-p, --font-h4, --font-h3, --font-h2
+ */
+
+.stats {
+  .container.content {
+    display: block;
+  }
+
+  .stats-header {
+    text-align: center;
+    margin-block-end: var(--space-l-2xl);
+  }
+
+  /* Stats List */
+  .stats-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  /* Grid Layout */
+  .stats-list.is-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
+    gap: var(--space-l);
+  }
+
+  /* Row Layout - single row, equal spacing */
+  .stats-list.is-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-l) var(--space-xl);
+  }
+
+  /* Compact Layout - tighter spacing, smaller text */
+  .stats-list.is-compact {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-m) var(--space-l);
+
+    .stat-item {
+      padding: var(--space-s);
+    }
+
+    .stat-value {
+      font-size: var(--font-h4);
+    }
+
+    .stat-label {
+      font-size: var(--font-xs);
+    }
+  }
+
+  /* Stat Item */
+  .stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: var(--space-m);
+  }
+
+  /* Icon */
+  .stat-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 3rem;
+    height: 3rem;
+    margin-block-end: var(--space-s);
+    color: var(--color-primary);
+
+    svg {
+      width: 2rem;
+      height: 2rem;
+    }
+  }
+
+  /* Value - the big number */
+  .stat-value {
+    font-size: var(--font-h2);
+    font-weight: 700;
+    line-height: 1.1;
+    color: var(--color-primary);
+    margin-block-end: var(--space-2xs);
+  }
+
+  /* Label */
+  .stat-label {
+    font-size: var(--font-s);
+    font-weight: 600;
+    color: var(--color-text);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  /* Optional description */
+  .stat-description {
+    font-size: var(--font-s);
+    color: var(--color-text-dark);
+    margin-block-start: var(--space-xs);
+    margin-block-end: 0;
+    line-height: 1.5;
+  }
+}
+
+/* Cards variant - boxed stats with borders */
+.stats.has-cards {
+  .stat-item {
+    background: var(--color-background);
+    border: 1px solid var(--color-border-light);
+    border-radius: 0.5rem;
+    padding: var(--space-l);
+  }
+}
+
+/* Highlight variant - emphasized primary color background */
+.stats.is-highlighted {
+  .stat-item {
+    background: var(--color-primary);
+    border-radius: 0.5rem;
+    padding: var(--space-l);
+  }
+
+  .stat-icon,
+  .stat-value,
+  .stat-label {
+    color: white;
+  }
+
+  .stat-description {
+    color: rgba(255, 255, 255, 0.8);
+  }
+}

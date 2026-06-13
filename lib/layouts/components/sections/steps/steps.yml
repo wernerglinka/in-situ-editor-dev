@@ -1,0 +1,37 @@
+- sectionType: steps
+  containerTag: aside
+  classes: ""
+  id: ""
+  isDisabled: false
+  containerFields:
+    inContainer: true
+    isAnimated: true
+    noMargin:
+      top: false
+      bottom: false
+    noPadding:
+      top: true
+      bottom: false
+    background:
+      color: ""
+      image: ""
+      imageScreen: "none"
+  text:
+    leadIn: ""
+    title: "How It Works"
+    titleTag: "h2"
+    subTitle: "Get started in three easy steps"
+    prose: ""
+  steps:
+    layout: "horizontal"
+    showNumbers: true
+    items:
+      - title: "Sign Up"
+        description: "Create your free account in seconds. No credit card required."
+        icon: "user-plus"
+      - title: "Configure"
+        description: "Set up your preferences and connect your integrations."
+        icon: "settings"
+      - title: "Launch"
+        description: "Go live and start seeing results immediately."
+        icon: "rocket"

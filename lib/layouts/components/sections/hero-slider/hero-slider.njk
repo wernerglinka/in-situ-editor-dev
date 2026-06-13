@@ -1,0 +1,112 @@
+{% from "components/_partials/ctas/ctas.njk" import ctas %}
+{% from "components/_partials/text/text.njk" import text %}
+{% from "components/_partials/image/image.njk" import image %}
+{% from "components/_partials/video/video.njk" import video %}
+
+<div class="{% if section.autoplay %}is-autoplay{% endif %} {% if section.containerFields.inContainer %}in-container{% endif %} js-hero-slider">
+  <div class="hero-slider-list">
+    <ul class="hero-slides">
+      {% for slide in section.slides %}
+        {% set hasText = slide.text.title or slide.text.subtitle or slide.text.prose or slide.text.leadIn %}
+        {% set hasCtas = slide.ctas | hasCtas %}
+        {% set hasImage = slide.image and slide.image.src %}
+        {% set hasTextAndImage = (hasText or hasCtas) and hasImage %}
+        {% set contentWidth = '' %}
+        {% set hasBackgroundImage = slide.background and slide.background.image and slide.background.image.src %}
+        {% set hasBackgroundVideo = slide.background and slide.background.video and slide.background.video.id %}
+        {% set hasBackgroundColor = slide.background and slide.background.color %}
+        {% set hasMediaBackground = hasBackgroundImage or hasBackgroundVideo %}
+        {% set hasBackgroundScreen = slide.background and slide.background.imageScreen and slide.background.imageScreen != 'none' %}
+        {% set screenColor = 'has-dark-screen' if slide.background and slide.background.imageScreen == 'dark' else 'has-light-screen' %}
+        {% set hasBackground = hasBackgroundImage or hasBackgroundVideo or hasBackgroundColor %}
+        {% set backgroundIsDark = slide.background and slide.background.isDark %}
+
+        <li class="hero-slide {% if loop.first %}is-selected{% endif %} {% if backgroundIsDark %}is-dark{% endif %} {% if slide.isReverse %}is-reverse{% endif %} js-slide"
+            {% if hasBackgroundColor %}style="background-color: {{ slide.background.color }};"{% endif %}>
+
+          {% if hasMediaBackground %}
+            <div class="media-background {% if hasBackgroundScreen %}{{ screenColor }}{% endif %}">
+              {% if hasBackgroundImage %}
+                {{ image(slide.background.image) }}
+              {% elif hasBackgroundVideo %}
+                <div class="background-video js-background-video" data-slideindex="{{ loop.index0 }}" data-autoplay="true">
+                  {% if slide.background.video.src == 'youtube' %}
+                    <iframe
+                      src="https://www.youtube.com/embed/{{ slide.background.video.id }}?autoplay=1&mute=1&loop=1&controls=0&showinfo=0&rel=0&modestbranding=1&playsinline=1&playlist={{ slide.background.video.id }}"
+                      frameborder="0"
+                      allow="autoplay; encrypted-media"
+                      allowfullscreen>
+                    </iframe>
+                  {% elif slide.background.video.src == 'vimeo' %}
+                    <iframe
+                      src="https://player.vimeo.com/video/{{ slide.background.video.id }}?autoplay=1&muted=1&loop=1&controls=0&background=1"
+                      frameborder="0"
+                      allow="autoplay; fullscreen"
+                      allowfullscreen>
+                    </iframe>
+                  {% elif slide.background.video.src == 'cloudinary' %}
+                    <video
+                      autoplay
+                      muted
+                      loop
+                      playsinline
+                      src="https://res.cloudinary.com/{{ slide.background.video.cloudname }}/video/upload/{{ slide.background.video.id }}.mp4">
+                    </video>
+                  {% else %}
+                    <!-- Fallback to video component for other providers -->
+                    {% set backgroundVideoConfig = {
+                      src: slide.background.video.src,
+                      id: slide.background.video.id,
+                      cloudname: slide.background.video.cloudname,
+                      tn: slide.background.video.tn,
+                      start: slide.background.video.start,
+                      end: slide.background.video.end,
+                      inline: true,
+                      autoplay: true,
+                      isBackground: true
+                    } %}
+                    {{ video(backgroundVideoConfig) }}
+                  {% endif %}
+                </div>
+              {% endif %}
+            </div>
+          {% endif %}
+
+          <div class="container">
+            <div class="hero-content {% if slide.text.isCentered %}is-text-centered{% endif %}">
+              {% if hasText %}
+                <div class="text-wrapper">
+                  {{ text(slide.text) }}
+                </div>
+              {% endif %}
+
+              {% if hasCtas %}
+                <div class="ctas-container">
+                  {{ ctas(slide.ctas) }}
+                </div>
+              {% endif %}
+            </div>
+
+            {% if hasImage %}
+              <div class="hero-content has-image">
+                {{ image(slide.image) }}
+              </div>
+            {% endif %}
+          </div>
+        </li>
+      {% endfor %}
+    </ul>
+
+    <nav class="hero-nav js-nav" aria-label="Slider navigation">
+      <ul>
+        {% for slide in section.slides %}
+          <li {% if loop.first %}class="is-selected"{% endif %}>
+            <a href="#slide-{{ loop.index }}" aria-label="Go to slide {{ loop.index }}">
+              {{ slide.navLabel or 'Slide ' + loop.index }}
+            </a>
+          </li>
+        {% endfor %}
+      </ul>
+    </nav>
+  </div>
+</div>

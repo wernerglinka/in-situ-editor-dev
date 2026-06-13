@@ -56,10 +56,12 @@
   /*
     Adjust the section height for transpartent header. Header is fixed
     so we need to move the section up and behind to compensate.
+    Also accounts for top-message bar via --top-message-offset custom property.
   */
   &.first-section {
     /* margin-top: calc(-1 * (var(--space-2xl-3xl))); */
-    padding-top: var(--space-3xl-4xl);
+    padding-top: calc(var(--space-3xl-4xl) + var(--top-message-offset, 0rem));
+    transition: padding-top 0.3s ease;
 
     &.demo {
       margin-top: var(--space-l-2xl);

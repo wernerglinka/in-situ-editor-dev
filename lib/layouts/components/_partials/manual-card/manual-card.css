@@ -1,0 +1,272 @@
+/**
+ * Manual Card Component Styles
+ *
+ * Modern CSS Layout Approach:
+ * - Container queries for component-level responsiveness
+ * - CSS custom properties for card dimensions
+ * - Design tokens for consistent theming
+ *
+ * Design Tokens:
+ * - --glass-background
+ * - --color-border-light
+ * - --space-2xs-xs
+ * - --glass-box-shadow
+ * - --contrast-text-on-dark
+ * - --color-icon-default
+ * - --space-s-m
+ * - --glass-background-light
+ * - --font-h5
+ * - --color-text
+ * - --font-s
+ * - --font-p
+ * - --space-3xs
+ * - --space-s
+ * - --space-l-xl
+ * - --space-2xl (replaces hardcoded 3rem)
+ * - --pattern1
+ * - --pattern2
+ * - --pattern3
+ * - --pattern4
+ * - --pattern5
+ */
+.manual-card {
+  container-type: inline-size;
+  container-name: manual-card;
+  display: block;
+  position: relative;
+
+  /* Card dimension custom properties */
+  --card-max-width: 30rem;
+  --card-decoration-height: 12rem;
+  --card-info-padding-bottom: var(--space-2xl, 3rem);
+  --card-horizontal-decoration-width: 20rem;
+  --card-horizontal-decoration-min-height: 15rem;
+
+  max-width: var(--card-max-width);
+  height: 100%;
+  background-color: var(--glass-background);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--space-2xs-xs);
+  overflow: hidden;
+  box-shadow: var(--glass-box-shadow);
+
+  &.is-dark .info * {
+    color: var(--contrast-text-on-dark);
+  }
+
+  .decoration {
+    height: var(--card-decoration-height);
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+    }
+
+    .icon-wrapper {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+
+      svg {
+        height: 80%;
+        width: 80%;
+        stroke: var(--color-icon-default);
+      }
+    }
+  }
+
+  .info {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    padding: var(--space-s-m);
+    padding-block-end: var(--card-info-padding-bottom);
+    background-color: var(--glass-background-light);
+  }
+
+  .title {
+    font-size: var(--font-h5);
+    text-transform: uppercase;
+    color: var(--color-text);
+  }
+  .sub-title {
+    margin: var(--space-3xs) 0 0;
+    font-size: var(--font-s);
+    font-style: italic;
+  }
+  /* restrict prose to three lines with ellipsis */
+  .prose {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    max-height: 4.5em; /* Fallback for browsers without line-clamp support */
+  }
+
+  .ctas {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-block-start: var(--space-s);
+    margin-top: auto;
+  }
+  .button {
+    margin: var(--space-s) auto 0;
+  }
+
+  &.has-image-background {
+    .image-background {
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      overflow: hidden;
+
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center;
+      }
+    }
+  }
+
+  &[class*='pattern'] {
+    background-color: transparent;
+    background-size: cover;
+    background-position: center;
+
+    .info {
+      background: none;
+      padding: var(--space-l-xl) var(--space-s-m);
+    }
+  }
+
+  &.pattern1 {
+    background-image: var(--pattern1);
+  }
+  &.pattern2 {
+    background-image: var(--pattern2);
+  }
+  &.pattern3 {
+    background-image: var(--pattern3);
+  }
+  &.pattern4 {
+    background-image: var(--pattern4);
+  }
+  &.pattern5 {
+    background-image: var(--pattern5);
+  }
+
+  &[class*='pattern'],
+  &.has-image-background {
+    display: flex;
+    flex-direction: column;
+
+    .info {
+      flex: 1 1 auto;
+      padding: var(--space-l-xl) var(--space-s-m);
+    }
+
+    .decoration + .info {
+      padding-block-start: var(--space-s-m);
+    }
+
+    /* restrict prose to seven lines with ellipsis */
+    .prose {
+      -webkit-line-clamp: 7;
+      max-height: 20em; /* Fallback for browsers without line-clamp support */
+    }
+  }
+
+  /**
+   * Whole card is a link 
+   */
+  &.link-wrapper {
+    color: var(--color-text);
+
+    .link-indicator {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      width: 100%;
+      padding-inline: var(--space-s-m);
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    &.is-dark svg {
+      stroke: var(--contrast-text-on-dark);
+    }
+  }
+
+  /**
+   * Horizontal layout
+   */
+  &.is-horizontal {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    max-width: 100%;
+    height: auto;
+
+    .decoration {
+      flex: 0 0 var(--card-horizontal-decoration-width);
+      height: auto;
+      min-height: var(--card-horizontal-decoration-min-height);
+
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .icon-wrapper {
+        padding: var(--space-l);
+      }
+    }
+
+    .info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: var(--space-m-l);
+    }
+
+    /* Remove prose line clamp for horizontal layout */
+    .prose {
+      -webkit-line-clamp: unset;
+      max-height: unset;
+    }
+
+    /* Adjust link indicator for horizontal layout */
+    &.link-wrapper .link-indicator {
+      padding-block: var(--space-s);
+    }
+
+    /* Responsive behavior for smaller screens */
+    @container manual-card (max-width: 48rem) {
+      flex-direction: column;
+
+      .decoration {
+        flex: 0 0 auto;
+        width: 100%;
+        height: var(--card-decoration-height);
+      }
+
+      .info {
+        flex: none;
+        width: 100%;
+      }
+
+      li {
+        max-width: var(--space-2xl, 17.5rem);
+      }
+    }
+  }
+}

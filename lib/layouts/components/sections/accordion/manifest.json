@@ -1,0 +1,102 @@
+{
+  "name": "accordion",
+  "type": "section",
+  "styles": ["accordion.css"],
+  "scripts": ["accordion.js"],
+  "requires": ["text", "ctas", "commons"],
+  "validation": {
+    "required": ["sectionType"],
+    "properties": {
+      "sectionType": {
+        "type": "string",
+        "const": "accordion"
+      },
+      "containerFields.inContainer": {
+        "type": "boolean"
+      },
+      "containerFields.isAnimated": {
+        "type": "boolean"
+      },
+      "text.titleTag": {
+        "type": "string",
+        "enum": ["h1", "h2", "h3", "h4", "h5", "h6"],
+        "default": "h2"
+      },
+      "faqs.scope": {
+        "type": "string",
+        "enum": ["all", "selections"]
+      },
+      "expandFirst": {
+        "type": "boolean"
+      },
+      "allowMultiple": {
+        "type": "boolean"
+      },
+      "ctas": {
+        "type": "array",
+        "items": {
+          "properties": {
+            "isButton": {
+              "type": "boolean"
+            },
+            "buttonStyle": {
+              "type": "string",
+              "enum": ["primary", "secondary", "tertiary", "inverted"]
+            },
+            "isSmall": {
+              "type": "boolean"
+            }
+          }
+        }
+      }
+    }
+  },
+  "fields": {
+    "text": {
+      "$use": "text"
+    },
+    "hasCenteredContent": {
+      "widget": "checkbox",
+      "label": "Center text",
+      "default": false
+    },
+    "faqs": {
+      "source": {
+        "widget": "text",
+        "label": "Data source (file in lib/data)",
+        "default": ""
+      },
+      "scope": {
+        "widget": "select",
+        "label": "Scope",
+        "enum": ["all", "selections"],
+        "default": "all"
+      },
+      "selections": {
+        "widget": "array",
+        "label": "Selected IDs (when scope is selections)",
+        "items": {
+          "id": {
+            "widget": "text",
+            "label": "ID",
+            "default": ""
+          }
+        }
+      }
+    },
+    "allowMultiple": {
+      "widget": "checkbox",
+      "label": "Allow multiple panels open",
+      "default": false
+    },
+    "expandIndex": {
+      "widget": "text",
+      "label": "Index of panel to expand on load (optional)",
+      "default": ""
+    },
+    "ctas": {
+      "$use": "ctas"
+    },
+    "$extends": ["commons"]
+  }
+}

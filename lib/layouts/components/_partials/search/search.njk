@@ -1,0 +1,50 @@
+{% macro search(info) %}
+  <!-- Extract settings from different possible structures for backward compatibility -->
+  {% set searchSource = info.source or info.settings.source or '/search-index.json' %}
+  {% set searchType = info.searchType or info.settings.searchType or 'default' %}
+  {% set searchId = info.id or info.settings.id or 'default' %}
+  {% set searchPlaceholder = info.placeholder or info.settings.placeholder or 'Search...' %}
+
+  <div class="search-container"
+       data-search-source="{{ searchSource }}"
+       data-search-type="{{ searchType }}">
+
+    {% if info.title %}
+      <h2 class="search-title">{{ info.title }}</h2>
+    {% endif %}
+
+    {% if info.subtitle %}
+      <p class="search-subtitle">{{ info.subtitle }}</p>
+    {% endif %}
+
+    <div class="search-input-container">
+      <input
+        type="text"
+        id="search-input-{{ searchId }}"
+        placeholder="{{ searchPlaceholder }}"
+        class="search-input"
+        autocomplete="off"
+        spellcheck="false"
+        aria-describedby="search-status-{{ searchId }}"
+      />
+      <button type="button"
+              id="search-clear-{{ searchId }}"
+              class="search-clear"
+              aria-label="Clear search">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+
+    <div class="search-status"
+         id="search-status-{{ searchId }}"
+         aria-live="polite"></div>
+
+    <div id="search-results-{{ searchId }}"
+         class="search-results flow"
+         role="region"
+         aria-label="Search results"></div>
+  </div>
+{% endmacro %}

@@ -1,0 +1,104 @@
+{# Get artwork data from the specified data file #}
+{% set artworks = data.artworks[section.artworks.source] %}
+{% set imageBasePath = '/assets/images/' + section.artworks.imageFolder + '/' %}
+
+<div
+  class="artist-slider-wrapper"
+  role="region"
+  aria-label="Artwork slideshow"
+  aria-roledescription="carousel"
+  data-cycle-time="{{ section.cycleTime | default(5000) }}"
+  tabindex="0"
+>
+  {# Slides container #}
+  <ul class="slides" aria-live="off">
+    {% for artwork in artworks %}
+      <li
+        class="slide {% if loop.index === 1 %}is-active{% endif %}"
+        role="group"
+        aria-roledescription="slide"
+        aria-label="{{ artwork.title }} - {{ loop.index }} of {{ artworks | length }}"
+        data-index="{{ loop.index0 }}"
+        data-title="{{ artwork.title }}"
+        data-description="{{ artwork.description }}"
+        data-size="{{ artwork.size }}"
+        data-year="{{ artwork.year }}"
+        data-materials="{{ artwork.materials }}"
+        {% if artwork.link %}data-link="{{ artwork.link }}"{% endif %}
+      >
+        <img
+          src="{{ imageBasePath }}{{ artwork.image }}"
+          alt="{{ artwork.alt }}"
+          loading="{% if loop.index === 1 %}eager{% else %}lazy{% endif %}"
+        >
+      </li>
+    {% endfor %}
+  </ul>
+
+  {# Info panel overlay #}
+  <div class="info-panel" aria-hidden="true">
+    <div class="info-content">
+      <h2 class="info-title"></h2>
+      <p class="info-description"></p>
+      <dl class="info-details">
+        <div class="info-detail">
+          <dt>Year</dt>
+          <dd class="info-year"></dd>
+        </div>
+        <div class="info-detail">
+          <dt>Size</dt>
+          <dd class="info-size"></dd>
+        </div>
+        <div class="info-detail">
+          <dt>Materials</dt>
+          <dd class="info-materials"></dd>
+        </div>
+      </dl>
+      <a class="info-link" href="#" aria-label="View artwork details">View Details</a>
+    </div>
+  </div>
+
+  {# Info toggle button #}
+  <button
+    type="button"
+    class="info-toggle"
+    aria-label="Show artwork information"
+    aria-expanded="false"
+    aria-controls="info-panel"
+  >
+    {% include "icons/info.njk" %}
+  </button>
+
+  {# Navigation dots #}
+  {% if section.showDots !== false %}
+    <nav class="nav-dots" aria-label="Slide navigation">
+      <ul role="group">
+        {% for artwork in artworks %}
+          <li>
+            <button
+              type="button"
+              class="nav-dot {% if loop.index === 1 %}is-active{% endif %}"
+              aria-label="Go to {{ artwork.title }}"
+              data-index="{{ loop.index0 }}"
+              {% if loop.index === 1 %}aria-current="true"{% endif %}
+            >
+              <span class="sr-only">Slide {{ loop.index }}</span>
+            </button>
+          </li>
+        {% endfor %}
+      </ul>
+    </nav>
+  {% endif %}
+
+  {# Scroll down indicator #}
+  {% if section.scrollTarget %}
+    <a
+      class="scroll-down"
+      href="{{ section.scrollTarget }}"
+      aria-label="Scroll to next section"
+    >
+      {% include "icons/arrow-down.njk" %}
+      <span class="sr-only">Scroll to next section</span>
+    </a>
+  {% endif %}
+</div>

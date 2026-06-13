@@ -1,37 +1,11 @@
 {
   "name": "flip-card",
   "type": "partial",
-  "styles": [
-    "flip-card.css"
-  ],
-  "scripts": [
-    "flip-card.js"
-  ],
-  "requires": [
-    "ctas",
-    "text",
-    "icon",
-    "commons"
-  ],
-  "fields": {
-    "front": {
-      "icon": {
-        "icon": { "widget": "text", "label": "Front icon name", "default": "" },
-        "url": { "widget": "text", "label": "Front icon link URL", "default": "" }
-      },
-      "text": { "$use": "text", "titleTag": { "default": "h3" } },
-      "ctas": { "$use": "ctas" }
-    },
-    "back": {
-      "text": { "$use": "text", "titleTag": { "default": "h3" } },
-      "ctas": { "$use": "ctas" }
-    }
-  },
+  "styles": ["flip-card.css"],
+  "scripts": ["flip-card.js"],
+  "requires": ["ctas", "text", "icon", "commons"],
   "validation": {
-    "required": [
-      "front",
-      "back"
-    ],
+    "required": ["front", "back"],
     "properties": {
       "front": {
         "type": "object",
@@ -65,6 +39,40 @@
             "type": "array"
           }
         }
+      }
+    }
+  },
+  "fields": {
+    "front": {
+      "icon": {
+        "widget": "text",
+        "label": "Front icon name (optional)",
+        "default": ""
+      },
+      "url": {
+        "widget": "text",
+        "label": "Front icon link URL (optional)",
+        "default": ""
+      },
+      "text": {
+        "$use": "text",
+        "titleTag": {
+          "default": "h3"
+        }
+      },
+      "ctas": {
+        "$use": "ctas"
+      }
+    },
+    "back": {
+      "text": {
+        "$use": "text",
+        "titleTag": {
+          "default": "h3"
+        }
+      },
+      "ctas": {
+        "$use": "ctas"
       }
     }
   }

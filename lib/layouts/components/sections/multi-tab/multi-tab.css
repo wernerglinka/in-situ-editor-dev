@@ -1,0 +1,50 @@
+/**
+ * Multi-Tab Component
+ *
+ * Tab navigation and panel visibility.
+ * Content inside panels is styled by the included child component (e.g., image-grid).
+ */
+
+/* Override the default flex layout on .content so text + tabs stack vertically */
+section:has(.tabs-component) .content {
+  display: block;
+}
+
+.tabs-nav {
+  display: flex;
+  gap: var(--space-2xs);
+  margin-block: var(--space-m);
+}
+
+.tabs-button {
+  padding: var(--space-2xs) var(--space-m);
+  border: 1px solid var(--color-border-light);
+  background: none;
+  box-shadow: none;
+  font-family: var(--font-heading);
+  font-size: var(--font-p);
+  font-weight: 400;
+  color: var(--color-text-inactive, #999);
+  cursor: pointer;
+  position: relative;
+  transition: color var(--transition-base);
+}
+
+.tabs-button[aria-selected='true'] {
+  color: var(--color-text);
+  font-weight: 600;
+}
+
+.tabs-button:hover:not([aria-selected='true']) {
+  color: var(--color-text);
+}
+
+.tabs-button:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: -2px;
+}
+
+/* Panel visibility */
+.tabs-panel[hidden] {
+  display: none;
+}

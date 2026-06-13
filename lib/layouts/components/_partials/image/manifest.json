@@ -1,22 +1,11 @@
 {
   "name": "image",
   "type": "partial",
-  "styles": [
-    "image.css"
-  ],
+  "styles": ["image.css"],
   "scripts": [],
   "requires": [],
-  "fields": {
-    "src": { "widget": "image", "label": "Image", "default": "", "required": true },
-    "alt": { "widget": "text", "label": "Alt text", "default": "", "required": true },
-    "caption": { "widget": "text", "label": "Caption", "default": "" },
-    "url": { "widget": "text", "label": "Link URL (optional)", "default": "" }
-  },
   "validation": {
-    "required": [
-      "src",
-      "alt"
-    ],
+    "required": ["src", "alt"],
     "properties": {
       "src": {
         "type": "string"
@@ -30,6 +19,30 @@
       "url": {
         "type": "string"
       }
+    }
+  },
+  "fields": {
+    "src": {
+      "widget": "image",
+      "label": "Image",
+      "default": "",
+      "required": true
+    },
+    "alt": {
+      "widget": "text",
+      "label": "Alt text",
+      "default": "",
+      "required": true
+    },
+    "caption": {
+      "widget": "text",
+      "label": "Caption",
+      "default": ""
+    },
+    "url": {
+      "widget": "text",
+      "label": "Link URL (optional)",
+      "default": ""
     }
   }
 }

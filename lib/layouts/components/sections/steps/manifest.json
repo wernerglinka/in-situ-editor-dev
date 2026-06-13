@@ -1,0 +1,75 @@
+{
+  "name": "steps",
+  "type": "section",
+  "styles": ["steps.css"],
+  "requires": ["text", "icon", "commons"],
+  "description": "Display a process or how-it-works section with numbered or icon-based steps",
+  "example": {
+    "sectionType": "steps",
+    "text": {
+      "title": "How It Works",
+      "subTitle": "Get started in three easy steps"
+    },
+    "steps": {
+      "layout": "horizontal",
+      "showNumbers": true,
+      "items": [
+        {
+          "title": "Sign Up",
+          "description": "Create your free account in seconds.",
+          "icon": "user-plus"
+        },
+        {
+          "title": "Configure",
+          "description": "Set up your preferences and integrations.",
+          "icon": "settings"
+        },
+        {
+          "title": "Launch",
+          "description": "Go live and start seeing results.",
+          "icon": "rocket"
+        }
+      ]
+    }
+  },
+  "fields": {
+    "text": {
+      "$use": "text"
+    },
+    "steps": {
+      "layout": {
+        "widget": "select",
+        "label": "Layout",
+        "enum": ["horizontal", "vertical"],
+        "default": "horizontal"
+      },
+      "showNumbers": {
+        "widget": "checkbox",
+        "label": "Show numbers",
+        "default": true
+      },
+      "items": {
+        "widget": "array",
+        "label": "Steps",
+        "items": {
+          "icon": {
+            "widget": "text",
+            "label": "Icon (optional)",
+            "default": ""
+          },
+          "title": {
+            "widget": "text",
+            "label": "Title",
+            "default": ""
+          },
+          "description": {
+            "widget": "text",
+            "label": "Description",
+            "default": ""
+          }
+        }
+      }
+    },
+    "$extends": ["commons"]
+  }
+}

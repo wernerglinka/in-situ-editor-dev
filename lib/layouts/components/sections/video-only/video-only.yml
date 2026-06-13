@@ -1,0 +1,29 @@
+- sectionType: video-only
+  containerTag: section
+  classes: ""
+  id: ""
+  isDisabled: false
+  isAnimated: true
+  containerFields:
+    inContainer: true
+    noMargin:
+      top: false
+      bottom: false
+    noPadding:
+      top: true
+      bottom: true
+    background:
+      color: ""
+      image: ""
+      imageScreen: "none"
+  video:
+    inSitu: true
+    src: "youtube"
+    id: "VIDEO_ID"
+    tn: "/assets/images/video-thumbnail.jpg"
+    alt: "Video description for accessibility"
+  ctas:
+    - url: "#"
+      label: "Learn More"
+      isButton: true
+      buttonStyle: "tertiary"

@@ -1,0 +1,15 @@
+{% from "components/_partials/ctas/ctas.njk" import ctas %}
+{% from "components/_partials/icon/icon.njk" import icon %}
+
+<div class="content container">
+  {% if section.icon %}
+    <div class="media">
+      {{ icon(section.icon) }}
+    </div>
+  {% endif %}
+  {% if section.ctas | hasCtas %}
+    <div class="ctas-wrapper">
+      {{ ctas(section.ctas) }}
+    </div>
+  {% endif %}
+</div>

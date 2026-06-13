@@ -1,12 +1,15 @@
 # Logos List Section Component
 
-A dynamic marquee-style component for displaying collections of logos, client marks, partner organizations, or social media links. Features intelligent scrolling behavior, fade effects, and responsive design that automatically adapts to screen size and content width.
+A dynamic marquee-style component for displaying collections of logos, client marks, partner organizations, awards, social proof, or social media links. Features intelligent scrolling behavior, fade effects, responsive design that automatically adapts to screen size and content width, and optional text/CTA sections.
 
 ## Features
 
 - **Intelligent Auto-Scroll**: Automatically scrolls only when content exceeds viewport width
 - **Smooth Marquee Animation**: CSS-based marquee with configurable speed and direction
 - **Fade Edge Effects**: Gradient masks create smooth fade-in/fade-out at edges during scrolling
+- **Text Content Support**: Optional text block with lead-in, title, subtitle, and prose
+- **CTA Integration**: Optional call-to-action buttons below the logo list
+- **Title Display**: Optional title display under each logo/icon for awards and social proof
 - **Data Source Integration**: Connects to JSON data files for logo collections
 - **Flexible Selection**: Display all logos or filter specific selections by title
 - **Responsive Behavior**: Uses ResizeObserver for dynamic layout adjustments
@@ -14,6 +17,7 @@ A dynamic marquee-style component for displaying collections of logos, client ma
 - **Hover Pause**: Scrolling pauses on hover for better user interaction
 - **Configurable Dimensions**: Customizable logo width and container sizing
 - **Interactive States**: Hover effects for logos with smooth transitions
+- **Centered Content Option**: Center-align text and CTAs when appropriate
 
 ## Data Structure
 
@@ -24,6 +28,7 @@ A dynamic marquee-style component for displaying collections of logos, client ma
   id: "logosList"
   classes: ""
   isReverse: false     # Enables reverse scrolling direction
+  hasCenteredContent: false  # Centers text and CTAs
   containerFields:
     inContainer: false
     isAnimated: true
@@ -37,28 +42,50 @@ A dynamic marquee-style component for displaying collections of logos, client ma
       color: ""
       image: ""
       imageScreen: "none"
+  text:
+    leadIn: ""
+    title: "Our Partners"
+    titleTag: "h2"
+    subTitle: ""
+    prose: "We work with industry-leading organizations"
   logos:
     source: "artMuseums"    # Name of JSON data file (without extension)
     logoWidth: 200          # Width in pixels for each logo
     scope: "all"            # "all" or "selections"
     selections: []          # Array of titles when scope is "selections"
+    showTitle: false        # Display title under each logo (useful for awards)
+  ctas:
+    - url: "/partners"
+      label: "View All Partners"
+      isButton: true
+      buttonStyle: "primary"
 
-# Alternative with selections
+# Alternative with selections and awards display
 - sectionType: logos-list
+  hasCenteredContent: true
+  text:
+    title: "Awards & Recognition"
+    prose: "Our work has been recognized by leading industry organizations"
   logos:
-    source: "socialLinks"
-    logoWidth: 90
-    scope: "selections"
-    selections:
-      - "LinkedIn"
-      - "GitHub"
-      - "Twitter"
+    source: "awards"
+    logoWidth: 160
+    scope: "all"
+    showTitle: true  # Shows award titles
+  ctas:
+    - url: "/awards"
+      label: "Learn More About Our Awards"
 ```
 
 ## HTML Structure
 
 ```html
 <div class="container logo-list content">
+  <!-- Optional text section -->
+  <div class="text flow is-centered">
+    <h2>Our Partners</h2>
+    <p>We work with industry-leading organizations</p>
+  </div>
+  
   <div class="marquee" style="--list-width: 1400px">
     <div class="mask">
       <div class="logos-wrapper">
@@ -69,6 +96,8 @@ A dynamic marquee-style component for displaying collections of logos, client ma
             <a href="https://example.com/">
               <img src="/assets/images/logo1.svg" alt="Company Logo">
             </a>
+            <!-- Optional title display -->
+            <div class="logo-title">Award Name</div>
           </li>
           <li style="width: 200px;">
             <a href="https://example.com/">
@@ -85,6 +114,11 @@ A dynamic marquee-style component for displaying collections of logos, client ma
         
       </div>
     </div>
+  </div>
+  
+  <!-- Optional CTAs section -->
+  <div class="ctas flow is-centered">
+    <a href="/partners" class="button primary">View All Partners</a>
   </div>
 </div>
 ```
@@ -146,6 +180,14 @@ A dynamic marquee-style component for displaying collections of logos, client ma
   filter: grayscale(0);
   opacity: 1;
 }
+
+/* Title styling for awards */
+.logo-title {
+  margin-top: var(--space-xs);
+  font-size: var(--font-size-sm);
+  text-align: center;
+  color: var(--color-text-secondary);
+}
 ```
 
 ## JavaScript Functionality
@@ -198,6 +240,18 @@ For icon-based entries (social links):
 ]
 ```
 
+### Awards Data Structure
+For awards and recognition:
+```json
+[
+  {
+    "url": "/awards/best-design",
+    "logo": "/assets/images/award-logo.svg",
+    "title": "Best Design Award 2024"
+  }
+]
+```
+
 ### Selection Filtering
 When using `scope: "selections"`, the component filters by the `title` field:
 ```yaml
@@ -219,10 +273,38 @@ logos:
     inContainer: true
     background:
       color: "#f8f9fa"
+  text:
+    title: "Trusted by Leading Brands"
+    prose: "Join thousands of companies that trust our platform"
   logos:
     source: "clientLogos"
     logoWidth: 180
     scope: "all"
+  ctas:
+    - url: "/clients"
+      label: "View Case Studies"
+      isButton: true
+```
+
+### Awards & Recognition
+```yaml
+- sectionType: logos-list
+  containerTag: section
+  hasCenteredContent: true
+  text:
+    title: "Awards & Recognition"
+    titleTag: "h2"
+    prose: "Our commitment to excellence has been recognized by industry leaders"
+  logos:
+    source: "awards"
+    logoWidth: 160
+    scope: "all"
+    showTitle: true  # Display award names
+  ctas:
+    - url: "/about/awards"
+      label: "Learn More"
+      isButton: true
+      buttonStyle: "secondary"
 ```
 
 ### Social Media Links
@@ -243,15 +325,24 @@ logos:
 ```yaml
 - sectionType: logos-list
   isReverse: true
+  text:
+    title: "Our Partners"
+    prose: "We collaborate with organizations that share our vision"
   logos:
     source: "partners"
     logoWidth: 200
     scope: "all"
+  ctas:
+    - url: "/partnerships"
+      label: "Become a Partner"
+      isButton: true
 ```
 
 ### Technology Stack Display
 ```yaml
 - sectionType: logos-list
+  text:
+    title: "Built With Best-in-Class Technology"
   logos:
     source: "technologies"
     logoWidth: 120
@@ -306,10 +397,14 @@ Modify edge gradient effects:
 
 - `logo`: Renders individual logo images with links
 - `icon`: Renders SVG icons for social links and icon-based entries
+- `text`: Renders text content block (lead-in, title, subtitle, prose)
+- `ctas`: Renders call-to-action buttons
 - `commons`: Provides base container and styling utilities
 
 ## Required Nunjucks Filters
 - `getSelections`: Custom filter for filtering data by selections array
+- `hasText`: Check if text object has meaningful content
+- `hasCtas`: Check if CTAs array has valid entries
 
 ## Accessibility
 
@@ -327,8 +422,11 @@ Modify edge gradient effects:
 3. **Performance**: Limit logo count for better performance (recommended: 6-12 logos)
 4. **Consistent Sizing**: Use similar aspect ratios for visual consistency
 5. **Load Testing**: Test with various screen sizes and logo counts
-6. **Content Strategy**: Group related logos logically (clients, partners, etc.)
+6. **Content Strategy**: Group related logos logically (clients, partners, awards, etc.)
 7. **Fallbacks**: Provide fallback images for external logo dependencies
+8. **Award Titles**: Use `showTitle: true` for awards and social proof sections
+9. **Text Content**: Include descriptive text to provide context for logo collections
+10. **CTAs**: Add clear calls-to-action to guide users to more information
 
 ## Performance Considerations
 
@@ -345,4 +443,4 @@ Modify edge gradient effects:
 - **Mobile Optimization**: Touch-friendly interactions and responsive behavior
 - **Performance**: Optimized for various device capabilities
 
-The logos list component provides an elegant solution for showcasing organizational relationships, social presence, and brand partnerships while maintaining excellent performance and user experience.
+The logos list component provides an elegant solution for showcasing organizational relationships, awards, social presence, and brand partnerships while maintaining excellent performance and user experience.

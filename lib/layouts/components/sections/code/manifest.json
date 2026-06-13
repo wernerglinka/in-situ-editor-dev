@@ -1,0 +1,75 @@
+{
+  "name": "code",
+  "type": "section",
+  "styles": ["code.css"],
+  "scripts": ["code.js"],
+  "requires": ["commons"],
+  "validation": {
+    "required": ["sectionType", "code"],
+    "properties": {
+      "sectionType": {
+        "type": "string",
+        "const": "code"
+      },
+      "containerFields.inContainer": {
+        "type": "boolean"
+      },
+      "containerFields.isAnimated": {
+        "type": "boolean"
+      },
+      "code.language": {
+        "type": "string",
+        "description": "Programming language for syntax highlighting"
+      },
+      "code.content": {
+        "type": "string",
+        "description": "The code content to display"
+      },
+      "code.theme": {
+        "type": "string",
+        "enum": ["default", "tomorrow", "okaidia", "twilight", "prism", "dark", "solarizedlight", "coy"],
+        "default": "default",
+        "description": "Prism theme to load dynamically"
+      },
+      "code.filename": {
+        "type": "string",
+        "description": "Optional filename to display"
+      },
+      "code.showCopy": {
+        "type": "boolean",
+        "default": true,
+        "description": "Show copy to clipboard button"
+      }
+    }
+  },
+  "fields": {
+    "code": {
+      "language": {
+        "widget": "text",
+        "label": "Language",
+        "default": "javascript"
+      },
+      "content": {
+        "widget": "textarea",
+        "label": "Code",
+        "default": ""
+      },
+      "theme": {
+        "widget": "text",
+        "label": "Theme (optional)",
+        "default": ""
+      },
+      "filename": {
+        "widget": "text",
+        "label": "Filename (optional)",
+        "default": ""
+      },
+      "showCopy": {
+        "widget": "checkbox",
+        "label": "Show copy button",
+        "default": true
+      }
+    },
+    "$extends": ["commons"]
+  }
+}

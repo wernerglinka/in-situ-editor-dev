@@ -1,5 +1,8 @@
 {% from "components/_partials/branding/branding.njk" import branding %}
 {% from "components/_partials/navigation/navigation.njk" import navigation %}
+{% from "components/_partials/dark-light-theme-switcher/dark-light-theme-switcher.njk" import darkLightThemeSwitcher %}
+{% from "components/_partials/language-switcher/language-switcher.njk" import languageSwitcher %}
+{% from "components/_partials/icon/icon.njk" import icon %}
 
 <div class="header-wrapper{% if topMessage %} has-top-message{% endif %}">
   {% if topMessage %}
@@ -19,11 +22,48 @@
   {% endif %}
 
   <header>
-      {% set link = '/' %}
-      {% set img = { src: '/assets/images/metalsmith2025-logo-bug.png', alt: 'Metalsmith Starter' } %}
+      {# Branding from site configuration - requires site.branding in site data #}
+      {% set link = site.branding.link if site.branding else '/' %}
+      {% set img = site.branding.logo if site.branding else { src: '/assets/images/logo.png', alt: 'Site Logo' } %}
 
       {{ branding( link, img ) }}
 
       {{ navigation( mainMenu, urlPath )}}
+
+      <div class="misc">
+        <button type="button" class="search-icon-toggle" aria-label="Toggle search" aria-expanded="false">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <path d="m21 21-4.35-4.35"></path>
+          </svg>
+        </button>
+        {{ languageSwitcher(data.languages.available, data.languages.defaultLang, data.languages.fallbackUrl) }}
+        {{ darkLightThemeSwitcher() }}
+        {{ icon( {
+          url: "https://github.com/wernerglinka/nunjucks-components",
+          icon: "github",
+          title: "GitHub Icon"
+        } ) }}
+      </div>
   </header>
+</div>
+
+<div class="header-search-overlay">
+  <form class="header-search-form" action="/search/" method="get" role="search">
+    <input
+      type="search"
+      name="q"
+      id="header-search-input"
+      class="header-search-input"
+      placeholder="Search..."
+      autocomplete="off"
+      aria-label="Search the site"
+    />
+    <button type="submit" class="none" aria-label="Submit search">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="11" cy="11" r="8"></circle>
+        <path d="m21 21-4.35-4.35"></path>
+      </svg>
+    </button>
+  </form>
 </div>

@@ -1,0 +1,110 @@
+/**
+ * Social Shares Section Styles
+ *
+ * Design Tokens:
+ * - --color-text
+ * - --color-primary
+ * - --space-s
+ * - --space-m
+ * - --space-m-l
+ */
+
+.social-shares .content {
+  .text {
+    max-width: clamp(45ch, 65ch, 80ch);
+
+    &.is-centered {
+      text-align: center;
+    }
+  }
+}
+
+.social-shares-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: var(--space-m);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  li {
+    display: inline-block;
+
+    a {
+      display: inline-block;
+      border: none;
+      text-decoration: none;
+      transition: transform 0.2s ease-in-out;
+
+      &:hover {
+        text-decoration: none;
+      }
+
+      &::after {
+        display: none;
+      }
+
+      svg {
+        width: auto;
+        height: 3rem;
+        stroke-width: 0;
+        stroke: var(--color-text);
+        fill: var(--color-text);
+        transition: all 0.5s ease-in-out;
+      }
+    }
+
+    /* platform-specific hover colors (match brand) */
+    &.bluesky a:hover svg {
+      fill: #1185fe;
+      stroke: #1185fe;
+    }
+
+    &.linkedin a:hover svg {
+      fill: #0077b5;
+      stroke: #0077b5;
+    }
+
+    &.facebook a:hover svg {
+      fill: #316ff6;
+      stroke: #316ff6;
+    }
+
+    &.twitter a:hover svg {
+      fill: #1da1f2;
+      stroke: #1da1f2;
+    }
+
+    /* Mail is a Feather outline icon — keep fill transparent, show the stroke */
+    &.mail a svg {
+      fill: var(--color-text);
+      stroke-width: 1;
+      stroke: var(--color-text-light);
+    }
+
+    &.mail a:hover svg {
+      opacity: 0.5;
+    }
+
+    &.custom a:hover svg {
+      fill: var(--color-primary);
+      stroke: var(--color-primary);
+    }
+  }
+}
+
+/* Dark theme: icons use light text color */
+.dark-theme .social-shares-list li a svg,
+.dark-theme .social-shares-list li a svg * {
+  fill: var(--color-text);
+  stroke: var(--color-text);
+}
+
+/* Dark theme: mail stays a stroke-only outline */
+.dark-theme .social-shares-list li.mail a svg,
+.dark-theme .social-shares-list li.mail a svg * {
+  fill: none;
+  stroke: var(--color-text);
+}

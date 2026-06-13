@@ -1,0 +1,91 @@
+{
+  "name": "timeline",
+  "type": "section",
+  "styles": ["timeline.css"],
+  "requires": ["text", "icon", "commons"],
+  "validation": {
+    "required": ["sectionType"],
+    "properties": {
+      "sectionType": {
+        "type": "string",
+        "const": "timeline"
+      },
+      "isDisabled": {
+        "type": "boolean"
+      },
+      "containerFields.inContainer": {
+        "type": "boolean"
+      },
+      "containerFields.isAnimated": {
+        "type": "boolean"
+      },
+      "containerFields.noMargin.top": {
+        "type": "boolean"
+      },
+      "containerFields.noMargin.bottom": {
+        "type": "boolean"
+      },
+      "containerFields.noPadding.top": {
+        "type": "boolean"
+      },
+      "containerFields.noPadding.bottom": {
+        "type": "boolean"
+      },
+      "containerFields.background.isDark": {
+        "type": "boolean"
+      },
+      "timeline.layout": {
+        "type": "string",
+        "enum": ["vertical", "horizontal"]
+      },
+      "timeline.alternating": {
+        "type": "boolean"
+      }
+    }
+  },
+  "fields": {
+    "text": {
+      "$use": "text"
+    },
+    "timeline": {
+      "layout": {
+        "widget": "select",
+        "label": "Layout",
+        "enum": ["vertical", "horizontal"],
+        "default": "vertical"
+      },
+      "alternating": {
+        "widget": "checkbox",
+        "label": "Alternating sides",
+        "default": true
+      },
+      "events": {
+        "widget": "array",
+        "label": "Events",
+        "items": {
+          "icon": {
+            "widget": "text",
+            "label": "Icon (optional)",
+            "default": ""
+          },
+          "year": {
+            "widget": "text",
+            "label": "Year",
+            "default": ""
+          },
+          "title": {
+            "widget": "text",
+            "label": "Title",
+            "default": ""
+          },
+          "description": {
+            "widget": "text",
+            "label": "Description",
+            "default": ""
+          }
+        }
+      }
+    },
+    "$extends": ["commons"]
+  }
+}

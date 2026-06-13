@@ -52,7 +52,7 @@ sections:
       alt: ''
       caption: ''
 
-  - sectionType: text-only
+  - sectionType: rich-text
     containerTag: article
     classes: ''
     id: 'section-id'
@@ -118,7 +118,7 @@ sections:
       alt: ''
       caption: ''
 
-  - sectionType: text-only
+  - sectionType: rich-text
     containerTag: article
     classes: 'banner-accordion-content is-closed'
     id: 'section-id'
@@ -188,7 +188,7 @@ sections:
       alt: ''
       caption: ''
 
-  - sectionType: text-only
+  - sectionType: rich-text
     containerTag: article
     classes: 'banner-accordion-content is-closed'
     id: 'section-id'
@@ -259,7 +259,7 @@ sections:
       alt: ''
       caption: ''
 
-  - sectionType: text-only
+  - sectionType: rich-text
     containerTag: article
     classes: 'banner-accordion-content is-closed'
     id: 'section-id'
@@ -329,7 +329,7 @@ sections:
       alt: ''
       caption: ''
 
-  - sectionType: text-only
+  - sectionType: rich-text
     containerTag: article
     classes: 'banner-accordion-content is-closed'
     id: 'section-id'
@@ -399,7 +399,7 @@ sections:
       alt: ''
       caption: ''
 
-  - sectionType: text-only
+  - sectionType: rich-text
     containerTag: article
     classes: 'banner-accordion-content is-closed'
     id: 'section-id'

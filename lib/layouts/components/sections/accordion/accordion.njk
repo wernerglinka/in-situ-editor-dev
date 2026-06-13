@@ -1,0 +1,70 @@
+{% from "components/_partials/text/text.njk" import text %}
+{% from "components/_partials/ctas/ctas.njk" import ctas %}
+
+{# 
+  This section displays an accordion of FAQs.
+  It can be configured to show all FAQs or a selection based on provided IDs.
+#}
+<div class="container content">
+  {# 
+    if scope is set to all we will show all FAQs that are available in 
+    data[section.faqs.source] 
+  #}
+  {% if section.faqs.scope === "all" %}
+    {% set faqsList = data[section.faqs.source] %}
+  {% endif %}
+  
+
+  {# 
+    filter the whole list which is available in data[section.faqs.source] with 
+    the list item ids which is available in section.faqs.selections. 
+  #}
+  {% if section.faqs.scope === "selections" %}
+    {% set faqsList = data[section.faqs.source] | getSelections(section.faqs.selections) %}
+  {% endif %}
+
+  {# if there is text render the text block #}
+  {% if section.text | hasText %}
+    <div class="text flow {% if section.hasCenteredContent %}is-centered{% endif %}">
+      {{ text(section.text)}}
+    </div>
+  {% endif %}
+
+  {# render the accordion #}
+  {% if faqsList | hasItems %}
+    <div class="accordion js-accordion"
+         {% if section.allowMultiple %}data-allow-multiple{% endif %}
+         {% if section.expandIndex is not null %}data-expand-index="{{ section.expandIndex }}"{% endif %}>
+      {# Add toggle all link when multiple panels are allowed #}
+      {% if section.allowMultiple %}
+        <a href="#" class="accordion-toggle-all js-accordion-toggle-all" aria-label="Toggle all panels">
+          <span class="toggle-text">Open All</span>
+        </a>
+      {% endif %}
+      {% for faq in faqsList %}
+        <div class="accordion-item{% if faq.isFancy %} is-fancy{% endif %}">
+          <button class="accordion-header js-accordion-header"
+                  aria-expanded="{% if section.expandIndex == loop.index0 %}true{% else %}false{% endif %}"
+                  aria-controls="accordion-panel-{{ loop.index }}"
+                  {% if faq.background %}
+                    {% if faq.background.image %}style="background-image: url('{{ faq.background.image }}');"{% endif %}
+                    {% if faq.background.color and not faq.background.image %}style="background-color: {{ faq.background.color }};"{% endif %}
+                  {% endif %}>
+            <p class="title">{{ faq.title }}</p>
+          </button>
+          <div id="accordion-panel-{{ loop.index }}"
+               class="accordion-panel js-accordion-panel {% if section.expandIndex != loop.index0 %} is-closed{% endif %}">
+            {{ faq.answer | mdToHTML | safe }}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  {# if ctas render them #}
+  {% if section.ctas | hasCtas %}
+    <div class="ctas flow {% if section.hasCenteredContent %}is-centered{% endif %}">
+      {{ ctas(section.ctas) }}
+    </div>
+  {% endif %}
+</div>

@@ -1,0 +1,26 @@
+- sectionType: image-compare
+  containerTag: section
+  classes: ""
+  id: ""
+  isDisabled: false
+  isAnimated: true
+  containerFields:
+    inContainer: false
+    noMargin:
+      top: true
+      bottom: true
+    noPadding:
+      top: false
+      bottom: false
+    background:
+      color: ""
+      image: ""
+      imageScreen: "none"
+  imageBefore:
+    src: "/assets/images/before.jpg"
+    alt: "Description of the before image for accessibility"
+    caption: ""
+  imageAfter:
+    src: "/assets/images/after.jpg"
+    alt: "Description of the after image for accessibility"
+    caption: ""

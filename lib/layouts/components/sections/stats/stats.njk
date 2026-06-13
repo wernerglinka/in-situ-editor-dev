@@ -1,0 +1,37 @@
+{% from "components/_partials/text/text.njk" import text %}
+
+<div class="container content">
+  {% if section.text | hasText %}
+    <div class="stats-header flow">
+      {{ text(section.text) }}
+    </div>
+  {% endif %}
+
+  {% if section.stats.items %}
+    {% set layout = section.stats.layout or "grid" %}
+
+    <ul class="stats-list is-{{ layout }}" role="list">
+      {% for item in section.stats.items %}
+        <li class="stat-item">
+          {% if item.icon %}
+            <span class="stat-icon">
+              {% include "icons/" + item.icon + ".njk" ignore missing %}
+            </span>
+          {% endif %}
+
+          <span class="stat-value">{{ item.value }}</span>
+
+          {% if item.label %}
+            <span class="stat-label">{{ item.label }}</span>
+          {% endif %}
+
+          {% if item.description %}
+            <p class="stat-description">{{ item.description }}</p>
+          {% endif %}
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>No stats items found</p>
+  {% endif %}
+</div>

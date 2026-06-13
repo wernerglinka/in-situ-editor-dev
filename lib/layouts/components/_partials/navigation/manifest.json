@@ -1,34 +1,21 @@
 {
   "name": "navigation",
   "type": "partial",
-  "styles": [
-    "navigation.css"
-  ],
-  "scripts": [
-    "navigation.js"
-  ],
+  "styles": ["navigation.css"],
+  "scripts": ["navigation.js"],
   "requires": [],
+  "context": ["urlPath"],
   "validation": {
-    "required": [
-      "mainMenu",
-      "urlPath"
-    ],
+    "required": ["mainMenu", "urlPath"],
     "properties": {
       "mainMenu": {
         "type": "array",
         "items": {
           "type": "object",
-          "required": [
-            "path",
-            "title"
-          ],
+          "required": ["path", "title"],
           "properties": {
-            "path": {
-              "type": "string"
-            },
-            "title": {
-              "type": "string"
-            }
+            "path": { "type": "string" },
+            "title": { "type": "string" }
           }
         }
       },

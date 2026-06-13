@@ -1,0 +1,25 @@
+# Language Switcher Component
+#
+# This partial is typically included in the header component.
+# It doesn't require frontmatter configuration - the available
+# languages are passed as macro parameters.
+#
+# Example macro usage in a template:
+#
+# {% from "components/_partials/language-switcher/language-switcher.njk" import languageSwitcher %}
+#
+# Default languages (no parameters needed):
+# {{ languageSwitcher() }}
+#
+# Custom languages:
+# {{ languageSwitcher([
+#   { code: 'en', label: 'English' },
+#   { code: 'de', label: 'Deutsch' },
+#   { code: 'fr', label: 'Francais' }
+# ], 'en') }}
+#
+# The component:
+# - Stores preference in localStorage under 'language' key
+# - Sets the lang attribute on <html> element
+# - Persists across page loads
+# - Does NOT change URLs (see blog post for full i18n implementation)

@@ -1,0 +1,28 @@
+- sectionType: team-grid
+  containerTag: section
+  classes: ""
+  id: ""
+  isDisabled: false
+  containerFields:
+    inContainer: true
+    isAnimated: true
+    noMargin:
+      top: false
+      bottom: false
+    noPadding:
+      top: false
+      bottom: false
+    background:
+      color: ""
+      image: ""
+      imageScreen: "none"
+      isDark: false
+  text:
+    leadIn: ""
+    title: "Meet Our Team"
+    titleTag: "h2"
+    subTitle: ""
+    prose: "The talented people behind our success."
+  team:
+    source: "team-example"
+    layout: "grid"

@@ -1,0 +1,46 @@
+{% from "components/_partials/text/text.njk" import text %}
+
+<div class="container content">
+  {% if section.text | hasText %}
+    <div class="timeline-header flow">
+      {{ text(section.text) }}
+    </div>
+  {% endif %}
+
+  {% if section.timeline.events %}
+    {% set layout = section.timeline.layout or "vertical" %}
+    {% set alternating = section.timeline.alternating if section.timeline.alternating is defined else true %}
+
+    <ol class="timeline-list is-{{ layout }}{% if alternating and layout === 'vertical' %} is-alternating{% endif %}" role="list">
+      {% for event in section.timeline.events %}
+        <li class="timeline-event">
+          <div class="event-marker">
+            {% if event.icon %}
+              <span class="event-icon">
+                {% include "icons/" + event.icon + ".njk" ignore missing %}
+              </span>
+            {% else %}
+              <span class="event-icon">
+                {% include "icons/circle.njk" ignore missing %}
+              </span>
+            {% endif %}
+          </div>
+
+          <div class="event-content">
+            {% if event.year %}
+              <span class="event-year">{{ event.year }}</span>
+            {% endif %}
+            {% if event.title %}
+              <h3 class="event-title">{{ event.title }}</h3>
+            {% endif %}
+            {% if event.description %}
+              <p class="event-description">{{ event.description }}</p>
+            {% endif %}
+          </div>
+        </li>
+      {% endfor %}
+    </ol>
+  {% else %}
+    <p>No timeline events found</p>
+  {% endif %}
+</div>

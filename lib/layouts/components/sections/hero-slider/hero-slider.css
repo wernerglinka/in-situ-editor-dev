@@ -1,0 +1,532 @@
+/**
+ * Hero Slider Section Styles
+ *
+ * Modern CSS Layout Approach:
+ * - Container queries for component-level responsiveness
+ * - Fluid scaling with clamp() and viewport units
+ * - Design tokens for consistent theming
+ * - Semantic breakpoint values (rem-based)
+ *
+ * Design Tokens:
+ * - --color-text-light
+ * - --color-text-dark (replaces hardcoded #161616)
+ * - --glass-background-dark-card
+ * - --glass-background
+ * - --color-text-highlight
+ * - --glass-background-light
+ * - --container-width
+ * - --gutter
+ * - --space-m-l
+ * - --space-m
+ * - --space-xl
+ * - --transition-fade
+ * - --dark-screen
+ * - --light-screen
+ * - --contrast-text-on-dark (replaces hardcoded #f4f4f4)
+ * - --space-s
+ * - --font-s
+ * - --transition-base
+ * - --glass-backdrop-filter
+ * - --background-color-link-hover
+ * - --color-secondary
+ */
+
+/* Remove inline padding from section wrapper for full-width hero */
+.section-wrapper.hero-slider:has(> .js-hero-slider:not(.in-container)) {
+  padding-inline: 0;
+}
+
+.hero-slider {
+  position: relative;
+  width: 100%;
+
+  /* Enable container queries for responsive behavior */
+  container-type: inline-size;
+  container-name: hero-slider;
+
+  /* Fluid height: 680px at 1240px viewport, 480px at 500px viewport */
+  --slider-height: clamp(
+    480px,
+    calc(480px + (680 - 480) * ((100vw - 500px) / (1240 - 500))),
+    680px
+  );
+  --slider-nav-height: 80px;
+  --slider-nav-color: var(--color-text-light);
+  --slider-nav-background-color: var(--glass-background-dark-card);
+  --slider-nav-item-width: 120px;
+  --slider-nav-item-hover-color: var(--glass-background);
+  --slider-nav-item-is-selected-color: var(--color-text-highlight);
+  --slider-nav-item-is-selected-background-color: var(--glass-background-light);
+}
+
+/* Container mode: constrain to max-width */
+.hero-slider.in-container {
+  max-width: var(--container-width);
+  margin: 0 auto;
+}
+
+.hero-slider-list {
+  position: relative;
+  height: var(--slider-height);
+  width: 100%;
+}
+
+.hero-slides {
+  position: relative;
+  height: 100%;
+  width: 100%;
+  overflow: clip;  /* clip instead of hidden prevents scrollIntoView() from scrolling this container */
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.hero-slide {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  transform: translateX(100%);
+  will-change: transform;
+  background-position: center center;
+  background-size: cover;
+  background-repeat: no-repeat;
+
+  .media-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+
+    /*
+      Media background container
+    */
+    &.has-dark-screen::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--dark-screen);
+      z-index: 1;
+    }
+
+    &.has-light-screen::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--light-screen);
+      z-index: 1;
+    }
+
+    picture {
+      width: 100%;
+      height: 100%;
+    }
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+    }
+  }
+
+  .container {
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0 var(--gutter);
+    max-width: var(--container-width);
+    margin: 0 auto;
+    gap: var(--space-m-l);
+
+    /* Fluid layout system similar to multi-media */
+    --threshold: 50rem;
+
+    flex-wrap: wrap;
+
+    > * {
+      flex-grow: 1;
+      flex-basis: calc((var(--threshold) - 100%) * 999);
+      align-self: stretch;
+    }
+  }
+
+  &.is-reverse .container {
+    flex-direction: row-reverse;
+  }
+
+  .hero-content {
+    height: 100%;
+    padding: var(--space-m);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    &.has-image {
+      img {
+        max-width: 100%;
+        height: auto;
+      }
+    }
+
+    * {
+      margin: 0;
+
+      /* All content starts translated to the right for slide-in effect */
+      opacity: 0;
+      transform: translateX(10rem);
+    }
+
+    /* Only center text when explicitly requested */
+    &.is-text-centered * {
+      text-align: center;
+    }
+
+    /* Left-align text content when not centered (better for split layouts) */
+    &:not(.is-text-centered) {
+      align-items: flex-start;
+
+      * {
+        text-align: left;
+      }
+    }
+
+    .sub-title {
+      margin-bottom: var(--space-s);
+    }
+
+    .ctas-container {
+      margin-top: var(--space-xl);
+    }
+  }
+
+  /* Slide animations */
+  &.is-moving,
+  &.is-selected {
+    transition: transform var(--transition-fade);
+  }
+
+  &.is-moving {
+    transform: translateX(-100%);
+
+    .hero-content * {
+      transition:
+        opacity 0s var(--transition-fade),
+        transform 0s var(--transition-fade);
+    }
+  }
+
+  /* Pause behavior on hover */
+  &.is-autoplay.is-paused {
+    cursor: wait;
+  }
+
+  /* Manual pause state - no specific styles needed here anymore */
+  &.is-manually-paused {
+    /* Pause state is handled by navigation tab styling */
+  }
+
+  /* When slide is selected, all content slides in from the right */
+  &.is-selected {
+    transform: translateX(0);
+
+    .hero-content {
+      * {
+        opacity: 1;
+        transform: translateX(0);
+      }
+
+      /* Staggered timing for different elements to create cascading effect */
+      :is(h1, h2, h3, h4, h5, h6) {
+        transition:
+          transform var(--transition-fade) 0.2s,
+          opacity var(--transition-fade) 0.2s;
+      }
+
+      p {
+        transition:
+          transform var(--transition-fade) 0.3s,
+          opacity var(--transition-fade) 0.3s;
+      }
+
+      .ctas-container,
+      img {
+        transition:
+          transform var(--transition-fade) 0.4s,
+          opacity var(--transition-fade) 0.4s;
+      }
+    }
+  }
+
+  /* Dark slides always have light text, regardless of global theme */
+  &.is-dark {
+    color: var(--contrast-text-on-dark);
+
+    .hero-content :is(h1, h2, h3, h4, h5, h6),
+    .hero-content p {
+      color: var(--contrast-text-on-dark);
+    }
+  }
+}
+
+/* Override dark theme to maintain slide-specific styling */
+/* Hero slider slides are self-contained and don't adapt to global theme */
+.dark-theme .hero-slide {
+  &.is-dark {
+    /* Dark slides always have light text, regardless of global theme */
+    color: var(--contrast-text-on-dark);
+
+    .hero-content :is(h1, h2, h3, h4, h5, h6),
+    .hero-content p {
+      color: var(--contrast-text-on-dark);
+    }
+  }
+
+  /* Light slides always have dark text, regardless of global theme */
+  &:not(.is-dark) {
+    color: var(--color-text-dark);
+
+    .hero-content :is(h1, h2, h3, h4, h5, h6),
+    .hero-content p {
+      color: var(--color-text-dark);
+    }
+  }
+}
+
+/* Slider navigation */
+.hero-nav {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2;
+  display: flex;
+  justify-content: center;
+  height: var(--slider-nav-height);
+  background-color: var(--slider-nav-background-color);
+  backdrop-filter: var(--glass-backdrop-filter);
+
+  ul {
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  li {
+    flex: 0 0 var(--slider-nav-item-width);
+    margin: 0;
+    background-color: transparent;
+    backdrop-filter: var(--glass-backdrop-filter);
+    transition: background-color 1s ease;
+    position: relative;
+
+    &:hover {
+      background-color: var(--background-color-link-hover);
+
+      a {
+        color: var(--color-text-dark);
+      }
+    }
+
+    &.is-selected {
+      background-color: var(--slider-nav-item-is-selected-background-color);
+
+      a {
+        color: var(--slider-nav-item-is-selected-color);
+      }
+    }
+
+    /* Pause indicator styling */
+    &.is-paused-indicator {
+      background-color: var(--color-secondary) !important;
+
+      a {
+        color: var(--color-text-light) !important;
+      }
+
+      &::after {
+        content: '⏸';
+        position: absolute;
+        top: 0.5rem;
+        right: 0.5rem;
+        font-size: 1em;
+        opacity: 0.9;
+        color: var(--color-text-light);
+        pointer-events: none;
+        z-index: 10;
+      }
+    }
+  }
+
+  a {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 0 var(--space-s);
+    font-size: var(--font-s);
+    font-weight: 700;
+    text-transform: uppercase;
+    text-decoration: none;
+    text-align: center;
+    color: var(--slider-nav-color);
+    transition: color var(--transition-base);
+    user-select: none;
+  }
+}
+
+/* Background video specific styles */
+.background-video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  overflow: hidden;
+
+  iframe,
+  video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    pointer-events: none;
+  }
+}
+
+/* Ensure video component spans full container when used as background */
+.media-background .background-video .video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+
+  video,
+  iframe {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border: none;
+  }
+
+  /* Hide video controls and overlays when used as background */
+  .video-trigger,
+  .close,
+  .play-button {
+    display: none;
+  }
+}
+
+/*
+  Small screen prose truncation
+  NOTE: display: -webkit-box; is required for text-overflow: ellipsis to work
+  Without the '-webkit-' prefix, the line-clamp property will work but the ellipsis
+  will not be shown
+*/
+@container hero-slider (max-width: 31rem) {
+  .hero-slide .hero-content {
+    .prose,
+    p {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      max-height: 4.5em; /* Fallback for browsers without line-clamp support */
+    }
+  }
+}
+
+/* Mobile adjustments - Must come AFTER regular styles for proper cascade */
+@container hero-slider (max-width: 48rem) {
+  .hero-content {
+    &.has-image {
+      display: none;
+    }
+
+    .button:not(:last-child) {
+      margin-bottom: var(--space-s);
+    }
+  }
+
+  /* Convert navigation tabs to dots on small screens */
+  .hero-nav {
+    height: 3rem;
+
+    ul {
+      width: auto;
+      gap: 0.5rem;
+    }
+
+    li {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 2rem;
+      height: 100%;
+      flex: 0 0 2rem;
+      background-color: transparent !important; /* No background changes */
+      transition: none; /* Remove background transition */
+
+      &:hover {
+        background-color: transparent !important;
+      }
+
+      &.is-selected {
+        background-color: transparent !important;
+      }
+
+      &.is-paused-indicator {
+        background-color: transparent !important;
+
+        &::after {
+          top: 0.5rem;
+          right: 0.5rem;
+          font-size: 0.6em;
+        }
+      }
+    }
+
+    a {
+      width: 1rem;
+      height: 1rem;
+      padding: 0;
+      margin: 0 auto;
+      border-radius: 50%;
+      background-color: rgb(255 255 255 / 30%);
+      font-size: 0; /* Hide text */
+      overflow: hidden;
+      text-indent: -9999px; /* Extra measure to hide text */
+      transition: background-color 1s ease; /* Fade transition for dots */
+
+      &:hover {
+        background-color: rgb(255 255 255 / 50%);
+      }
+    }
+
+    li.is-selected a {
+      background-color: var(--color-text-light);
+    }
+
+    li.is-paused-indicator a {
+      background-color: var(--color-secondary) !important;
+    }
+  }
+}

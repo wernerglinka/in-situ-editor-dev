@@ -1,0 +1,114 @@
+- sectionType: code
+  containerTag: section
+  classes: ""
+  id: ""
+  isDisabled: false
+  containerFields:
+    inContainer: true
+    isAnimated: true
+    noMargin:
+      top: false
+      bottom: false
+    noPadding:
+      top: false
+      bottom: false
+    background:
+      color: ""
+      image: ""
+      imageScreen: "none"
+  code:
+    language: "javascript"
+    theme: "default"
+    filename: "example.js"
+    showCopy: true
+    content: |
+      /**
+       * Example JavaScript function
+       * @param {string} name - The name to greet
+       * @returns {string} Greeting message
+       */
+      function greet(name) {
+        return `Hello, ${name}!`;
+      }
+
+      // Usage example
+      const message = greet('World');
+      console.log(message); // Output: Hello, World!
+
+- sectionType: code
+  containerTag: section
+  classes: ""
+  id: ""
+  isDisabled: false
+  containerFields:
+    inContainer: true
+    isAnimated: true
+    noMargin:
+      top: false
+      bottom: false
+    noPadding:
+      top: false
+      bottom: false
+    background:
+      color: ""
+      image: ""
+      imageScreen: "none"
+  code:
+    language: "css"
+    theme: "tomorrow"
+    filename: "styles.css"
+    showCopy: true
+    content: |
+      /* Modern CSS Grid Layout */
+      .container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+        padding: 2rem;
+      }
+
+      .card {
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        padding: 1.5rem;
+        transition: transform 0.2s ease;
+      }
+
+      .card:hover {
+        transform: translateY(-4px);
+      }
+
+- sectionType: code
+  containerTag: section
+  classes: ""
+  id: ""
+  isDisabled: false
+  containerFields:
+    inContainer: true
+    isAnimated: true
+    noMargin:
+      top: false
+      bottom: false
+    noPadding:
+      top: false
+      bottom: false
+    background:
+      color: ""
+      image: ""
+      imageScreen: "none"
+  code:
+    language: "yaml"
+    theme: "okaidia"
+    showCopy: false
+    content: |
+      # Metalsmith configuration example
+      sections:
+        - sectionType: hero
+          text:
+            title: 'Welcome to My Site'
+            prose: 'This is a hero section'
+        - sectionType: code
+          code:
+            language: 'javascript'
+            content: 'console.log("Hello, World!");'

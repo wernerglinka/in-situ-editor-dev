@@ -1,0 +1,35 @@
+- sectionType: social-shares
+  containerTag: aside
+  classes: ""
+  id: ""
+  isDisabled: false
+  hasCenteredContent: true
+  containerFields:
+    inContainer: true
+    isAnimated: true
+    noMargin:
+      top: false
+      bottom: false
+    noPadding:
+      top: false
+      bottom: false
+    background:
+      color: ""
+      image: ""
+      imageScreen: "none"
+  text:
+    leadIn: ""
+    title: "Share This Page"
+    titleTag: "h2"
+    subTitle: ""
+    prose: ""
+  share:
+    title: "Nunjucks Components Library"
+    comment: "Page excerpt that pre-fills the share post body on Bluesky, Facebook, X, and the email body."
+    platforms:
+      - bluesky
+      - linkedin
+      - facebook
+      - twitter
+      - mail
+    custom: []

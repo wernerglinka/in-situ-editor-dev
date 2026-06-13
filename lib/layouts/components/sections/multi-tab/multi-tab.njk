@@ -1,0 +1,110 @@
+{% from "components/_helpers/render-section.njk" import renderSection %}
+{% from "components/_partials/text/text.njk" import text %}
+
+{#
+  Multi-Tab Section
+
+  A dynamic tabs wrapper where each pane can be any section type.
+  Tabs and their panes are defined explicitly in frontmatter — no data directory scanning.
+
+  Each tab entry requires:
+    key:   unique identifier used for ARIA ids and default-tab matching
+    label: display label for the tab button (defaults to key if omitted)
+    pane:  a full section definition with sectionType and its own data/settings
+
+  Frontmatter structure:
+    sectionType: multi-tab
+    defaultTab: '2026'          # omit to auto-select current year or first tab
+    text:
+      title: 'Works'
+      titleTag: 'h1'
+    tabs:
+      - key: '2026'
+        label: '2026'
+        pane:
+          sectionType: image-grid
+          dataSource: 'works/2026'
+          settings:
+            gap: '50'
+            targetRowHeight: '300'
+      - key: statement
+        label: 'Statement'
+        pane:
+          sectionType: rich-text
+          text:
+            title: 'Statement'
+            prose: 'Some text here.'
+#}
+
+{% set tabsSection = section %}
+{% set currentYearStr = "" | currentYear | string %}
+
+{# Build a flat list of tab keys for default-tab lookup #}
+{% set tabKeyList = [] %}
+{% for tab in tabsSection.tabs %}
+  {% set tabKeyList = tabKeyList.concat([tab.key]) %}
+{% endfor %}
+
+{# Determine default tab: explicit → current year → first key #}
+{% if tabsSection.defaultTab and tabsSection.defaultTab in tabKeyList %}
+  {% set defaultTab = tabsSection.defaultTab %}
+{% elif currentYearStr in tabKeyList %}
+  {% set defaultTab = currentYearStr %}
+{% else %}
+  {% set defaultTab = tabKeyList[0] %}
+{% endif %}
+
+{#
+  Reconstruct context so pane renderSection calls have access to all page-level data.
+  IMPORTANT: this list must stay in sync with the variable list extracted in
+  components/_helpers/render-section.njk. If a new variable is added there,
+  add it here too — otherwise pane components will silently receive undefined.
+
+  Metalsmith context variables: data, collections, urlPath, collection, crumbs
+#}
+{% set paneContext = {
+  data: data,
+  collections: collections,
+  urlPath: urlPath,
+  collection: collection,
+  crumbs: crumbs
+} %}
+
+<div class="container content">
+  {% if tabsSection.text | hasText %}
+    <div class="text flow {% if tabsSection.hasCenteredContent %}is-centered{% endif %}">
+      {{ text(tabsSection.text) }}
+    </div>
+  {% endif %}
+
+  {% if tabsSection.tabs and tabsSection.tabs | length > 0 %}
+    <div class="tabs-component" data-default-tab="{{ defaultTab }}">
+      <div class="tabs-nav" role="tablist" aria-label="{{ tabsSection.text.title or 'Tabs' }}">
+        {% for tab in tabsSection.tabs %}
+          <button
+            class="tabs-button"
+            role="tab"
+            id="tab-{{ tab.key }}"
+            aria-controls="panel-{{ tab.key }}"
+            aria-selected="{{ 'true' if tab.key == defaultTab else 'false' }}"
+            tabindex="{{ '0' if tab.key == defaultTab else '-1' }}"
+          >
+            {{ tab.label if tab.label else tab.key }}
+          </button>
+        {% endfor %}
+      </div>
+
+      {% for tab in tabsSection.tabs %}
+        <div
+          class="tabs-panel"
+          role="tabpanel"
+          id="panel-{{ tab.key }}"
+          aria-labelledby="tab-{{ tab.key }}"
+          {% if tab.key != defaultTab %}hidden{% endif %}
+        >
+          {{ renderSection(tab.pane, paneContext) }}
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+</div>

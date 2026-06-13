@@ -1,0 +1,27 @@
+{% from "components/_partials/icon/icon.njk" import icon %}
+
+<div class="content container">
+  {% if section.code %}
+    <div class="code-block theme-{{ section.code.theme or 'default' }}" data-theme="{{ section.code.theme or 'default' }}">
+      <div class="code-header">
+        {% if section.code.filename %}
+          <div class="code-info">
+            <span class="filename">{{ section.code.filename }}</span>
+            <span class="theme">Theme: {{ section.code.theme }}</span>
+          </div>
+        {% endif %}
+        <div class="code-actions">
+          <span class="language-label">{{ section.code.language or 'text' }}</span>
+          {% if section.code.showCopy !== false %}
+            <button class="copy-button" type="button" aria-label="Copy code to clipboard">
+              {{ icon({ icon: "copy", url: '' }, 16) }}
+            </button>
+          {% endif %}
+        </div>
+      </div>
+      <div class="code-content">
+        {{ section.code.content | mdToHTML | safe }}
+      </div>
+    </div>
+  {% endif %}
+</div>

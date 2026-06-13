@@ -60,7 +60,7 @@ sections:
       alt: ''
       caption: ''
 
-  - sectionType: composed
+  - sectionType: columns
     containerTag: section
     classes: 'media-image hero-cta'
     id: ''
@@ -106,7 +106,7 @@ sections:
                 isButton: true
                 buttonStyle: 'primary'
 
-  - sectionType: text-only
+  - sectionType: rich-text
     containerTag: article
     classes: ''
     id: 'section-id'
@@ -167,7 +167,8 @@ sections:
       scope: 'all'
       selections: []
 
-  - sectionType: media-image
+  - sectionType: multi-media
+    mediaType: image
     containerTag: aside
     classes: ''
     id: ''

@@ -1,0 +1,92 @@
+{% from "components/_partials/text/text.njk" import text %}
+{% from "components/_partials/ctas/ctas.njk" import ctas %}
+{% from "components/_partials/image/image.njk" import image %}
+{% from "components/_partials/icon/icon.njk" import icon %}
+
+{#
+  Manual Card Component
+  A versatile card component for displaying content with optional image, text, and CTAs.
+  Can be used standalone or within other components.
+
+  props:
+    - isHorizontal: boolean to determine layout style
+    - image: image object with src, alt, etc.
+    - hasImageBackground: boolean to set image as background
+    - text: text object with title, prose, etc.
+    - ctas: array of CTA objects
+    - link: optional URL to make entire card clickable. ctas will be ignored if
+            link is set.
+    - classes: optional CSS classes
+    - icon: optional icon to display in the card decoration
+    - pattern: optional pattern name to display in the card background
+#}
+{% macro manualCard(props) %}
+  {% set cardClasses = "manual-card" %}
+  {# add hasImageBackground class if true #}
+  {% if props.background.hasImage %}{% set cardClasses = cardClasses + " has-image-background" %}{% endif %}
+  {% if props.background.pattern %}{% set cardClasses = cardClasses + " " + props.background.pattern %}{% endif %}
+  {% if props.background.isDark %}{% set cardClasses = cardClasses + " is-dark" %}{% endif %}
+  {# add is-horizontal class if true #}
+  {% if props.isHorizontal %}{% set cardClasses = cardClasses + " is-horizontal" %}{% endif %}
+  {% if props.classes %}{% set cardClasses = cardClasses + " " + props.classes %}{% endif %}
+
+  {# If link is present, wrap entire card #}
+  {% if props.link %}
+    <a href="{{ props.link }}" class="{{ cardClasses }} link-wrapper" aria-label="{% if props.text.title %}{{ props.text.title }}{% else %}Learn more{% endif %}">
+      {{ cardContent(props) }}
+      <div class="link-indicator">
+        {{ icon({icon: "arrow-right", url: ''}) }}
+      </div>
+    </a>
+  {% else %}
+    <div class="{{ cardClasses }}">
+      {{ cardContent(props) }}
+    </div>
+  {% endif %}
+{% endmacro %}
+
+{# Separate macro for card content to avoid duplication #}
+{% macro cardContent(props) %}
+  {# Background image container if hasImageBackground is true #}
+  {% if props.background.hasImage and props.image %}
+    <div class="image-background">
+      {{ image(props.image) }}
+    </div>
+  {% endif %}
+
+  {# Decoration container - shows icon or image #}
+  {% if props.background.hasImage %}
+    {# When image is background, show icon in decoration if provided #}
+    {% if props.icon | hasIcon %}
+      <div class="decoration">
+        {{ icon( props.icon) }}
+      </div>
+    {% endif %}
+  {% else %}
+    {# When image is not background, show image in decoration #}
+    {% if props.image | hasImage %}
+      <div class="decoration">
+        {{ image(props.image) }}
+      </div>
+    {% elif props.icon | hasIcon %}
+      <div class="decoration">
+        {{ icon(props.icon) }}
+      </div>
+    {% endif %}
+  {% endif %}
+
+
+  {# Text content #}
+  {% if props.text %}
+    <div class="info flow">
+      {{ text(props.text) }}
+
+      {# CTAs - only if no link wrapper #}
+      {% if props.ctas and not props.link %}
+        {{ ctas(props.ctas) }}
+      {% endif %}
+    </div>
+  {% endif %}
+
+  
+{% endmacro %}

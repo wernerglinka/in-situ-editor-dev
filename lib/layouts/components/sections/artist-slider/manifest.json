@@ -1,0 +1,93 @@
+{
+  "name": "artist-slider",
+  "type": "section",
+  "styles": ["artist-slider.css"],
+  "scripts": ["artist-slider.js"],
+  "requires": ["commons"],
+  "context": ["data.artworks"],
+  "validation": {
+    "required": ["sectionType", "artworks"],
+    "properties": {
+      "sectionType": {
+        "type": "string",
+        "const": "artist-slider"
+      },
+      "isDisabled": {
+        "type": "boolean"
+      },
+      "containerFields.inContainer": {
+        "type": "boolean"
+      },
+      "containerFields.isAnimated": {
+        "type": "boolean"
+      },
+      "containerFields.noMargin.top": {
+        "type": "boolean"
+      },
+      "containerFields.noMargin.bottom": {
+        "type": "boolean"
+      },
+      "containerFields.noPadding.top": {
+        "type": "boolean"
+      },
+      "containerFields.noPadding.bottom": {
+        "type": "boolean"
+      },
+      "containerFields.background.isDark": {
+        "type": "boolean"
+      },
+      "artworks.source": {
+        "type": "string",
+        "description": "JSON filename in /lib/data/artworks/ (without .json extension)"
+      },
+      "artworks.imageFolder": {
+        "type": "string",
+        "description": "Subfolder name in /lib/assets/images/"
+      },
+      "cycleTime": {
+        "type": "number",
+        "default": 5000,
+        "description": "Auto-cycle interval in milliseconds"
+      },
+      "showDots": {
+        "type": "boolean",
+        "default": true,
+        "description": "Show navigation dots"
+      },
+      "scrollTarget": {
+        "type": "string",
+        "description": "Anchor for scroll-down icon (e.g., '#first-section')"
+      }
+    }
+  },
+  "fields": {
+    "artworks": {
+      "source": {
+        "widget": "text",
+        "label": "Data source (file in lib/data)",
+        "default": ""
+      },
+      "imageFolder": {
+        "widget": "text",
+        "label": "Image folder path",
+        "default": ""
+      }
+    },
+    "cycleTime": {
+      "widget": "text",
+      "label": "Cycle time (ms)",
+      "default": "5000"
+    },
+    "showDots": {
+      "widget": "checkbox",
+      "label": "Show navigation dots",
+      "default": true
+    },
+    "scrollTarget": {
+      "widget": "text",
+      "label": "Scroll target (optional)",
+      "default": ""
+    },
+    "$extends": ["commons"]
+  }
+}

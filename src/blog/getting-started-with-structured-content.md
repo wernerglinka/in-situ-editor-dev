@@ -59,7 +59,7 @@ sections:
       alt: ''
       caption: ''
 
-  - sectionType: text-only
+  - sectionType: rich-text
     containerTag: article
     classes: ''
     id: 'section-id'
@@ -119,7 +119,7 @@ sections:
     name: 'Niels Bohr'
     logoWidth: 30
 
-  - sectionType: blog-navigation
+  - sectionType: collection-links
     containerTag: section
     classes: ''
     id: ''

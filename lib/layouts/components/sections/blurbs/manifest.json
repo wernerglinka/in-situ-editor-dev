@@ -1,0 +1,78 @@
+{
+  "name": "blurbs",
+  "type": "section",
+  "styles": ["blurbs.css"],
+  "scripts": ["blurbs.js"],
+  "requires": ["ctas", "text", "image", "icon", "commons"],
+  "context": ["data.blurbs"],
+  "validation": {
+    "required": ["sectionType"],
+    "properties": {
+      "sectionType": {
+        "type": "string",
+        "const": "blurbs"
+      },
+      "isDisabled": {
+        "type": "boolean"
+      },
+      "containerFields.inContainer": {
+        "type": "boolean"
+      },
+      "containerFields.isAnimated": {
+        "type": "boolean"
+      },
+      "containerFields.noMargin.top": {
+        "type": "boolean"
+      },
+      "containerFields.noMargin.bottom": {
+        "type": "boolean"
+      },
+      "containerFields.noPadding.top": {
+        "type": "boolean"
+      },
+      "containerFields.noPadding.bottom": {
+        "type": "boolean"
+      },
+      "containerFields.background.isDark": {
+        "type": "boolean"
+      },
+      "blurbs.layout": {
+        "type": "string",
+        "enum": ["inline", "featurePlus"]
+      },
+      "isReverse": {
+        "type": "boolean"
+      },
+      "blurbs.source": {
+        "type": "string"
+      }
+    }
+  },
+  "fields": {
+    "text": {
+      "$use": "text"
+    },
+    "isReverse": {
+      "widget": "checkbox",
+      "label": "Reverse layout",
+      "default": false
+    },
+    "blurbs": {
+      "source": {
+        "widget": "text",
+        "label": "Data source (file in lib/data)",
+        "default": ""
+      },
+      "layout": {
+        "widget": "select",
+        "label": "Layout",
+        "enum": ["inline", "stacked"],
+        "default": "inline"
+      }
+    },
+    "ctas": {
+      "$use": "ctas"
+    },
+    "$extends": ["commons"]
+  }
+}

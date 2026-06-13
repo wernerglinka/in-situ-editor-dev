@@ -1,15 +1,11 @@
 {
   "name": "icon",
   "type": "partial",
-  "styles": [
-    "icon.css"
-  ],
+  "styles": ["icon.css"],
   "scripts": [],
   "requires": [],
   "validation": {
-    "required": [
-      "icon"
-    ],
+    "required": ["icon"],
     "properties": {
       "icon": {
         "type": "string"
@@ -20,6 +16,23 @@
       "title": {
         "type": "string"
       }
+    }
+  },
+  "fields": {
+    "icon": {
+      "widget": "text",
+      "label": "Icon name",
+      "default": ""
+    },
+    "url": {
+      "widget": "text",
+      "label": "Link URL (optional)",
+      "default": ""
+    },
+    "title": {
+      "widget": "text",
+      "label": "Title (optional)",
+      "default": ""
     }
   }
 }

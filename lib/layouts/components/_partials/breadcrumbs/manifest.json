@@ -1,27 +1,19 @@
 {
   "name": "breadcrumbs",
   "type": "partial",
-  "styles": [
-    "breadcrumbs.css"
-  ],
+  "styles": ["breadcrumbs.css"],
   "scripts": [],
   "requires": [],
+  "context": ["crumbs"],
   "validation": {
     "required": [],
     "type": "array",
     "items": {
       "type": "object",
-      "required": [
-        "title",
-        "path"
-      ],
+      "required": ["title", "path"],
       "properties": {
-        "title": {
-          "type": "string"
-        },
-        "path": {
-          "type": "string"
-        }
+        "title": { "type": "string" },
+        "path": { "type": "string" }
       }
     }
   }

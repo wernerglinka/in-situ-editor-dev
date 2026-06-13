@@ -1,12 +1,22 @@
-{# 
-  render-section is a nunjucks macro that uses the 'section.sectionType' parameter 
+{#
+  render-section is a nunjucks macro that uses the 'section.sectionType' parameter
   to compose the name of the target component macro.
-  Since Nunjucks doesn't support dynamic macro names, we have to use a helper 
-  function to do this. We also pass the required meta data through, e.g., crumbs, 
-  data, pageFiles, etc. 
+  Since Nunjucks doesn't support dynamic macro names, we have to use a helper
+  function to do this. We also pass the required meta data through, e.g., crumbs,
+  data, pageFiles, etc.
+
+  Note: Navigation (previous/next) is accessed via collection[name].previous/next
+  Compatible with @metalsmith/collections v2.0
 #}
 
-{% macro renderSection(section, crumbs, data, collections, previous, next, urlPath, collection) %}
+{% macro renderSection(section, context) %}
+{# Extract context properties for use in relevant included templates #}
+  {% set data = context. data %}
+  {% set collections = context.collections %}
+  {% set urlPath = context.urlPath %}
+  {% set collection = context.collection %}
+  {% set crumbs = context.crumbs %}
+
   {# include the target section component based on section.sectionType #}
   {# the 'ignore missing' flag prevents errors if the target component doesn't exist #}
   {% include "../sections/" + section.sectionType + "/" + section.sectionType + ".njk" ignore missing %}

@@ -1,0 +1,22 @@
+- sectionType: icon-only
+  containerTag: section
+  classes: ""
+  id: ""
+  isDisabled: false
+  isAnimated: true
+  containerFields:
+    inContainer: false
+    noMargin:
+      top: true
+      bottom: true
+    noPadding:
+      top: false
+      bottom: false
+    background:
+      color: ""
+      image: ""
+      imageScreen: "none"
+  icon:
+    icon: "feather"
+    title: "Feather Icon"
+    url: ""

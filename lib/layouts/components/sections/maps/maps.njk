@@ -1,0 +1,63 @@
+{% from "components/_partials/ctas/ctas.njk" import ctas %}
+{% from "components/_partials/text/text.njk" import text %}
+
+<div class="content">
+  {% if section.text %}
+    <div class="text flow">
+      <div class="prose flow">{{ text(section.text)}}</div>
+    </div>
+  {% endif %}
+
+  {% set mapData = data.maps[section.mapData] if section.mapData else section %}
+  {% set mapLat = mapData.latitude %}
+  {% set mapLng = mapData.longitude %}
+  {% set mapZoom = mapData.zoom %}
+  {% set mapMarkers = mapData.markers %}
+  {% set mapClustering = mapData.clustering %}
+
+  {% set mapStyle = ("style=\"--map-default-height: " + section.height + ";\"" if section.height else "") %}
+
+  {% if section.mapProvider === "leaflet" %}
+    <div class="js-leaflet-map map-wrapper"
+         data-provider="leaflet"
+         data-latitude="{{ mapLat }}"
+         data-longitude="{{ mapLng }}"
+         data-zoom="{{ mapZoom }}"
+         data-markers="{{ mapMarkers | dump | e }}"
+         data-clustering="{{ mapClustering | dump | e }}"
+         role="application"
+         aria-label="Interactive map{% if section.text.title %}: {{ section.text.title }}{% endif %}"
+         {{ mapStyle | safe }}>
+      <div id="map-{{ section.id or 'leaflet-' + loop.index }}" tabindex="0" aria-label="Map view with markers and interactive controls">
+        <div class="map-loading" role="status" aria-live="polite" aria-label="Loading map">
+          <span class="sr-only">Loading interactive map, please wait...</span>
+          Loading map...
+        </div>
+      </div>
+    </div>
+  {% else %}
+    <div class="js-openlayers-map map-wrapper"
+         data-provider="openlayers"
+         data-latitude="{{ mapLat }}"
+         data-longitude="{{ mapLng }}"
+         data-zoom="{{ mapZoom }}"
+         data-markers="{{ mapMarkers | dump | e }}"
+         data-clustering="{{ mapClustering | dump | e }}"
+         role="application"
+         aria-label="Interactive map{% if section.text.title %}: {{ section.text.title }}{% endif %}"
+         {{ mapStyle | safe }}>
+      <div id="map-{{ section.id or 'openlayers-' + loop.index }}" tabindex="0" aria-label="Map view with markers and interactive controls">
+        <div class="map-loading" role="status" aria-live="polite" aria-label="Loading map">
+          <span class="sr-only">Loading interactive map, please wait...</span>
+          Loading map...
+        </div>
+      </div>
+    </div>
+  {% endif %}
+
+  {% if section.ctas | hasCtas %}
+    <div class="ctas-wrapper">
+      {{ ctas(section.ctas) }}
+    </div>
+  {% endif %}
+</div>

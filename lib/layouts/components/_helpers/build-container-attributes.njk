@@ -16,7 +16,7 @@
     imageScreen: if imageScreen is set adds 'has-dark-screen' or 'has-light-screen' to class list depending on imageScreen value 
 #} 
 
-{% macro buildContainerAttributes(section, isFirst) -%}
+{% macro buildContainerAttributes(section, isFirst, firstSectionClass) -%}
   {%- set containerFields = section.containerFields -%}
   {%- set classes = ['section-wrapper'] -%}
   {%- set styles = [] -%}
@@ -25,8 +25,10 @@
   {% set classes = classes.concat([section.sectionType]) %}
 
   {# Add first-section class to the first section for top padding #}
+  {# Use 'first-text-section' for sidebar layouts, 'first-section' for regular pages #}
   {%- if isFirst -%}
-    {%- set classes = classes.concat(['first-section']) -%}
+    {%- set firstClass = firstSectionClass if firstSectionClass else 'first-section' -%}
+    {%- set classes = classes.concat([firstClass]) -%}
   {%- endif -%}
 
   {# Build classes array #}

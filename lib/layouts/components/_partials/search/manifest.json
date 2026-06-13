@@ -1,0 +1,36 @@
+{
+  "name": "search",
+  "type": "partial",
+  "styles": ["search.css"],
+  "scripts": ["search.js"],
+  "validation": {
+    "properties": {
+      "title": {
+        "type": "string"
+      },
+      "subtitle": {
+        "type": "string"
+      },
+      "placeholder": {
+        "type": "string",
+        "default": "Search..."
+      },
+      "settings.maxResults": {
+        "type": "number",
+        "default": 20
+      },
+      "settings.showRelevanceScore": {
+        "type": "boolean",
+        "default": true
+      },
+      "settings.enableHighlighting": {
+        "type": "boolean",
+        "default": true
+      },
+      "settings.minCharacters": {
+        "type": "number",
+        "default": 2
+      }
+    }
+  }
+}
