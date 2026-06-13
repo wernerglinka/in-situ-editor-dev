@@ -223,7 +223,12 @@ The change spans three repos, so it is staged to keep each shippable.
 2. **Library — in progress.** `fields` authored for `commons`, `text`,
    `image`, `ctas`, and `banner`. Remaining: the other sections, one at a
    time, partials they need authored first.
-3. Editor last. Point it at the emitted artifact, build the generic form
+3. **Site wiring — done.** The site is on `metalsmith-bundled-components`
+   1.1.0 with `schema.enabled` set in `metalsmith.js`; the production build
+   writes `build/assets/components-schema.json` (served at
+   `/assets/components-schema.json`) with `banner` fully composed, and the
+   0.6 -> 1.1 jump left the rest of the build unchanged.
+4. Editor last. Point it at the emitted artifact, build the generic form
    generator, serializer, and hydrator, and delete the lean editor-state
    model and the per-type emitter.
 
@@ -253,13 +258,9 @@ writing editor rendering code:
   `"abstract": true`) the emitter honors, or emit only components whose
   validation declares a `sectionType` const. Decide when migrating the next
   sections.
-- **How the site consumes the new plugin.** The site is on
-  `metalsmith-bundled-components@0.6.0`; the local checkout that carries the
-  schema emit is at `1.0.0`. To actually emit the artifact in the site build
-  the site must move onto the new version (link the local checkout, or
-  publish and bump), and a `0.6 -> 1.0` jump may change build behavior
-  unrelated to this feature. This is the one cross-repo decision still open
-  and should be made before wiring `schema.enabled` into `metalsmith.js`.
+- ~~**How the site consumes the new plugin.**~~ Resolved: published as
+  1.1.0 (minor, additive), the site bumped to `^1.1.0`, and `schema.enabled`
+  wired into `metalsmith.js`. The build verified clean across the jump.
 
 ## Constraints and cautions
 
