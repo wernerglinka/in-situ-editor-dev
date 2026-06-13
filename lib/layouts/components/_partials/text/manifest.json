@@ -6,6 +6,14 @@
   ],
   "scripts": [],
   "requires": [],
+  "fields": {
+    "leadIn": { "widget": "text", "label": "Lead-in", "default": "" },
+    "title": { "widget": "text", "label": "Title", "default": "" },
+    "titleTag": { "widget": "select", "label": "Title level", "enum": ["h1", "h2", "h3", "h4", "h5", "h6"], "default": "h2" },
+    "isCentered": { "widget": "checkbox", "label": "Center text", "default": false },
+    "subTitle": { "widget": "text", "label": "Subtitle", "default": "" },
+    "prose": { "widget": "markdown", "label": "Body", "default": "" }
+  },
   "validation": {
     "properties": {
       "leadIn": {

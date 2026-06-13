@@ -10,6 +10,17 @@
     "text-link"
   ],
   "comment": "Button styles are provided by button partial, ctas.css only contains CTA-specific layout",
+  "fields": {
+    "widget": "array",
+    "label": "Call-to-action buttons",
+    "items": {
+      "url": { "widget": "text", "label": "URL", "default": "" },
+      "label": { "widget": "text", "label": "Label", "default": "" },
+      "isButton": { "widget": "checkbox", "label": "Render as button", "default": true },
+      "buttonStyle": { "widget": "select", "label": "Button style", "enum": ["primary", "secondary", "tertiary", "inverted"], "default": "primary" },
+      "isSmall": { "widget": "checkbox", "label": "Small button", "default": false }
+    }
+  },
   "validation": {
     "type": "array",
     "items": {

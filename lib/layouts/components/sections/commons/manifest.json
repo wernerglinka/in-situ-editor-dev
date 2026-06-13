@@ -5,5 +5,26 @@
     "commons.css"
   ],
   "scripts": [],
-  "requires": []
+  "requires": [],
+  "fields": {
+    "isDisabled": { "widget": "checkbox", "label": "Disable section (hide from build)", "default": false },
+    "containerFields": {
+      "inContainer": { "widget": "checkbox", "label": "Constrain to container width", "default": true },
+      "isAnimated": { "widget": "checkbox", "label": "Animate on scroll", "default": false },
+      "noMargin": {
+        "top": { "widget": "checkbox", "label": "Remove top margin", "default": false },
+        "bottom": { "widget": "checkbox", "label": "Remove bottom margin", "default": false }
+      },
+      "noPadding": {
+        "top": { "widget": "checkbox", "label": "Remove top padding", "default": false },
+        "bottom": { "widget": "checkbox", "label": "Remove bottom padding", "default": false }
+      },
+      "background": {
+        "color": { "widget": "text", "label": "Background color", "default": "" },
+        "image": { "widget": "image", "label": "Background image", "default": "" },
+        "imageScreen": { "widget": "select", "label": "Background image screen", "enum": ["light", "dark", "none"], "default": "none" },
+        "isDark": { "widget": "checkbox", "label": "Dark background (use light text)", "default": false }
+      }
+    }
+  }
 }
