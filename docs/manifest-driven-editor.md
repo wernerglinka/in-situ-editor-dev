@@ -88,11 +88,11 @@ reads presentation intent, and the two concerns share a file without
 sharing logic. Every plugin change ships backward compatible and behind an
 option so existing consumers are never forced to adopt it.
 
-## The `fields` format (proposed, to be proven on the banner spike)
+## The `fields` format
 
-The format below is the working proposal. The first milestone exists to
-validate it on one real section before it is frozen; treat divergence
-found during the spike as expected, not as failure.
+Proven on the banner spike (the `banner` section plus the `commons`,
+`text`, `image`, and `ctas` partials) and confirmed against the bundler's
+schema emitter. The rules below are what the emitter implements today.
 
 `fields` mirrors the data shape. A node with a `widget` key is a field; any
 other object is a group whose entries are nested fields, and a group's
@@ -108,44 +108,62 @@ A leaf field carries `widget` (one of `text`, `markdown`, `select`,
 understands (`enum`, `required`, `type`). An array of objects uses
 `widget: array` with an `items` field-tree describing one entry.
 
-Composition is explicit. A section places a partial's fields with a `$use`
-reference naming the partial, and the resolver expands it in place. This
-keeps the field definitions DRY (the `text` partial owns the `text` fields)
-while letting the section control where the group appears and in what
-order. Every `$use` target must also appear in `requires`; a plugin test
-asserts that.
+Composition has two forms, both expanded by the bundler:
 
-Sketch of `banner` (illustrative, not final):
+- `$use` inserts a partial's fields **under a named key**. `"text": { "$use": "text" }`
+  draws the text group from the `text` partial. Sibling keys on the same
+  node deep-merge over the inherited fields, so a section can tune one
+  inherited field (a different `titleTag` default, say) without redefining
+  the group. A partial whose entire `fields` block is a single field also
+  resolves through `$use`: the `ctas` partial is one `widget: array` field,
+  and `"ctas": { "$use": "ctas" }` yields that array field.
+- `$extends` spreads one or more partials' fields **into the current level**
+  rather than nesting them. The section-root fields every section shares
+  (the `containerFields` wrapper and `isDisabled`) live on the `commons`
+  partial, and each section pulls them in with `"$extends": ["commons"]`.
+
+Every `$use` and `$extends` target should also appear in `requires`.
+
+The real `banner` section:
 
 ```jsonc
 {
   "name": "banner",
   "requires": ["ctas", "text", "image", "commons"],
   "fields": {
-    "text": { "$use": "text" },
-    "ctas": { "$use": "ctas" },
-    "containerFields": {
-      "inContainer": { "widget": "checkbox", "label": "Constrain width", "default": false },
-      "background": {
-        "color": { "widget": "text", "label": "Background color", "default": "" },
-        "isDark": { "widget": "checkbox", "label": "Dark background", "default": false }
-      }
-    }
+    "isReverse": { "widget": "checkbox", "label": "Reverse layout (image on the right)", "default": false },
+    "text":  { "$use": "text" },
+    "image": { "$use": "image" },
+    "ctas":  { "$use": "ctas" },
+    "$extends": ["commons"]
   }
 }
 ```
 
-And the `text` partial owns its group once:
+The `text` partial owns its group once, and `commons` owns the shared
+section-root wrapper:
 
 ```jsonc
-{
-  "name": "text",
-  "fields": {
-    "leadIn":   { "widget": "text", "label": "Lead-in", "default": "" },
-    "title":    { "widget": "text", "label": "Title", "default": "" },
-    "titleTag": { "widget": "select", "label": "Title level", "enum": ["h1","h2","h3","h4","h5","h6"], "default": "h2" },
-    "subTitle": { "widget": "text", "label": "Subtitle", "default": "" },
-    "prose":    { "widget": "markdown", "label": "Body", "default": "" }
+// _partials/text
+"fields": {
+  "leadIn":   { "widget": "text", "label": "Lead-in", "default": "" },
+  "title":    { "widget": "text", "label": "Title", "default": "" },
+  "titleTag": { "widget": "select", "label": "Title level", "enum": ["h1","h2","h3","h4","h5","h6"], "default": "h2" },
+  "isCentered": { "widget": "checkbox", "label": "Center text", "default": false },
+  "subTitle": { "widget": "text", "label": "Subtitle", "default": "" },
+  "prose":    { "widget": "markdown", "label": "Body", "default": "" }
+}
+
+// sections/commons
+"fields": {
+  "isDisabled": { "widget": "checkbox", "label": "Disable section (hide from build)", "default": false },
+  "containerFields": {
+    "inContainer": { "widget": "checkbox", "label": "Constrain to container width", "default": true },
+    "background": {
+      "color":  { "widget": "text", "label": "Background color", "default": "" },
+      "isDark": { "widget": "checkbox", "label": "Dark background (use light text)", "default": false }
+    }
+    // isAnimated, noMargin, noPadding, background.image, background.imageScreen elided
   }
 }
 ```
@@ -194,14 +212,17 @@ builds on the schema-driven editor rather than blocking on it.
 
 The change spans three repos, so it is staged to keep each shippable.
 
-1. Plugin first. Teach `metalsmith-bundled-components` to read a nested
-   `fields` block, add the opt-in schema emit, and (later) let the content
-   validator derive from `fields` instead of the parallel `validation`
-   block. Backward compatible, behind an option, shipped as a normal
-   versioned release.
-2. Library next. Author `fields` for the partials first (`text`, `ctas`,
-   `image`, `commons`), then the sections that compose from them, one
-   section at a time.
+1. **Plugin first — done.** `metalsmith-bundled-components` now reads a
+   nested `fields` block and emits the composed schema behind an opt-in
+   `schema` option (`schema.enabled`, default off; `schema.dest` defaults to
+   `assets/components-schema.json`). The resolver handles `$use`, `$extends`,
+   leaf-target `$use`, override merge, and array `items`, with unit coverage
+   in `test/unit/schema-emitter.test.js`. Letting the content validator
+   derive from `fields` instead of the parallel `validation` block is still
+   pending and stays a later cleanup.
+2. **Library — in progress.** `fields` authored for `commons`, `text`,
+   `image`, `ctas`, and `banner`. Remaining: the other sections, one at a
+   time, partials they need authored first.
 3. Editor last. Point it at the emitted artifact, build the generic form
    generator, serializer, and hydrator, and delete the lean editor-state
    model and the per-type emitter.
@@ -210,22 +231,35 @@ Validation derivation (folding the dotted `validation` block into `fields`)
 comes after the editor works, not before; it is a cleanup, not a
 prerequisite.
 
-## First milestone
+## First milestone — confirmed
 
-Prove the contract on one section before touching the other sixteen or
-writing any editor rendering code:
+The contract is proven on `banner` before touching the other sections or
+writing editor rendering code:
 
-- Add the schema emit to the plugin behind a flag.
-- Author the `fields` block for `banner` and for the partials it requires
-  (`text`, `ctas`, `image`, `commons`).
-- Confirm the emitted artifact for `banner` is a complete, nested field
-  tree the editor could render directly, with `$use` expanded and defaults
-  present.
+- Schema emit added to the plugin behind a flag.
+- `fields` authored for `banner` and the partials it requires (`commons`,
+  `text`, `image`, `ctas`).
+- The emitted `banner` artifact is a complete, nested field tree: `text`,
+  `image`, and `ctas` composed via `$use`, `isDisabled` and the full
+  `containerFields` subtree spread in via `$extends`, every default present.
+  A form generator can consume it without further massaging.
 
-If that artifact is something a form generator can consume without further
-massaging, the format is right and the remaining sections are mechanical.
-If it is not, the spike has done its job cheaply, and the format adjusts
-before any scale-up.
+## Open items before scale-up
+
+- **`commons` emits as a section.** It lives in `sections/` and now has a
+  `fields` block, so the emitter lists it among section types even though it
+  is a shared base, not an authorable section. The editor must exclude it
+  from the section palette. Cleanest fix: a manifest flag (for example
+  `"abstract": true`) the emitter honors, or emit only components whose
+  validation declares a `sectionType` const. Decide when migrating the next
+  sections.
+- **How the site consumes the new plugin.** The site is on
+  `metalsmith-bundled-components@0.6.0`; the local checkout that carries the
+  schema emit is at `1.0.0`. To actually emit the artifact in the site build
+  the site must move onto the new version (link the local checkout, or
+  publish and bump), and a `0.6 -> 1.0` jump may change build behavior
+  unrelated to this feature. This is the one cross-repo decision still open
+  and should be made before wiring `schema.enabled` into `metalsmith.js`.
 
 ## Constraints and cautions
 
@@ -244,8 +278,7 @@ before any scale-up.
 
 ## Keeping this current
 
-This guide tracks an in-progress effort. When the format is proven on the
-banner spike, fold the confirmed format back into the proposal section and
-drop the "to be proven" hedge. When a stage lands, update the sequence so
-the doc reflects what is done versus pending, and keep
-[editor-guide.md](editor-guide.md) in step as user-facing behavior changes.
+This guide tracks an in-progress effort. As stages land, update the
+sequence so the doc reflects what is done versus pending, resolve the open
+items as they are decided, and keep [editor-guide.md](editor-guide.md) in
+step as user-facing behavior changes.
