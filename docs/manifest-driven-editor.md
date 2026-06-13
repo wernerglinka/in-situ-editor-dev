@@ -258,9 +258,13 @@ The change spans three repos, so it is staged to keep each shippable.
    linkage publish needs is preserved; it fills empty sibling alt/caption on
    upload and shows a thumbnail. The renderer threads an editor context
    (`processFile`, `resolveThumb`, `rerender`) to the image widget without
-   coupling itself to the DB. Legacy `multi-media` still uses the lean model
-   and the hand-written `toLibrarySection`; the emitter branches on the
-   presence of `sectionType`. Loading a draft re-syncs once the schema
+   coupling itself to the DB. Every author-facing type the editor offers
+   (`rich-text`, `image-only`, `multi-media`, `banner`) is now on this path,
+   so the lean per-type model, the hand-written `toLibrarySection`, and the
+   hand-coded card renderers are gone; the emitter and builder are purely
+   schema-driven, and `draft-housekeeping` collects image references
+   generically from section values rather than from the old
+   `imageName`/`imageId` fields. Loading a draft re-syncs once the schema
    resolves so the preview never lingers on the schema-less fallback. Pure
    logic has node:test coverage in `test/schema-serializer.test.js`; the
    image upload round-trip (pick -> blob -> imageFiles -> emit path) and
@@ -270,10 +274,12 @@ The change spans three repos, so it is staged to keep each shippable.
    `blog-navigation`) are aliased to their current names on load so old
    drafts render instead of showing empty cards.
 
-   Still to do on this stage: move `multi-media` and the remaining types onto
-   the schema path; hydration (existing frontmatter back into the form); then
-   retire the lean model, the per-type emitter, and the legacy add buttons
-   once every type is schema-driven.
+   Still to do on this stage: hydration (existing frontmatter back into the
+   form), so the editor can open and round-trip an already-published page.
+   The other library section types (hero, slider, columns, and the rest)
+   already render through the generic form when added to `SCHEMA_DRIVEN` and
+   given an add button; they are held back only until hydration and the page
+   abstraction land.
 
 Validation derivation (folding the dotted `validation` block into `fields`)
 comes after the editor works, not before; it is a cleanup, not a

@@ -3,11 +3,9 @@
  * frontmatter (with an empty body) that lib/layouts/pages/sections.njk
  * renders.
  *
- * Two emit paths coexist during the migration to the schema-driven editor
- * (see docs/manifest-driven-editor.md): schema-driven sections (tagged with
- * `sectionType`) go through the generic serializer in schema/serializer.js,
- * driven by the loaded component schema; legacy lean sections (keyed by
- * `type`) go through the hand-written toLibrarySection below.
+ * Every section is schema-driven (tagged with `sectionType`): emitSection
+ * runs it through the generic serializer in schema/serializer.js, driven by
+ * the loaded component schema (see docs/manifest-driven-editor.md).
  */
 
 import { getSectionFields } from '../editor/schema/schema-loader.js';
@@ -98,106 +96,16 @@ const slugify = (title) =>
     .replace(/\s+/g, '-')
     .replace(/[^\w-]/g, '');
 
-/** Shared wrapper fields every emitted section carries. */
-const containerDefaults = (overrides = {}) => ({
-  containerTag: 'section',
-  classes: '',
-  id: '',
-  isDisabled: false,
-  containerFields: {
-    inContainer: true,
-    isAnimated: false,
-    noMargin: { top: false, bottom: false },
-    noPadding: { top: false, bottom: false },
-    background: {
-      color: '',
-      image: '',
-      imageScreen: 'none',
-      isDark: false
-    }
-  },
-  ...overrides
-});
-
-/**
- * Maps one lean editor section onto the library schema.
- * @param {Object} s - Editor section state.
- * @param {string} slug - The post slug (for image paths).
- * @return {Object} Library-schema section object.
- */
-function toLibrarySection(s, slug) {
-  if (s.type === 'multi-media') {
-    return {
-      sectionType: 'multi-media',
-      mediaType: 'image',
-      ...containerDefaults(),
-      image: {
-        src: s.imageName ? `/assets/images/blog/${slug}/${s.imageName}` : '',
-        alt: s.alt || '',
-        caption: s.caption || ''
-      }
-    };
-  }
-
-  if (s.type === 'banner') {
-    // Library banner convention: a full-width dark band. is-dark only
-    // switches the text color, so a background color must come with it.
-    const section = {
-      sectionType: 'banner',
-      ...containerDefaults({ containerTag: 'aside', classes: 'cta-banner' }),
-      text: {
-        leadIn: '',
-        title: s.title || '',
-        titleTag: 'h2',
-        subTitle: '',
-        prose: s.prose || ''
-      },
-      ctas:
-        s.ctaUrl && s.ctaLabel
-          ? [
-              {
-                url: s.ctaUrl,
-                label: s.ctaLabel,
-                isButton: true,
-                buttonStyle: 'primary'
-              }
-            ]
-          : []
-    };
-    section.containerFields.inContainer = false;
-    section.containerFields.background.color = '#333333';
-    section.containerFields.background.isDark = true;
-    return section;
-  }
-
-  return {
-    sectionType: 'rich-text',
-    ...containerDefaults(),
-    text: {
-      leadIn: '',
-      title: s.title || '',
-      titleTag: 'h2',
-      subTitle: '',
-      prose: s.prose || ''
-    },
-    ctas: []
-  };
-}
-
 /**
  * Generates a structured-content markdown document (frontmatter only,
  * empty body) from draft data.
- *
- * Signature kept compatible with the previous body-markdown generator;
- * `content` is only used as a legacy fallback when the draft has no
- * sections yet.
  *
  * @param {Object} draft - The draft object.
  * @param {string} title - The post title.
  * @param {string} description - The post description.
  * @param {string} date - The post date.
  * @param {string} tagsValue - Comma-separated tags string.
- * @param {string} content - Legacy markdown body fallback.
+ * @param {string} content - Unused; kept for signature compatibility.
  * @param {Array<Object>} [classifierResults=[]] - AI classifier results.
  * @return {string} The formatted Markdown string.
  */
@@ -208,12 +116,8 @@ export function generateMarkdown(draft, title, description, date, tagsValue, con
     .map((t) => t.trim())
     .filter((t) => t);
 
-  let editorSections = Array.isArray(draft.sections) ? draft.sections : null;
-  if (!editorSections && content && content.trim()) {
-    editorSections = [ { type: 'rich-text', title: '', prose: content } ];
-  }
-
-  const thumbnail = computeThumbnail(editorSections || [], slug);
+  const editorSections = Array.isArray(draft.sections) ? draft.sections : [];
+  const thumbnail = firstSectionImage(editorSections, getSectionFields, slug);
 
   const doc = {
     layout: 'pages/sections.njk',
@@ -240,45 +144,25 @@ export function generateMarkdown(draft, title, description, date, tagsValue, con
           ad_confidences: classifierResults.map((r) => r.confidence)
         }
       : {}),
-    sections: (editorSections || []).map((s) => emitSection(s, slug))
+    sections: editorSections.map((s) => emitSection(s, slug))
   };
 
   return `---\n${toYaml(doc)}\n---\n`;
 }
 
 /**
- * The card thumbnail and social image: the first section image, drawn from a
- * legacy multi-media section or a schema-driven one.
- * @param {Array<Object>} editorSections - The draft's sections.
- * @param {string} slug - The post slug.
- * @return {string} The image path, or ''.
- */
-function computeThumbnail(editorSections, slug) {
-  const legacyImage = editorSections.find((s) => s.type === 'multi-media' && s.imageName);
-  if (legacyImage) {
-    return `/assets/images/blog/${slug}/${legacyImage.imageName}`;
-  }
-  return firstSectionImage(editorSections, getSectionFields, slug);
-}
-
-/**
- * Emits one section, choosing the schema-driven or legacy path by model.
- * @param {Object} s - A section state object.
+ * Emits one section into the library frontmatter shape via the schema.
+ * @param {Object} s - A schema-driven section values object.
  * @param {string} slug - The post slug.
  * @return {Object} The library-schema section object.
  */
 function emitSection(s, slug) {
-  if (!s.sectionType) {
-    return toLibrarySection(s, slug);
-  }
-  const fields = getSectionFields(s.sectionType);
+  const fields = s.sectionType ? getSectionFields(s.sectionType) : null;
   if (fields) {
     return serializeSection(s.sectionType, s, fields, slug);
   }
-  // Schema not loaded (e.g. an early preview render before the fetch
+  // Schema not loaded yet (an early preview render before the fetch
   // resolves). The values object is already library-shaped, so emit it with
-  // the wrapper fields and let the next render correct any image paths.
-  const { type, ...rest } = s;
-  void type;
-  return { containerTag: 'section', id: '', classes: '', ...rest };
+  // the wrapper fields; the load-time re-sync corrects image paths.
+  return { containerTag: 'section', id: '', classes: '', ...s };
 }

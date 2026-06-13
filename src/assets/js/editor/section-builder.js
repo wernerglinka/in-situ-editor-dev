@@ -2,19 +2,15 @@
  * Section builder: the editor's left-column replacement for the markdown
  * body textarea. A draft holds a `sections` array.
  *
- * Two section models coexist while the editor migrates onto the
- * schema-driven path (see docs/manifest-driven-editor.md):
+ * Every section is schema-driven: a library-shaped values object
+ * materialized from the component schema and tagged with `sectionType`,
+ * rendered generically by form-renderer.js and serialized generically by
+ * schema/serializer.js (see docs/manifest-driven-editor.md). `SCHEMA_DRIVEN`
+ * lists the types the add buttons offer.
  *
- *   Schema-driven (new): a library-shaped values object materialized from
- *   the component schema, tagged with `sectionType`. Rendered generically by
- *   form-renderer.js and serialized generically by schema/serializer.js. The
- *   set SCHEMA_DRIVEN lists the types on this path; it grows as types
- *   migrate, and the legacy path retires when it covers everything.
- *
- *   Legacy (old): a lean editor-state object keyed by `type`, hand-rendered
- *   below and hand-mapped in markdown-utils.js.
- *     { type: 'multi-media', imageName, imageId, alt, caption }
- *     { type: 'banner',      title, prose, ctaLabel, ctaUrl }
+ * Drafts authored before this used a lean per-type model
+ * (`{ type, title, prose, ... }`); migrateSection converts those on load,
+ * including the pre-rename type names, so old drafts open without loss.
  */
 
 import { getImage } from '../utils/db-storage.js';
@@ -23,8 +19,8 @@ import { loadSchema, getSectionFields } from './schema/schema-loader.js';
 import { materializeDefaults } from './schema/field-utils.js';
 import { renderFields } from './schema/form-renderer.js';
 
-/** Section types rendered through the generic schema-driven path. */
-const SCHEMA_DRIVEN = new Set([ 'rich-text', 'image-only', 'banner' ]);
+/** Section types the add buttons offer, all on the schema-driven path. */
+const SCHEMA_DRIVEN = new Set([ 'rich-text', 'image-only', 'multi-media', 'banner' ]);
 
 /**
  * The card header label for a section type: its section name, title-cased
@@ -49,25 +45,14 @@ let sections = [];
 let currentDraft = null;
 
 /**
- * Creates a new empty section of the given type. Schema-driven types
- * materialize their defaults from the loaded schema; the schema must be
- * loaded first (callers await loadSchema()).
- * @param {string} type - A SCHEMA_DRIVEN type or a legacy TYPE_LABELS key.
- * @return {Object} The section state object (new or legacy model).
+ * Creates a new empty section of the given type by materializing its
+ * defaults from the loaded schema. The schema must be loaded first (callers
+ * await loadSchema()).
+ * @param {string} type - A SCHEMA_DRIVEN section type.
+ * @return {Object} The section values object, tagged with sectionType.
  */
 function newSection(type) {
-  if (SCHEMA_DRIVEN.has(type)) {
-    const fields = getSectionFields(type);
-    return { sectionType: type, ...materializeDefaults(fields) };
-  }
-  switch (type) {
-    case 'multi-media':
-      return { type, imageName: '', imageId: '', alt: '', caption: '' };
-    case 'banner':
-      return { type, title: '', prose: '', ctaLabel: '', ctaUrl: '' };
-    default:
-      return { type: 'rich-text', title: '', prose: '' };
-  }
+  return { sectionType: type, ...materializeDefaults(getSectionFields(type)) };
 }
 
 /**
@@ -95,53 +80,40 @@ function migrateSection(s) {
     return s;
   }
   const type = TYPE_ALIASES[s.type] || s.type;
-  if (SCHEMA_DRIVEN.has(type)) {
-    const next = newSection(type);
-    if (type === 'rich-text') {
-      next.text.title = s.title || '';
-      next.text.prose = s.prose || '';
-    } else if (type === 'banner') {
-      next.text.title = s.title || '';
-      next.text.prose = s.prose || '';
-      if (s.ctaUrl || s.ctaLabel) {
-        const cta = materializeDefaults(getSectionFields('banner').ctas.items);
-        cta.url = s.ctaUrl || '';
-        cta.label = s.ctaLabel || '';
-        next.ctas.push(cta);
-      }
-    }
-    return next;
+  if (!SCHEMA_DRIVEN.has(type)) {
+    return type === s.type ? s : { ...s, type };
   }
-  return type === s.type ? s : { ...s, type };
+  const next = newSection(type);
+  carryLegacyFields(type, s, next);
+  return next;
 }
 
 /**
- * Builds a labeled input or textarea bound to a section field.
- * @param {Object} section - The section state object.
- * @param {string} field - The property name on the section.
- * @param {string} label - The visible label.
- * @param {Object} [opts] - { textarea: boolean, rows: number, placeholder: string }
- * @return {HTMLElement} The form-group element.
+ * Copies a legacy lean section's fields into its fresh schema-driven values
+ * object. Each former per-type editor shape maps onto the library fields.
+ * @param {string} type - The schema section type.
+ * @param {Object} s - The legacy lean section.
+ * @param {Object} next - The fresh schema-driven section (mutated).
  */
-function boundField(section, field, label, opts = {}) {
-  const group = document.createElement('div');
-  group.className = 'form-group section-field';
-  const labelEl = document.createElement('label');
-  labelEl.textContent = label;
-  const input = document.createElement(opts.textarea ? 'textarea' : 'input');
-  if (opts.textarea) {
-    input.rows = opts.rows || 6;
-  } else {
-    input.type = 'text';
+function carryLegacyFields(type, s, next) {
+  if (type === 'rich-text' || type === 'banner') {
+    next.text.title = s.title || '';
+    next.text.prose = s.prose || '';
   }
-  input.placeholder = opts.placeholder || '';
-  input.value = section[field] || '';
-  input.oninput = () => {
-    section[field] = input.value;
-    onChangeRef();
-  };
-  group.append(labelEl, input);
-  return group;
+  if (type === 'banner' && (s.ctaUrl || s.ctaLabel)) {
+    const cta = materializeDefaults(getSectionFields('banner').ctas.items);
+    cta.url = s.ctaUrl || '';
+    cta.label = s.ctaLabel || '';
+    next.ctas.push(cta);
+  }
+  if (type === 'multi-media') {
+    // The lean shape stored a single uploaded image; the blob stays linked
+    // through draft.imageFiles by filename, so only the name is carried.
+    next.mediaType = 'image';
+    next.image.src = s.imageName || '';
+    next.image.alt = s.alt || '';
+    next.image.caption = s.caption || '';
+  }
 }
 
 /**
@@ -197,76 +169,6 @@ function formContext() {
 }
 
 /**
- * Renders the image picker (button + thumbnail) for a multi-media section.
- * @param {Object} section - The multi-media section state.
- * @return {HTMLElement} The picker element.
- */
-function imagePicker(section) {
-  const wrap = document.createElement('div');
-  wrap.className = 'form-group section-field section-image-picker';
-
-  const thumb = document.createElement('img');
-  thumb.className = 'section-thumb';
-  thumb.alt = '';
-  thumb.hidden = !section.imageId;
-  if (section.imageId) {
-    const cached = thumbCache.get(section.imageId);
-    if (cached) {
-      thumb.src = cached;
-    } else {
-      getImage(section.imageId).then((data) => {
-        if (!data) {
-          return;
-        }
-        const url = URL.createObjectURL(new Blob([ data ]));
-        thumbCache.set(section.imageId, url);
-        thumb.src = url;
-      });
-    }
-  }
-
-  const btn = document.createElement('button');
-  btn.type = 'button';
-  btn.className = 'btn';
-  btn.textContent = section.imageName ? `🖼 ${section.imageName}` : '📂 Choose image';
-
-  const fileInput = document.createElement('input');
-  fileInput.type = 'file';
-  fileInput.accept = 'image/*';
-  fileInput.hidden = true;
-  fileInput.onchange = async () => {
-    const file = fileInput.files[0];
-    if (!file || !currentDraft) {
-      return;
-    }
-    btn.disabled = true;
-    btn.textContent = '⏳ Processing...';
-    try {
-      const info = await processImage(file, currentDraft.id, currentDraft, uiRef);
-      section.imageName = info.name;
-      // processImage just pushed this file's entry
-      const files = currentDraft.imageFiles || [];
-      const entry = files[files.length - 1];
-      section.imageId = entry && entry.name === info.name ? entry.id : '';
-      if (!section.alt) {
-        section.alt = info.alt;
-      }
-      if (!section.caption) {
-        section.caption = info.caption;
-      }
-      render();
-      onChangeRef();
-    } finally {
-      btn.disabled = false;
-    }
-  };
-
-  btn.onclick = () => fileInput.click();
-  wrap.append(thumb, btn, fileInput);
-  return wrap;
-}
-
-/**
  * Renders one section card.
  * @param {Object} section - The section state object.
  * @param {number} index - Position in the sections array.
@@ -311,33 +213,14 @@ function renderCard(section, index) {
 
   const body = document.createElement('div');
   body.className = 'section-card-body';
-  if (section.sectionType) {
-    const fields = getSectionFields(section.sectionType);
-    if (fields) {
-      body.append(renderFields(fields, section, onChangeRef, formContext()));
-    } else {
-      const pending = document.createElement('p');
-      pending.className = 'field-hint';
-      pending.textContent = 'Loading schema...';
-      body.append(pending);
-    }
-  } else if (section.type === 'multi-media') {
-    body.append(
-      imagePicker(section),
-      boundField(section, 'alt', 'Alt text', { placeholder: 'Describe the image' }),
-      boundField(section, 'caption', 'Caption', { placeholder: 'Optional caption' })
-    );
-  } else if (section.type === 'banner') {
-    body.append(
-      boundField(section, 'title', 'Title', { placeholder: 'Banner title' }),
-      boundField(section, 'prose', 'Prose (Markdown)', {
-        textarea: true,
-        rows: 3,
-        placeholder: 'Optional supporting text...'
-      }),
-      boundField(section, 'ctaLabel', 'CTA label', { placeholder: 'Read more' }),
-      boundField(section, 'ctaUrl', 'CTA URL', { placeholder: '/blog/ or https://...' })
-    );
+  const fields = section.sectionType ? getSectionFields(section.sectionType) : null;
+  if (fields) {
+    body.append(renderFields(fields, section, onChangeRef, formContext()));
+  } else {
+    const pending = document.createElement('p');
+    pending.className = 'field-hint';
+    pending.textContent = 'Loading schema...';
+    body.append(pending);
   }
 
   card.append(header, body);
