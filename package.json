@@ -57,7 +57,7 @@
     "jstransformer-nunjucks": "^1.2.0",
     "marked": "^17.0.3",
     "metalsmith": "^2.7.0",
-    "metalsmith-bundled-components": "^1.1.0",
+    "metalsmith-bundled-components": "^1.2.0",
     "metalsmith-menu-plus": "^0.3.0",
     "metalsmith-optimize-html": "^0.8.3",
     "metalsmith-optimize-images": "^0.10.3",
