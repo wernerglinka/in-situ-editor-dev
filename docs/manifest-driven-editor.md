@@ -1,0 +1,251 @@
+# Manifest-driven editor
+
+The development guide for moving the editor from hand-written, blog-only
+section forms to a schema-driven editor that can create and edit any page.
+This is the detailed plan behind the direction recorded in
+[design-notes.md](design-notes.md); read that first for the why and the
+shape, this for the contract and the sequence.
+
+## Goal
+
+Today the editor creates new blog posts from three hand-coded section
+types. The target is an editor that composes any of the library's section
+types and edits any existing page, without per-type code in the editor and
+without losing fields it does not understand.
+
+The lever is that we own all three layers: the
+`metalsmith2025-structured-content-starter` (this site's base), the
+component library under `lib/layouts/components/`, and the
+`metalsmith-bundled-components` plugin that discovers, resolves, and
+bundles those components at build time. Because we own all three, the
+component manifests can become a single source of truth that drives the
+build, the content validation, and the editor at once.
+
+## Where we are
+
+The editor knows three section types (`text-only`, `media-image`,
+`banner`) out of seventeen in the library. Each is hand-written in
+[section-builder.js](../src/assets/js/editor/section-builder.js) and
+hand-mapped onto the library schema by the emitter in
+[markdown-utils.js](../src/assets/js/utils/markdown-utils.js). The editor
+holds a lean editor-state object per section and the emitter is a one-way
+function from that lean state to library frontmatter. There is no path
+from existing frontmatter back into the editor, so nothing can edit a page
+that already exists.
+
+Every component already ships a `manifest.json`. Those manifests carry a
+`requires` list (the composition graph), `styles` and `scripts` (the
+bundler's asset inputs), and a `validation` block in a flattened
+dotted-key JSON-Schema dialect (for example `containerFields.background.isDark`).
+The plugin reads all of these at build time: it discovers every component,
+resolves the transitive `requires` graph, and validates authored sections
+against the `validation` block.
+
+Two properties of the current manifests make them awkward for an editor.
+They are incomplete: `validation.properties` lists only fields with
+constraints worth validating, so plain free-text fields like `text.title`,
+`text.prose`, and the CTA `url` and `label` appear nowhere in a section's
+manifest and are only discoverable by reading the partials it requires.
+And they are flattened: dotted keys have to be un-flattened into the nested
+object the frontmatter actually uses. A form generator cannot render
+fields it cannot see, and should not have to reverse-engineer the shape.
+
+## The decision
+
+Each component manifest gains a complete, nested `fields` block that
+describes every authored field, its default, and its editor presentation.
+Sections compose their fields from partials through the existing `requires`
+relationship, so shared field groups like `text`, `ctas`, and `image` are
+defined once in the partial that owns them. The `fields` block is additive:
+the existing `validation`, `requires`, `styles`, and `scripts` keys keep
+working unchanged, so the bundler and the content validator are undisturbed
+while the new block is introduced.
+
+The plugin gains an opt-in output that emits the fully composed schema as a
+build artifact. The plugin already discovers every component and resolves
+the `requires` graph; this step surfaces that result as a single
+`components-schema.json` holding, per section type, the resolved nested
+field tree. The editor loads that one artifact and never does composition
+in the browser.
+
+The editor becomes generic. It renders forms from the schema, serializes
+frontmatter from the schema, and hydrates an existing page's frontmatter
+back into the form from the same schema. The lean editor-state model and
+the hand-written per-type emitter both retire. Because one definition
+describes the complete shape of every section, the inverse direction
+(frontmatter back to form) is faithful rather than lossy, which is what
+makes editing arbitrary existing pages safe.
+
+### Layering discipline
+
+`metalsmith-bundled-components` is a published, general-purpose plugin that
+other sites depend on. The manifest format is the shared contract, but the
+plugin must stay generic. It reads the manifest, resolves dependencies,
+validates content, and optionally emits the composed schema. It does not
+interpret editor-only keys like `widget`, `label`, or `order`; it carries
+them through opaquely. The bundler validates content shape, the editor
+reads presentation intent, and the two concerns share a file without
+sharing logic. Every plugin change ships backward compatible and behind an
+option so existing consumers are never forced to adopt it.
+
+## The `fields` format (proposed, to be proven on the banner spike)
+
+The format below is the working proposal. The first milestone exists to
+validate it on one real section before it is frozen; treat divergence
+found during the spike as expected, not as failure.
+
+`fields` mirrors the data shape. A node with a `widget` key is a field; any
+other object is a group whose entries are nested fields, and a group's
+nesting becomes the field's path in the frontmatter. Declaration order is
+the render order. Because `containerFields` is its own subtree, the
+editor's "container settings" disclosure pane (see
+[design-notes.md](design-notes.md)) falls out structurally, with no flag
+needed.
+
+A leaf field carries `widget` (one of `text`, `markdown`, `select`,
+`checkbox`, `image`, and others as needed), a human `label`, an optional
+`default`, optional `help`, and the constraint keys the validator already
+understands (`enum`, `required`, `type`). An array of objects uses
+`widget: array` with an `items` field-tree describing one entry.
+
+Composition is explicit. A section places a partial's fields with a `$use`
+reference naming the partial, and the resolver expands it in place. This
+keeps the field definitions DRY (the `text` partial owns the `text` fields)
+while letting the section control where the group appears and in what
+order. Every `$use` target must also appear in `requires`; a plugin test
+asserts that.
+
+Sketch of `banner` (illustrative, not final):
+
+```jsonc
+{
+  "name": "banner",
+  "requires": ["ctas", "text", "image", "commons"],
+  "fields": {
+    "text": { "$use": "text" },
+    "ctas": { "$use": "ctas" },
+    "containerFields": {
+      "inContainer": { "widget": "checkbox", "label": "Constrain width", "default": false },
+      "background": {
+        "color": { "widget": "text", "label": "Background color", "default": "" },
+        "isDark": { "widget": "checkbox", "label": "Dark background", "default": false }
+      }
+    }
+  }
+}
+```
+
+And the `text` partial owns its group once:
+
+```jsonc
+{
+  "name": "text",
+  "fields": {
+    "leadIn":   { "widget": "text", "label": "Lead-in", "default": "" },
+    "title":    { "widget": "text", "label": "Title", "default": "" },
+    "titleTag": { "widget": "select", "label": "Title level", "enum": ["h1","h2","h3","h4","h5","h6"], "default": "h2" },
+    "subTitle": { "widget": "text", "label": "Subtitle", "default": "" },
+    "prose":    { "widget": "markdown", "label": "Body", "default": "" }
+  }
+}
+```
+
+This retires the emitter's hardcoded banner background (`#333333` with
+`isDark: true`): background color and dark-mode become authored fields with
+defaults, honoring the rule that dark mode is the author's call and never
+inferred.
+
+## The build artifact
+
+The plugin emits `components-schema.json` into the build output where the
+admin can fetch it (alongside the other admin assets). Its shape is the
+resolved form of the manifests: a map from `sectionType` to the fully
+composed, nested field tree, with every `$use` expanded and every default
+present. The editor treats it as read-only data. When a component is added
+or its fields change, the next build regenerates the artifact and the
+editor reflects it with no editor code change. That is the point of the
+exercise: adding a section type is data, not code.
+
+## What the editor becomes
+
+Form generation walks the resolved field tree and renders a control per
+leaf from its `widget`, grouping `containerFields` into the disclosure
+pane. Serialization walks the same tree, reads the bound values, applies
+defaults for untouched fields, and writes nested frontmatter; the per-type
+branches in [markdown-utils.js](../src/assets/js/utils/markdown-utils.js)
+go away. Hydration reads an existing page's `sections` array and, for each
+section, maps its values onto the field tree for that `sectionType`,
+populating the form. Fields present in the page but absent from the schema
+are surfaced rather than silently dropped, so a hand-authored page never
+loses data by being opened in the editor.
+
+## Beyond sections: editing all pages
+
+Section coverage and faithful round-trips are the foundation, but "all
+pages" also means decoupling from blog. Output path, layout, image path,
+and `card` or collection membership are currently hardwired to
+`src/blog/<slug>`. A later pass introduces a page-type and destination
+concept in the draft model and widens the publish Function's path
+validation accordingly, with the Function staying the security boundary.
+That work is tracked separately and is not part of the first milestones; it
+builds on the schema-driven editor rather than blocking on it.
+
+## Sequence
+
+The change spans three repos, so it is staged to keep each shippable.
+
+1. Plugin first. Teach `metalsmith-bundled-components` to read a nested
+   `fields` block, add the opt-in schema emit, and (later) let the content
+   validator derive from `fields` instead of the parallel `validation`
+   block. Backward compatible, behind an option, shipped as a normal
+   versioned release.
+2. Library next. Author `fields` for the partials first (`text`, `ctas`,
+   `image`, `commons`), then the sections that compose from them, one
+   section at a time.
+3. Editor last. Point it at the emitted artifact, build the generic form
+   generator, serializer, and hydrator, and delete the lean editor-state
+   model and the per-type emitter.
+
+Validation derivation (folding the dotted `validation` block into `fields`)
+comes after the editor works, not before; it is a cleanup, not a
+prerequisite.
+
+## First milestone
+
+Prove the contract on one section before touching the other sixteen or
+writing any editor rendering code:
+
+- Add the schema emit to the plugin behind a flag.
+- Author the `fields` block for `banner` and for the partials it requires
+  (`text`, `ctas`, `image`, `commons`).
+- Confirm the emitted artifact for `banner` is a complete, nested field
+  tree the editor could render directly, with `$use` expanded and defaults
+  present.
+
+If that artifact is something a form generator can consume without further
+massaging, the format is right and the remaining sections are mechanical.
+If it is not, the spike has done its job cheaply, and the format adjusts
+before any scale-up.
+
+## Constraints and cautions
+
+- The plugin is published and shared. Keep every change backward
+  compatible and opt-in; never make it interpret editor-only keys.
+- Changes ripple across three packages. Land the contract in the plugin,
+  version it, then migrate the library, then the editor. Do not edit the
+  three in a single uncoordinated pass.
+- This library is the source of truth for this project (see project
+  `CLAUDE.md`), so divergence from the upstream starter is accepted.
+  Keeping manifest changes additive also keeps a future upstream sync from
+  becoming a merge fight.
+- The publish Function remains the security boundary. Generalizing page
+  destinations widens its path validation; it does not move the check into
+  the UI.
+
+## Keeping this current
+
+This guide tracks an in-progress effort. When the format is proven on the
+banner spike, fold the confirmed format back into the proposal section and
+drop the "to be proven" hedge. When a stage lands, update the sequence so
+the doc reflects what is done versus pending, and keep
+[editor-guide.md](editor-guide.md) in step as user-facing behavior changes.
