@@ -220,15 +220,17 @@ The change spans three repos, so it is staged to keep each shippable.
    in `test/unit/schema-emitter.test.js`. Letting the content validator
    derive from `fields` instead of the parallel `validation` block is still
    pending and stays a later cleanup.
-2. **Library — in progress.** `fields` authored for the partials (`commons`,
-   `text`, `image`, `ctas`) and the author-facing content sections: `banner`,
-   `text-only`, `media-image`, `hero`, `testimonial`. `commons` is marked
-   `"abstract": true`. Remaining: the composed/array-bearing sections
-   (`composed`, `flip-cards`, `slider`, `logos-list`), which need new partial
-   fields (`flip-card`, `logo`, `slider-pagination`) and array modeling; and
-   a decision on the data-driven listing/chrome sections (`collection-list`,
-   `featured-posts`, `header`, `footer`, the `blog-*` sections), which simply
-   stay out of the schema by carrying no `fields` until that call is made.
+2. **Library — done.** `fields` authored for the partials (`commons`,
+   `text`, `image`, `ctas`, `flip-card`) and every author-facing section:
+   `banner`, `text-only`, `media-image`, `hero`, `testimonial`, `composed`,
+   `flip-cards`, `slider`, `logos-list`, and the minimal-config
+   `collection-list` and `blog-author` (11 sections emitted). `commons` is
+   marked `"abstract": true`. The fully auto/chrome sections
+   (`featured-posts`, `blog-list`, `blog-navigation`, `header`, `footer`)
+   take no authored input, so they carry no `fields` and stay out of the
+   schema by design. A few `requires` gaps surfaced and were fixed while
+   authoring (`composed` now requires the text/image/ctas it imports,
+   `flip-cards` requires `flip-card`, `collection-list` requires `commons`).
 3. **Site wiring — done.** The site is on `metalsmith-bundled-components`
    1.1.0 with `schema.enabled` set in `metalsmith.js`; the production build
    writes `build/assets/components-schema.json` (served at
@@ -259,9 +261,8 @@ writing editor rendering code:
 
 - ~~**`commons` emits as a section.**~~ Resolved: the plugin honors
   `"abstract": true` (bundled-components 1.2.0), `commons` carries the flag,
-  and the site is on 1.2.0. The emitted artifact now lists only the
-  author-facing sections (`banner`, `hero`, `media-image`, `testimonial`,
-  `text-only`).
+  and the site is on 1.2.0. The emitted artifact lists only the author-facing
+  sections (11 of them).
 - ~~**How the site consumes the new plugin.**~~ Resolved: published as
   1.1.0 (minor, additive), the site bumped to `^1.1.0`, and `schema.enabled`
   wired into `metalsmith.js`. The build verified clean across the jump.
