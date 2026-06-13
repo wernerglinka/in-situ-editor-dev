@@ -244,18 +244,31 @@ The change spans three repos, so it is staged to keep each shippable.
    disclosure pane); a generic serializer (`schema/serializer.js`) walks the
    same tree to emit nested library frontmatter, filling defaults and adding
    the wrapper fields the template needs (`containerTag`, `id`, `classes`).
-   `rich-text` runs end to end on this path: "+ Text" materializes defaults
-   from the schema, the form binds into a library-shaped values object, and
-   the emitter serializes it (notably emitting `text.isCentered`, which the
-   old hand-mapped path dropped). Legacy `multi-media` and `banner` still use
-   the lean model and the hand-written `toLibrarySection`; the emitter
-   branches on the presence of `sectionType`. Pure logic has node:test
-   coverage in `test/schema-serializer.test.js`.
+   `rich-text` and `image-only` run end to end on this path: their add
+   buttons ("+ Rich Text", "+ Image Only") materialize defaults from the
+   schema, the form binds into a library-shaped values object, and the
+   emitter serializes it (notably emitting `text.isCentered`, which the old
+   hand-mapped path dropped). The `image` widget is real: a text field (for
+   URLs and hydrated values) plus a file picker that runs the existing
+   `processImage` pipeline, so the IndexedDB blob and `draft.imageFiles`
+   linkage publish needs is preserved; it fills empty sibling alt/caption on
+   upload and shows a thumbnail. The renderer threads an editor context
+   (`processFile`, `resolveThumb`, `rerender`) to the image widget without
+   coupling itself to the DB. Legacy `multi-media` and `banner` still use the
+   lean model and the hand-written `toLibrarySection`; the emitter branches
+   on the presence of `sectionType`. Loading a draft re-syncs once the schema
+   resolves so the preview never lingers on the schema-less fallback. Pure
+   logic has node:test coverage in `test/schema-serializer.test.js`; the
+   image upload round-trip (pick -> blob -> imageFiles -> emit path) and
+   draft persistence were verified in the browser.
 
-   Still to do on this stage: a real image widget (file picker that keeps the
-   IndexedDB blob linkage publish needs) so `multi-media` and `slider` can
-   move onto the schema path; hydration (existing frontmatter back into the
-   form); then retiring the lean model, the per-type emitter, and the legacy
+   Pre-rename type names (`media-image`, `text-only`, `composed`,
+   `blog-navigation`) are aliased to their current names on load so old
+   drafts render instead of showing empty cards.
+
+   Still to do on this stage: move `multi-media`, `slider`, and the remaining
+   types onto the schema path; hydration (existing frontmatter back into the
+   form); then retire the lean model, the per-type emitter, and the legacy
    add buttons once every type is schema-driven.
 
 Validation derivation (folding the dotted `validation` block into `fields`)

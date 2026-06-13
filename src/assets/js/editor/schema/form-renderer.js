@@ -29,9 +29,14 @@ function groupLabel(key) {
  * @param {Object} obj - The parent values object.
  * @param {string} key - The property on obj this control binds to.
  * @param {Function} onChange - Called after every edit.
+ * @param {Object} ctx - Editor context (image picker callbacks).
  * @return {HTMLElement} The form-group element.
  */
-function renderLeaf(node, obj, key, onChange) {
+function renderLeaf(node, obj, key, onChange, ctx) {
+  if (node.widget === 'image' && ctx && typeof ctx.processFile === 'function') {
+    return renderImage(node, obj, key, onChange, ctx);
+  }
+
   const group = document.createElement('div');
   group.className = 'form-group section-field';
 
@@ -61,23 +66,7 @@ function renderLeaf(node, obj, key, onChange) {
       onChange();
     };
   } else if (node.widget === 'checkbox') {
-    input = document.createElement('input');
-    input.type = 'checkbox';
-    input.checked = Boolean(obj[key]);
-    input.onchange = () => {
-      obj[key] = input.checked;
-      onChange();
-    };
-    // Checkbox reads better as label-after-control.
-    group.classList.add('section-field-checkbox');
-    const inline = document.createElement('label');
-    inline.className = 'checkbox-label';
-    inline.append(input, document.createTextNode(` ${node.label || key}`));
-    group.append(inline);
-    if (node.help) {
-      group.append(hint(node.help));
-    }
-    return group;
+    return renderCheckbox(node, obj, key, onChange);
   } else {
     // text, image (URL/filename), and any not-yet-specialized widget.
     input = document.createElement('input');
@@ -93,6 +82,138 @@ function renderLeaf(node, obj, key, onChange) {
   if (node.help) {
     group.append(hint(node.help));
   }
+  return group;
+}
+
+/**
+ * Builds a checkbox control, rendered label-after-control for readability.
+ * @param {Object} node - The checkbox field definition.
+ * @param {Object} obj - The parent values object.
+ * @param {string} key - The property on obj.
+ * @param {Function} onChange - Called after every edit.
+ * @return {HTMLElement} The form-group element.
+ */
+function renderCheckbox(node, obj, key, onChange) {
+  const group = document.createElement('div');
+  group.className = 'form-group section-field section-field-checkbox';
+  const input = document.createElement('input');
+  input.type = 'checkbox';
+  input.checked = Boolean(obj[key]);
+  input.onchange = () => {
+    obj[key] = input.checked;
+    onChange();
+  };
+  const inline = document.createElement('label');
+  inline.className = 'checkbox-label';
+  inline.append(input, document.createTextNode(` ${node.label || key}`));
+  group.append(inline);
+  if (node.help) {
+    group.append(hint(node.help));
+  }
+  return group;
+}
+
+/**
+ * Builds the image widget: a text input (for URLs and hydrated values), a
+ * file picker that uploads through the editor's image pipeline and stores
+ * the filename, and a thumbnail. On upload it fills empty sibling alt and
+ * caption fields, matching the legacy image section's convenience.
+ * @param {Object} node - The image field definition.
+ * @param {Object} obj - The parent group (e.g. the `image` group).
+ * @param {string} key - The image property (e.g. `src`).
+ * @param {Function} onChange - Called after every edit.
+ * @param {Object} ctx - { processFile(file), resolveThumb(value) }.
+ * @return {HTMLElement} The form-group element.
+ */
+function renderImage(node, obj, key, onChange, ctx) {
+  const group = document.createElement('div');
+  group.className = 'form-group section-field section-image-field';
+
+  const labelEl = document.createElement('label');
+  labelEl.textContent = node.label || key;
+
+  const thumb = document.createElement('img');
+  thumb.className = 'section-thumb';
+  thumb.alt = '';
+  thumb.hidden = true;
+
+  const refreshThumb = () => {
+    const value = obj[key];
+    if (!value) {
+      thumb.hidden = true;
+      return;
+    }
+    Promise.resolve(ctx.resolveThumb ? ctx.resolveThumb(value) : null).then((url) => {
+      const src = url || (/^(https?:|\/|data:)/i.test(value) ? value : null);
+      thumb.hidden = !src;
+      if (src) {
+        thumb.src = src;
+      }
+    });
+  };
+
+  const input = document.createElement('input');
+  input.type = 'text';
+  input.value = obj[key] ?? '';
+  input.placeholder = 'Filename or URL';
+  input.oninput = () => {
+    obj[key] = input.value;
+    refreshThumb();
+    onChange();
+  };
+
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.className = 'btn';
+  btn.textContent = '📂 Choose image';
+
+  const fileInput = document.createElement('input');
+  fileInput.type = 'file';
+  fileInput.accept = 'image/*';
+  fileInput.hidden = true;
+  fileInput.onchange = async () => {
+    const file = fileInput.files[0];
+    if (!file) {
+      return;
+    }
+    btn.disabled = true;
+    btn.textContent = '⏳ Processing...';
+    try {
+      const info = await ctx.processFile(file);
+      if (info && info.name) {
+        obj[key] = info.name;
+        input.value = info.name;
+        if ('alt' in obj && !obj.alt && info.alt) {
+          obj.alt = info.alt;
+        }
+        if ('caption' in obj && !obj.caption && info.caption) {
+          obj.caption = info.caption;
+        }
+        onChange();
+        // Re-render so auto-filled alt/caption inputs reflect the new
+        // values; fall back to just refreshing the thumbnail.
+        if (typeof ctx.rerender === 'function') {
+          ctx.rerender();
+        } else {
+          refreshThumb();
+        }
+      }
+    } finally {
+      btn.disabled = false;
+      btn.textContent = '📂 Choose image';
+    }
+  };
+  btn.onclick = () => fileInput.click();
+
+  const picker = document.createElement('div');
+  picker.className = 'section-image-picker';
+  picker.append(thumb, btn, fileInput);
+
+  group.append(labelEl, input, picker);
+  if (node.help) {
+    group.append(hint(node.help));
+  }
+  refreshThumb();
   return group;
 }
 
@@ -112,9 +233,10 @@ function hint(text) {
  * @param {Object} obj - The parent values object.
  * @param {string} key - The array property on obj.
  * @param {Function} onChange - Called after every edit.
+ * @param {Object} ctx - Editor context, threaded to nested fields.
  * @return {HTMLElement} The array widget element.
  */
-function renderArray(node, obj, key, onChange) {
+function renderArray(node, obj, key, onChange, ctx) {
   const wrap = document.createElement('div');
   wrap.className = 'section-array';
 
@@ -163,7 +285,7 @@ function renderArray(node, obj, key, onChange) {
         controls.append(b);
       }
       itemEl.append(controls);
-      itemEl.append(renderFields(node.items, item, onChange));
+      itemEl.append(renderFields(node.items, item, onChange, ctx));
       list.append(itemEl);
     });
   };
@@ -188,20 +310,22 @@ function renderArray(node, obj, key, onChange) {
  * @param {Object} fields - The field tree.
  * @param {Object} values - The values object to bind to (mutated in place).
  * @param {Function} onChange - Called after every edit.
+ * @param {Object} [ctx] - Editor context (image picker callbacks), threaded
+ *   to every nested control.
  * @return {DocumentFragment} The rendered controls.
  */
-export function renderFields(fields, values, onChange) {
+export function renderFields(fields, values, onChange, ctx = {}) {
   const frag = document.createDocumentFragment();
   for (const [ key, node ] of Object.entries(fields)) {
     if (isArrayField(node)) {
-      frag.append(renderArray(node, values, key, onChange));
+      frag.append(renderArray(node, values, key, onChange, ctx));
     } else if (isLeaf(node)) {
-      frag.append(renderLeaf(node, values, key, onChange));
+      frag.append(renderLeaf(node, values, key, onChange, ctx));
     } else if (isGroup(node)) {
       if (!values[key] || typeof values[key] !== 'object') {
         values[key] = materializeDefaults(node);
       }
-      frag.append(renderGroup(key, node, values[key], onChange));
+      frag.append(renderGroup(key, node, values[key], onChange, ctx));
     }
   }
   return frag;
@@ -214,16 +338,17 @@ export function renderFields(fields, values, onChange) {
  * @param {Object} node - The group's field tree.
  * @param {Object} groupValues - The group's values object.
  * @param {Function} onChange - Called after every edit.
+ * @param {Object} ctx - Editor context, threaded to nested fields.
  * @return {HTMLElement} The group element.
  */
-function renderGroup(key, node, groupValues, onChange) {
+function renderGroup(key, node, groupValues, onChange, ctx) {
   if (key === 'containerFields') {
     const details = document.createElement('details');
     details.className = 'section-container-settings';
     const summary = document.createElement('summary');
     summary.textContent = groupLabel(key);
     details.append(summary);
-    details.append(renderFields(node, groupValues, onChange));
+    details.append(renderFields(node, groupValues, onChange, ctx));
     return details;
   }
 
@@ -233,6 +358,6 @@ function renderGroup(key, node, groupValues, onChange) {
   title.className = 'section-field-group-label';
   title.textContent = groupLabel(key);
   fieldset.append(title);
-  fieldset.append(renderFields(node, groupValues, onChange));
+  fieldset.append(renderFields(node, groupValues, onChange, ctx));
   return fieldset;
 }

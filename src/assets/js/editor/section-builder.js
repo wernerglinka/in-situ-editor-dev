@@ -24,7 +24,7 @@ import { materializeDefaults } from './schema/field-utils.js';
 import { renderFields } from './schema/form-renderer.js';
 
 /** Section types rendered through the generic schema-driven path. */
-const SCHEMA_DRIVEN = new Set([ 'rich-text' ]);
+const SCHEMA_DRIVEN = new Set([ 'rich-text', 'image-only' ]);
 
 /**
  * The card header label for a section type: its section name, title-cased
@@ -133,6 +133,58 @@ function boundField(section, field, label, opts = {}) {
   };
   group.append(labelEl, input);
   return group;
+}
+
+/**
+ * The editor context passed to the schema-driven form renderer, giving its
+ * generic image widget access to the draft's image pipeline without coupling
+ * the renderer to the DB or the upload code.
+ * @return {Object} { processFile, resolveThumb, rerender }.
+ */
+function formContext() {
+  return {
+    /**
+     * Uploads a picked file through the draft's image pipeline.
+     * @param {File} file - The chosen image.
+     * @return {Promise<Object|null>} { name, alt, caption } or null.
+     */
+    async processFile(file) {
+      if (!currentDraft) {
+        return null;
+      }
+      return processImage(file, currentDraft.id, currentDraft, uiRef);
+    },
+    /**
+     * Resolves a stored image value to a thumbnail blob URL, matching it
+     * against the draft's uploaded files by filename.
+     * @param {string} value - The stored image value (filename or path).
+     * @return {Promise<string|null>} A blob URL, or null.
+     */
+    async resolveThumb(value) {
+      if (!value || !currentDraft) {
+        return null;
+      }
+      const name = value.split('/').pop();
+      const entry = (currentDraft.imageFiles || []).find((f) => f.name === name);
+      if (!entry) {
+        return null;
+      }
+      if (thumbCache.has(entry.id)) {
+        return thumbCache.get(entry.id);
+      }
+      const data = await getImage(entry.id);
+      if (!data) {
+        return null;
+      }
+      const url = URL.createObjectURL(new Blob([ data ]));
+      thumbCache.set(entry.id, url);
+      return url;
+    },
+    /** Re-renders the section cards (after an upload fills sibling fields). */
+    rerender() {
+      render();
+    }
+  };
 }
 
 /**
@@ -253,7 +305,7 @@ function renderCard(section, index) {
   if (section.sectionType) {
     const fields = getSectionFields(section.sectionType);
     if (fields) {
-      body.append(renderFields(fields, section, onChangeRef));
+      body.append(renderFields(fields, section, onChangeRef, formContext()));
     } else {
       const pending = document.createElement('p');
       pending.className = 'field-hint';
@@ -317,6 +369,9 @@ export function loadSections(draft) {
       draft.sections = draft.sections.map(migrateSection);
       sections = draft.sections;
       render();
+      // Re-emit now that the schema is loaded: the first preview may have
+      // run through the schema-less fallback (bare image paths, no defaults).
+      onChangeRef();
     })
     .catch(() => {
       sections = draft.sections;
