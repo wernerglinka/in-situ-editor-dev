@@ -64,23 +64,39 @@ function newSection(type) {
 }
 
 /**
- * Migrates a legacy lean section into its schema-driven equivalent when its
- * type has moved onto the schema path. Types still on the legacy path pass
- * through unchanged.
+ * Pre-rename lean type names -> their current names. Drafts saved before the
+ * library rename (text-only -> rich-text, etc.) carry the old names; without
+ * this they match no render branch and show an empty card.
+ */
+const TYPE_ALIASES = {
+  'text-only': 'rich-text',
+  'media-image': 'multi-media',
+  composed: 'columns',
+  'blog-navigation': 'collection-links'
+};
+
+/**
+ * Migrates a legacy lean section: renames pre-rename types to current names
+ * and converts types that have moved onto the schema path into their
+ * schema-driven values object. Already-migrated (schema-driven) sections and
+ * legacy types still on the lean path pass through unchanged.
  * @param {Object} s - A section state object.
  * @return {Object} The (possibly migrated) section.
  */
 function migrateSection(s) {
-  if (s.sectionType || !SCHEMA_DRIVEN.has(s.type)) {
+  if (s.sectionType) {
     return s;
   }
-  if (s.type === 'rich-text') {
-    const next = newSection('rich-text');
-    next.text.title = s.title || '';
-    next.text.prose = s.prose || '';
+  const type = TYPE_ALIASES[s.type] || s.type;
+  if (SCHEMA_DRIVEN.has(type)) {
+    const next = newSection(type);
+    if (type === 'rich-text') {
+      next.text.title = s.title || '';
+      next.text.prose = s.prose || '';
+    }
     return next;
   }
-  return s;
+  return type === s.type ? s : { ...s, type };
 }
 
 /**
