@@ -14,6 +14,21 @@
     "commons",
     "slider-pagination"
   ],
+  "fields": {
+    "config": { "widget": "select", "label": "Slider mode", "enum": ["", "isTabs"], "default": "" },
+    "text": { "$use": "text" },
+    "slides": {
+      "widget": "array",
+      "label": "Slides",
+      "items": {
+        "image": { "$use": "image" },
+        "text": { "$use": "text", "titleTag": { "default": "h3" } },
+        "ctas": { "$use": "ctas" },
+        "slideClasses": { "widget": "text", "label": "Slide CSS classes (optional)", "default": "" }
+      }
+    },
+    "$extends": ["commons"]
+  },
   "validation": {
     "required": [
       "sectionType"

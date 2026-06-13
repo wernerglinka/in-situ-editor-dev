@@ -9,8 +9,18 @@
     "ctas",
     "text",
     "image",
-    "commons"
+    "commons",
+    "flip-card"
   ],
+  "fields": {
+    "text": { "$use": "text" },
+    "cards": {
+      "widget": "array",
+      "label": "Flip cards",
+      "items": { "$extends": ["flip-card"] }
+    },
+    "$extends": ["commons"]
+  },
   "validation": {
     "required": [
       "sectionType"

@@ -3,8 +3,12 @@
   "type": "section",
   "styles": ["collection-list.css"],
   "scripts": [],
-  "requires": [],
+  "requires": ["commons"],
   "requiredPlugins": ["metalsmith-sectioned-blog-pagination"],
+  "fields": {
+    "collectionName": { "widget": "text", "label": "Collection name (e.g. blog)", "default": "" },
+    "$extends": ["commons"]
+  },
   "validation": {
     "required": ["sectionType", "collectionName"],
     "properties": {

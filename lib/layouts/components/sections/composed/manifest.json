@@ -3,7 +3,28 @@
   "type": "section",
   "styles": ["composed.css"],
   "scripts": [],
-  "requires": ["commons"],
+  "requires": ["commons", "text", "image", "ctas"],
+  "fields": {
+    "columnsDirection": { "widget": "select", "label": "Columns direction", "enum": ["", "reverse"], "default": "" },
+    "contentClasses": { "widget": "text", "label": "Content CSS classes (optional)", "default": "" },
+    "columns": {
+      "widget": "array",
+      "label": "Columns",
+      "items": {
+        "columnClasses": { "widget": "text", "label": "Column CSS classes (optional)", "default": "" },
+        "blocks": {
+          "widget": "array",
+          "label": "Blocks",
+          "items": {
+            "text": { "$use": "text" },
+            "image": { "$use": "image" },
+            "ctas": { "$use": "ctas" }
+          }
+        }
+      }
+    },
+    "$extends": ["commons"]
+  },
   "validation": {
     "required": ["sectionType"],
     "properties": {

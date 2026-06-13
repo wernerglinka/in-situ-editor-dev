@@ -13,6 +13,20 @@
     "icon",
     "commons"
   ],
+  "fields": {
+    "front": {
+      "icon": {
+        "icon": { "widget": "text", "label": "Front icon name", "default": "" },
+        "url": { "widget": "text", "label": "Front icon link URL", "default": "" }
+      },
+      "text": { "$use": "text", "titleTag": { "default": "h3" } },
+      "ctas": { "$use": "ctas" }
+    },
+    "back": {
+      "text": { "$use": "text", "titleTag": { "default": "h3" } },
+      "ctas": { "$use": "ctas" }
+    }
+  },
   "validation": {
     "required": [
       "front",
