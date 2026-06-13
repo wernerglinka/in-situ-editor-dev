@@ -261,6 +261,10 @@ metalsmith
     componentDependencyBundler( {
       basePath: 'lib/layouts/components/_partials',
       sectionsPath: 'lib/layouts/components/sections',
+      schema: {
+        // Emit the composed editor schema for the admin to consume
+        enabled: true
+      },
       postcss: {
         enabled: true,
         plugins: [ autoprefixer(), cssnano( { preset: 'default' } ) ],
