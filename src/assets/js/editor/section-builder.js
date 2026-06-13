@@ -26,12 +26,19 @@ import { renderFields } from './schema/form-renderer.js';
 /** Section types rendered through the generic schema-driven path. */
 const SCHEMA_DRIVEN = new Set([ 'rich-text' ]);
 
-/** Labels shown in the card header per section type. */
-const TYPE_LABELS = {
-  'rich-text': 'Text',
-  'multi-media': 'Image',
-  banner: 'CTA Banner'
-};
+/**
+ * The card header label for a section type: its section name, title-cased
+ * from the kebab type so it always matches the library (rich-text -> "Rich
+ * Text", multi-media -> "Multi Media").
+ * @param {string} type - The sectionType (or legacy type).
+ * @return {string} The display label.
+ */
+function typeLabel(type) {
+  return type
+    .split('-')
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
+}
 
 /** Cache of imageId -> blob URL for thumbnails. */
 const thumbCache = new Map();
@@ -213,7 +220,7 @@ function renderCard(section, index) {
   header.className = 'section-card-header';
   const typeEl = document.createElement('span');
   typeEl.className = 'section-card-type';
-  typeEl.textContent = TYPE_LABELS[kind] || kind;
+  typeEl.textContent = typeLabel(kind);
   const controls = document.createElement('div');
   controls.className = 'section-card-controls';
   for (const [ act, symbol, title ] of [
