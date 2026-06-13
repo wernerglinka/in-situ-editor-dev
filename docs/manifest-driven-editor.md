@@ -257,11 +257,11 @@ writing editor rendering code:
 
 ## Open items before scale-up
 
-- ~~**`commons` emits as a section.**~~ Resolved: the plugin now honors
-  `"abstract": true` and skips such components from the schema (shipped in
-  the plugin, pending a 1.2.0 publish), and `commons` carries the flag. Until
-  the site moves to 1.2.0 the 1.1.0 build still lists `commons`; harmless,
-  the editor can ignore it in the meantime.
+- ~~**`commons` emits as a section.**~~ Resolved: the plugin honors
+  `"abstract": true` (bundled-components 1.2.0), `commons` carries the flag,
+  and the site is on 1.2.0. The emitted artifact now lists only the
+  author-facing sections (`banner`, `hero`, `media-image`, `testimonial`,
+  `text-only`).
 - ~~**How the site consumes the new plugin.**~~ Resolved: published as
   1.1.0 (minor, additive), the site bumped to `^1.1.0`, and `schema.enabled`
   wired into `metalsmith.js`. The build verified clean across the jump.
