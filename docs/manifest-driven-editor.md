@@ -220,9 +220,15 @@ The change spans three repos, so it is staged to keep each shippable.
    in `test/unit/schema-emitter.test.js`. Letting the content validator
    derive from `fields` instead of the parallel `validation` block is still
    pending and stays a later cleanup.
-2. **Library — in progress.** `fields` authored for `commons`, `text`,
-   `image`, `ctas`, and `banner`. Remaining: the other sections, one at a
-   time, partials they need authored first.
+2. **Library — in progress.** `fields` authored for the partials (`commons`,
+   `text`, `image`, `ctas`) and the author-facing content sections: `banner`,
+   `text-only`, `media-image`, `hero`, `testimonial`. `commons` is marked
+   `"abstract": true`. Remaining: the composed/array-bearing sections
+   (`composed`, `flip-cards`, `slider`, `logos-list`), which need new partial
+   fields (`flip-card`, `logo`, `slider-pagination`) and array modeling; and
+   a decision on the data-driven listing/chrome sections (`collection-list`,
+   `featured-posts`, `header`, `footer`, the `blog-*` sections), which simply
+   stay out of the schema by carrying no `fields` until that call is made.
 3. **Site wiring — done.** The site is on `metalsmith-bundled-components`
    1.1.0 with `schema.enabled` set in `metalsmith.js`; the production build
    writes `build/assets/components-schema.json` (served at
@@ -251,13 +257,11 @@ writing editor rendering code:
 
 ## Open items before scale-up
 
-- **`commons` emits as a section.** It lives in `sections/` and now has a
-  `fields` block, so the emitter lists it among section types even though it
-  is a shared base, not an authorable section. The editor must exclude it
-  from the section palette. Cleanest fix: a manifest flag (for example
-  `"abstract": true`) the emitter honors, or emit only components whose
-  validation declares a `sectionType` const. Decide when migrating the next
-  sections.
+- ~~**`commons` emits as a section.**~~ Resolved: the plugin now honors
+  `"abstract": true` and skips such components from the schema (shipped in
+  the plugin, pending a 1.2.0 publish), and `commons` carries the flag. Until
+  the site moves to 1.2.0 the 1.1.0 build still lists `commons`; harmless,
+  the editor can ignore it in the meantime.
 - ~~**How the site consumes the new plugin.**~~ Resolved: published as
   1.1.0 (minor, additive), the site bumped to `^1.1.0`, and `schema.enabled`
   wired into `metalsmith.js`. The build verified clean across the jump.
