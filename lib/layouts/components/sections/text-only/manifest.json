@@ -10,6 +10,11 @@
     "text",
     "commons"
   ],
+  "fields": {
+    "text": { "$use": "text" },
+    "ctas": { "$use": "ctas" },
+    "$extends": ["commons"]
+  },
   "validation": {
     "required": [
       "sectionType"

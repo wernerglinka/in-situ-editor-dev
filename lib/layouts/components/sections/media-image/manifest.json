@@ -4,6 +4,13 @@
   "styles": ["media-image.css"],
   "scripts": [],
   "requires": ["ctas", "text", "image", "commons"],
+  "fields": {
+    "isReverse": { "widget": "checkbox", "label": "Reverse layout (image on the right)", "default": false },
+    "image": { "$use": "image" },
+    "text": { "$use": "text" },
+    "ctas": { "$use": "ctas" },
+    "$extends": ["commons"]
+  },
   "validation": {
     "required": ["sectionType"],
     "properties": {

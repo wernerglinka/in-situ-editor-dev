@@ -1,6 +1,7 @@
 {
   "name": "commons",
   "type": "section",
+  "abstract": true,
   "styles": [
     "commons.css"
   ],

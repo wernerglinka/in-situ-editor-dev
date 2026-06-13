@@ -11,6 +11,21 @@
     "image",
     "commons"
   ],
+  "fields": {
+    "isReverse": { "widget": "checkbox", "label": "Reverse layout", "default": false },
+    "quote": {
+      "text": { "widget": "markdown", "label": "Quote", "default": "" },
+      "cite": { "widget": "text", "label": "Citation URL (optional)", "default": "" }
+    },
+    "quotee": {
+      "portrait": { "$use": "image" },
+      "name": { "widget": "text", "label": "Name", "default": "" },
+      "title": { "widget": "text", "label": "Title", "default": "" },
+      "company": { "widget": "text", "label": "Company", "default": "" },
+      "logo": { "widget": "image", "label": "Company logo (optional)", "default": "" }
+    },
+    "$extends": ["commons"]
+  },
   "validation": {
     "required": [
       "sectionType"

@@ -11,6 +11,16 @@
     "image",
     "commons"
   ],
+  "fields": {
+    "isReverse": { "widget": "checkbox", "label": "Reverse layout (image on the right)", "default": false },
+    "isFullScreen": { "widget": "checkbox", "label": "Full-screen hero", "default": false },
+    "image": { "$use": "image" },
+    "text": { "$use": "text", "titleTag": { "default": "h1" } },
+    "ctas": { "$use": "ctas" },
+    "date": { "widget": "text", "label": "Date (optional)", "default": "" },
+    "author": { "widget": "text", "label": "Author (optional)", "default": "" },
+    "$extends": ["commons"]
+  },
   "validation": {
     "required": [
       "sectionType"
