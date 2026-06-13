@@ -24,7 +24,7 @@ import { materializeDefaults } from './schema/field-utils.js';
 import { renderFields } from './schema/form-renderer.js';
 
 /** Section types rendered through the generic schema-driven path. */
-const SCHEMA_DRIVEN = new Set([ 'rich-text', 'image-only' ]);
+const SCHEMA_DRIVEN = new Set([ 'rich-text', 'image-only', 'banner' ]);
 
 /**
  * The card header label for a section type: its section name, title-cased
@@ -100,6 +100,15 @@ function migrateSection(s) {
     if (type === 'rich-text') {
       next.text.title = s.title || '';
       next.text.prose = s.prose || '';
+    } else if (type === 'banner') {
+      next.text.title = s.title || '';
+      next.text.prose = s.prose || '';
+      if (s.ctaUrl || s.ctaLabel) {
+        const cta = materializeDefaults(getSectionFields('banner').ctas.items);
+        cta.url = s.ctaUrl || '';
+        cta.label = s.ctaLabel || '';
+        next.ctas.push(cta);
+      }
     }
     return next;
   }

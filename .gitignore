@@ -61,3 +61,6 @@ DEPLOY-GITHUB-PAGES.md
 
 # Temporary component updates
 metalsmith-components/
+
+# Local-only autonomous-mode docs (pairs with .claude/settings.local.json)
+docs/autonomous.md

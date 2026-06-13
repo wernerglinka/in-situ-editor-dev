@@ -244,19 +244,23 @@ The change spans three repos, so it is staged to keep each shippable.
    disclosure pane); a generic serializer (`schema/serializer.js`) walks the
    same tree to emit nested library frontmatter, filling defaults and adding
    the wrapper fields the template needs (`containerTag`, `id`, `classes`).
-   `rich-text` and `image-only` run end to end on this path: their add
-   buttons ("+ Rich Text", "+ Image Only") materialize defaults from the
-   schema, the form binds into a library-shaped values object, and the
-   emitter serializes it (notably emitting `text.isCentered`, which the old
-   hand-mapped path dropped). The `image` widget is real: a text field (for
+   `rich-text`, `image-only`, and `banner` run end to end on this path: their
+   add buttons materialize defaults from the schema, the form binds into a
+   library-shaped values object, and the emitter serializes it (notably
+   emitting `text.isCentered`, which the old hand-mapped path dropped).
+   Moving `banner` over retired the emitter's hardcoded dark full-width band
+   (`#333333`, `isDark: true`, `inContainer: false`): background color, dark
+   mode, and width are now authored through the Container settings pane with
+   the library's own defaults, honoring the rule that dark mode is the
+   author's call. The `image` widget is real: a text field (for
    URLs and hydrated values) plus a file picker that runs the existing
    `processImage` pipeline, so the IndexedDB blob and `draft.imageFiles`
    linkage publish needs is preserved; it fills empty sibling alt/caption on
    upload and shows a thumbnail. The renderer threads an editor context
    (`processFile`, `resolveThumb`, `rerender`) to the image widget without
-   coupling itself to the DB. Legacy `multi-media` and `banner` still use the
-   lean model and the hand-written `toLibrarySection`; the emitter branches
-   on the presence of `sectionType`. Loading a draft re-syncs once the schema
+   coupling itself to the DB. Legacy `multi-media` still uses the lean model
+   and the hand-written `toLibrarySection`; the emitter branches on the
+   presence of `sectionType`. Loading a draft re-syncs once the schema
    resolves so the preview never lingers on the schema-less fallback. Pure
    logic has node:test coverage in `test/schema-serializer.test.js`; the
    image upload round-trip (pick -> blob -> imageFiles -> emit path) and
@@ -266,10 +270,10 @@ The change spans three repos, so it is staged to keep each shippable.
    `blog-navigation`) are aliased to their current names on load so old
    drafts render instead of showing empty cards.
 
-   Still to do on this stage: move `multi-media`, `slider`, and the remaining
-   types onto the schema path; hydration (existing frontmatter back into the
-   form); then retire the lean model, the per-type emitter, and the legacy
-   add buttons once every type is schema-driven.
+   Still to do on this stage: move `multi-media` and the remaining types onto
+   the schema path; hydration (existing frontmatter back into the form); then
+   retire the lean model, the per-type emitter, and the legacy add buttons
+   once every type is schema-driven.
 
 Validation derivation (folding the dotted `validation` block into `fields`)
 comes after the editor works, not before; it is a cleanup, not a

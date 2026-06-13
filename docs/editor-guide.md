@@ -43,18 +43,20 @@ A post is a stack of sections, composed in the **Sections** area:
   call-to-action buttons. Type a filename or URL, or use **📂 Choose image**
   to upload; alt and caption are filled in for you when you upload, and a
   thumbnail appears.
-- **CTA Banner** — a full-width call-to-action band: title, supporting
-  prose, and a button with a label and URL.
+- **CTA Banner** — a call-to-action band: title, supporting prose, an
+  optional image, and any number of buttons. Whether it spans full width and
+  whether it uses a dark background are set in **Container settings**, not
+  fixed; a plain banner is contained and light by default.
 
 Add sections with the buttons below the stack; reorder with ↑/↓; remove
 with ✕.
 
-Rich Text and Image Only generate their forms straight from the component
-library's schema rather than from hand-written editor code, which is why
-they expose every field the library supports and are named after their
-library section. CTA Banner is being moved onto the same schema-driven path,
-after which more section types (hero, slider, columns, …) become available
-without new editor code. Within a section, repeatable fields like
+Rich Text, Image Only, and CTA Banner generate their forms straight from the
+component library's schema rather than from hand-written editor code, which
+is why they expose every field the library supports and are named after
+their library section. The remaining section types are being moved onto the
+same schema-driven path, after which more of them (hero, slider, columns, …)
+become available without new editor code. Within a section, repeatable fields like
 call-to-action buttons add, remove, and reorder the same way the section
 stack does. Drafts made before the section types were renamed open without
 losing content.
