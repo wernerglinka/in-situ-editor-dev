@@ -236,9 +236,27 @@ The change spans three repos, so it is staged to keep each shippable.
    writes `build/assets/components-schema.json` (served at
    `/assets/components-schema.json`) with `banner` fully composed, and the
    0.6 -> 1.1 jump left the rest of the build unchanged.
-4. Editor last. Point it at the emitted artifact, build the generic form
-   generator, serializer, and hydrator, and delete the lean editor-state
-   model and the per-type emitter.
+4. **Editor — in progress.** The first thin slice has landed: a schema
+   loader (`schema/schema-loader.js`) fetches the artifact once and caches
+   it; a generic recursive form renderer (`schema/form-renderer.js`) renders
+   any field tree (text, markdown, select, checkbox, image-as-text, and the
+   repeatable `array` widget, with `containerFields` collapsing into a
+   disclosure pane); a generic serializer (`schema/serializer.js`) walks the
+   same tree to emit nested library frontmatter, filling defaults and adding
+   the wrapper fields the template needs (`containerTag`, `id`, `classes`).
+   `rich-text` runs end to end on this path: "+ Text" materializes defaults
+   from the schema, the form binds into a library-shaped values object, and
+   the emitter serializes it (notably emitting `text.isCentered`, which the
+   old hand-mapped path dropped). Legacy `multi-media` and `banner` still use
+   the lean model and the hand-written `toLibrarySection`; the emitter
+   branches on the presence of `sectionType`. Pure logic has node:test
+   coverage in `test/schema-serializer.test.js`.
+
+   Still to do on this stage: a real image widget (file picker that keeps the
+   IndexedDB blob linkage publish needs) so `multi-media` and `slider` can
+   move onto the schema path; hydration (existing frontmatter back into the
+   form); then retiring the lean model, the per-type emitter, and the legacy
+   add buttons once every type is schema-driven.
 
 Validation derivation (folding the dotted `validation` block into `fields`)
 comes after the editor works, not before; it is a cleanup, not a

@@ -1,17 +1,30 @@
 /**
  * Section builder: the editor's left-column replacement for the markdown
- * body textarea. A draft holds a `sections` array of lean editor-state
- * objects; the emitter in markdown-utils.js maps them onto the
- * nunjucks-components library schema at generate time.
+ * body textarea. A draft holds a `sections` array.
  *
- * Section state shapes:
- *   { type: 'rich-text',   title, prose }
- *   { type: 'multi-media', imageName, imageId, alt, caption }
- *   { type: 'banner',      title, prose, ctaLabel, ctaUrl }
+ * Two section models coexist while the editor migrates onto the
+ * schema-driven path (see docs/manifest-driven-editor.md):
+ *
+ *   Schema-driven (new): a library-shaped values object materialized from
+ *   the component schema, tagged with `sectionType`. Rendered generically by
+ *   form-renderer.js and serialized generically by schema/serializer.js. The
+ *   set SCHEMA_DRIVEN lists the types on this path; it grows as types
+ *   migrate, and the legacy path retires when it covers everything.
+ *
+ *   Legacy (old): a lean editor-state object keyed by `type`, hand-rendered
+ *   below and hand-mapped in markdown-utils.js.
+ *     { type: 'multi-media', imageName, imageId, alt, caption }
+ *     { type: 'banner',      title, prose, ctaLabel, ctaUrl }
  */
 
 import { getImage } from '../utils/db-storage.js';
 import { processImage } from './image-handler.js';
+import { loadSchema, getSectionFields } from './schema/schema-loader.js';
+import { materializeDefaults } from './schema/field-utils.js';
+import { renderFields } from './schema/form-renderer.js';
+
+/** Section types rendered through the generic schema-driven path. */
+const SCHEMA_DRIVEN = new Set([ 'rich-text' ]);
 
 /** Labels shown in the card header per section type. */
 const TYPE_LABELS = {
@@ -29,11 +42,17 @@ let sections = [];
 let currentDraft = null;
 
 /**
- * Creates a new empty section of the given type.
- * @param {string} type - One of TYPE_LABELS keys.
- * @return {Object} The section state object.
+ * Creates a new empty section of the given type. Schema-driven types
+ * materialize their defaults from the loaded schema; the schema must be
+ * loaded first (callers await loadSchema()).
+ * @param {string} type - A SCHEMA_DRIVEN type or a legacy TYPE_LABELS key.
+ * @return {Object} The section state object (new or legacy model).
  */
 function newSection(type) {
+  if (SCHEMA_DRIVEN.has(type)) {
+    const fields = getSectionFields(type);
+    return { sectionType: type, ...materializeDefaults(fields) };
+  }
   switch (type) {
     case 'multi-media':
       return { type, imageName: '', imageId: '', alt: '', caption: '' };
@@ -42,6 +61,26 @@ function newSection(type) {
     default:
       return { type: 'rich-text', title: '', prose: '' };
   }
+}
+
+/**
+ * Migrates a legacy lean section into its schema-driven equivalent when its
+ * type has moved onto the schema path. Types still on the legacy path pass
+ * through unchanged.
+ * @param {Object} s - A section state object.
+ * @return {Object} The (possibly migrated) section.
+ */
+function migrateSection(s) {
+  if (s.sectionType || !SCHEMA_DRIVEN.has(s.type)) {
+    return s;
+  }
+  if (s.type === 'rich-text') {
+    const next = newSection('rich-text');
+    next.text.title = s.title || '';
+    next.text.prose = s.prose || '';
+    return next;
+  }
+  return s;
 }
 
 /**
@@ -150,14 +189,15 @@ function imagePicker(section) {
  * @return {HTMLElement} The card element.
  */
 function renderCard(section, index) {
+  const kind = section.sectionType || section.type;
   const card = document.createElement('div');
-  card.className = `section-card section-card-${section.type}`;
+  card.className = `section-card section-card-${kind}`;
 
   const header = document.createElement('div');
   header.className = 'section-card-header';
   const typeEl = document.createElement('span');
   typeEl.className = 'section-card-type';
-  typeEl.textContent = TYPE_LABELS[section.type] || section.type;
+  typeEl.textContent = TYPE_LABELS[kind] || kind;
   const controls = document.createElement('div');
   controls.className = 'section-card-controls';
   for (const [ act, symbol, title ] of [
@@ -187,15 +227,16 @@ function renderCard(section, index) {
 
   const body = document.createElement('div');
   body.className = 'section-card-body';
-  if (section.type === 'rich-text') {
-    body.append(
-      boundField(section, 'title', 'Title', { placeholder: 'Section title' }),
-      boundField(section, 'prose', 'Prose (Markdown)', {
-        textarea: true,
-        rows: 6,
-        placeholder: 'Write this section in Markdown...'
-      })
-    );
+  if (section.sectionType) {
+    const fields = getSectionFields(section.sectionType);
+    if (fields) {
+      body.append(renderFields(fields, section, onChangeRef));
+    } else {
+      const pending = document.createElement('p');
+      pending.className = 'field-hint';
+      pending.textContent = 'Loading schema...';
+      body.append(pending);
+    }
   } else if (section.type === 'multi-media') {
     body.append(
       imagePicker(section),
@@ -246,8 +287,18 @@ export function loadSections(draft) {
     draft.sections =
       draft.content && draft.content.trim() ? [ { type: 'rich-text', title: '', prose: draft.content } ] : [];
   }
-  sections = draft.sections;
-  render();
+  // Schema-driven types need the schema loaded before they can render or be
+  // migrated, so defer to ensure the cache is warm.
+  loadSchema()
+    .then(() => {
+      draft.sections = draft.sections.map(migrateSection);
+      sections = draft.sections;
+      render();
+    })
+    .catch(() => {
+      sections = draft.sections;
+      render();
+    });
 }
 
 /**
@@ -260,9 +311,15 @@ export function initSectionBuilder(ui, onChange) {
   uiRef = ui;
   onChangeRef = onChange;
   ui.getSections = () => sections;
+  // Warm the schema cache so schema-driven cards render without a flash.
+  loadSchema().catch((err) => console.error('schema load failed', err));
   for (const btn of document.querySelectorAll('[data-add-section]')) {
-    btn.onclick = () => {
-      sections.push(newSection(btn.dataset.addSection));
+    const type = btn.dataset.addSection;
+    btn.onclick = async () => {
+      if (SCHEMA_DRIVEN.has(type)) {
+        await loadSchema();
+      }
+      sections.push(newSection(type));
       render();
       onChangeRef();
     };

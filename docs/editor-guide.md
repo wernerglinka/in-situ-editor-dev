@@ -34,14 +34,24 @@ deletes one, and **📂 Load Draft** restores a draft from a saved file.
 
 A post is a stack of sections, composed in the **Sections** area:
 
-- **Text** — a title plus prose. Prose fields take Markdown (headings,
-  bold, lists, code blocks).
+- **Text** — a title and prose plus the full set of fields the library's
+  text section supports: lead-in, title level (h1–h6), centering, subtitle,
+  any number of call-to-action buttons, and a **Container settings** pane for
+  width, spacing, and background. Prose fields take Markdown (headings, bold,
+  lists, code blocks).
 - **Image** — one image with alt text and a caption.
 - **CTA Banner** — a full-width call-to-action band: title, supporting
   prose, and a button with a label and URL.
 
 Add sections with the buttons below the stack; reorder with ↑/↓; remove
-with ✕. More section types (hero, composed, …) are planned.
+with ✕.
+
+The **Text** section now generates its form straight from the component
+library's schema rather than from hand-written editor code, which is why it
+exposes every field the library supports. Image and CTA Banner are being
+moved onto the same schema-driven path, after which more section types
+(hero, slider, columns, …) become available without new editor code. Each
+field's add/remove and reordering works the same way the section stack does.
 
 Above the sections sit the post's metadata: title, description, date,
 authors, and tags. The title doubles as the post's URL slug

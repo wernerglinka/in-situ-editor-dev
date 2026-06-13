@@ -1,9 +1,17 @@
 /**
- * Structured-frontmatter emitter. Maps the editor's lean section state
- * (see editor/section-builder.js) onto the nunjucks-components library
- * schema and serializes the whole document as YAML frontmatter with an
- * empty body. Rendered by lib/layouts/pages/sections.njk.
+ * Structured-frontmatter emitter. Serializes a draft's sections to YAML
+ * frontmatter (with an empty body) that lib/layouts/pages/sections.njk
+ * renders.
+ *
+ * Two emit paths coexist during the migration to the schema-driven editor
+ * (see docs/manifest-driven-editor.md): schema-driven sections (tagged with
+ * `sectionType`) go through the generic serializer in schema/serializer.js,
+ * driven by the loaded component schema; legacy lean sections (keyed by
+ * `type`) go through the hand-written toLibrarySection below.
  */
+
+import { getSectionFields } from '../editor/schema/schema-loader.js';
+import { serializeSection, firstSectionImage } from '../editor/schema/serializer.js';
 
 /**
  * Escapes a scalar string for safe use as a single-line YAML value.
@@ -205,9 +213,7 @@ export function generateMarkdown(draft, title, description, date, tagsValue, con
     editorSections = [ { type: 'rich-text', title: '', prose: content } ];
   }
 
-  // First section image doubles as the card thumbnail and social image.
-  const firstImage = (editorSections || []).find((s) => s.type === 'multi-media' && s.imageName);
-  const thumbnail = firstImage ? `/assets/images/blog/${slug}/${firstImage.imageName}` : '';
+  const thumbnail = computeThumbnail(editorSections || [], slug);
 
   const doc = {
     layout: 'pages/sections.njk',
@@ -234,8 +240,45 @@ export function generateMarkdown(draft, title, description, date, tagsValue, con
           ad_confidences: classifierResults.map((r) => r.confidence)
         }
       : {}),
-    sections: (editorSections || []).map((s) => toLibrarySection(s, slug))
+    sections: (editorSections || []).map((s) => emitSection(s, slug))
   };
 
   return `---\n${toYaml(doc)}\n---\n`;
+}
+
+/**
+ * The card thumbnail and social image: the first section image, drawn from a
+ * legacy multi-media section or a schema-driven one.
+ * @param {Array<Object>} editorSections - The draft's sections.
+ * @param {string} slug - The post slug.
+ * @return {string} The image path, or ''.
+ */
+function computeThumbnail(editorSections, slug) {
+  const legacyImage = editorSections.find((s) => s.type === 'multi-media' && s.imageName);
+  if (legacyImage) {
+    return `/assets/images/blog/${slug}/${legacyImage.imageName}`;
+  }
+  return firstSectionImage(editorSections, getSectionFields, slug);
+}
+
+/**
+ * Emits one section, choosing the schema-driven or legacy path by model.
+ * @param {Object} s - A section state object.
+ * @param {string} slug - The post slug.
+ * @return {Object} The library-schema section object.
+ */
+function emitSection(s, slug) {
+  if (!s.sectionType) {
+    return toLibrarySection(s, slug);
+  }
+  const fields = getSectionFields(s.sectionType);
+  if (fields) {
+    return serializeSection(s.sectionType, s, fields, slug);
+  }
+  // Schema not loaded (e.g. an early preview render before the fetch
+  // resolves). The values object is already library-shaped, so emit it with
+  // the wrapper fields and let the next render correct any image paths.
+  const { type, ...rest } = s;
+  void type;
+  return { containerTag: 'section', id: '', classes: '', ...rest };
 }

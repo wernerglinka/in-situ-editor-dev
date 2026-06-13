@@ -846,6 +846,71 @@ dialog p {
   flex-wrap: wrap;
 }
 
+/* Schema-driven section forms (form-renderer.js) */
+
+.section-field-group {
+  border: 1px solid var(--color-border, #ddd);
+  border-radius: 4px;
+  padding: 0.6rem;
+  margin-bottom: 0.75rem;
+}
+
+.section-field-group-label,
+.section-array-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 0.5rem;
+  opacity: 0.75;
+}
+
+.section-field-checkbox .checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.section-container-settings {
+  margin-top: 0.75rem;
+  border-top: 1px solid var(--color-border, #ddd);
+  padding-top: 0.5rem;
+}
+
+.section-container-settings > summary {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  opacity: 0.75;
+  margin-bottom: 0.5rem;
+}
+
+.section-array {
+  margin-bottom: 0.75rem;
+}
+
+.section-array-item {
+  position: relative;
+  border: 1px solid var(--color-border, #ddd);
+  border-radius: 4px;
+  padding: 0.6rem;
+  padding-top: 1.8rem;
+  margin-bottom: 0.5rem;
+  background: rgba(0, 0, 0, 0.02);
+}
+
+.section-array-item-controls {
+  position: absolute;
+  top: 0.35rem;
+  right: 0.35rem;
+  display: flex;
+  gap: 0.25rem;
+}
+
 .sections-empty {
   margin: 0;
 }
