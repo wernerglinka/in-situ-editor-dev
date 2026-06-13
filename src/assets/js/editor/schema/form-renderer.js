@@ -316,11 +316,27 @@ function renderArray(node, obj, key, onChange, ctx) {
  */
 export function renderFields(fields, values, onChange, ctx = {}) {
   const frag = document.createDocumentFragment();
+  const discriminator = findDiscriminator(fields);
   for (const [ key, node ] of Object.entries(fields)) {
+    // A discriminator's variant groups are mutually exclusive: show only the
+    // one the discriminator currently selects (e.g. multi-media's mediaType
+    // picks image / video / audio / icon / lottie).
+    if (discriminator && discriminator.variants.has(key) && key !== values[discriminator.key]) {
+      continue;
+    }
     if (isArrayField(node)) {
       frag.append(renderArray(node, values, key, onChange, ctx));
     } else if (isLeaf(node)) {
-      frag.append(renderLeaf(node, values, key, onChange, ctx));
+      // Changing the discriminator re-renders the card so the shown variant
+      // follows the selection.
+      const leafOnChange =
+        discriminator && key === discriminator.key && typeof ctx.rerender === 'function'
+          ? () => {
+              onChange();
+              ctx.rerender();
+            }
+          : onChange;
+      frag.append(renderLeaf(node, values, key, leafOnChange, ctx));
     } else if (isGroup(node)) {
       if (!values[key] || typeof values[key] !== 'object') {
         values[key] = materializeDefaults(node);
@@ -329,6 +345,31 @@ export function renderFields(fields, values, onChange, ctx = {}) {
     }
   }
   return frag;
+}
+
+/**
+ * Detects a discriminator field: a `select` whose enum values name sibling
+ * groups, so the groups are variants of one another and only the selected
+ * one should show. Returns the discriminator key and its variant group keys,
+ * or null when the tree has no such field.
+ * @param {Object} fields - The field tree.
+ * @return {{ key: string, variants: Set<string> }|null}
+ */
+function findDiscriminator(fields) {
+  for (const [ key, node ] of Object.entries(fields)) {
+    if (!isLeaf(node) || node.widget !== 'select' || !Array.isArray(node.enum)) {
+      continue;
+    }
+    const present = node.enum.filter((value) => fields[value] !== undefined);
+    const variants = new Set(present.filter((value) => isGroup(fields[value])));
+    // Treat it as a discriminator only when its options cleanly map onto
+    // sibling groups (every present option is a group, at least two of them),
+    // so ordinary selects like titleTag are never misread.
+    if (variants.size >= 2 && variants.size === present.length) {
+      return { key, variants };
+    }
+  }
+  return null;
 }
 
 /**

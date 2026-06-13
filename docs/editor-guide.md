@@ -45,8 +45,8 @@ A post is a stack of sections, composed in the **Sections** area:
   thumbnail appears.
 - **Multi Media** — a richer media section: a text block plus media that can
   be an image, video, audio, icon, or Lottie animation, with a reverse-layout
-  option and call-to-action buttons. Set the media type at the top and fill
-  the matching group.
+  option and call-to-action buttons. Pick the media type at the top and the
+  form shows only that media's fields; the others stay hidden until selected.
 - **CTA Banner** — a call-to-action band: title, supporting prose, an
   optional image, and any number of buttons. Whether it spans full width and
   whether it uses a dark background are set in **Container settings**, not
