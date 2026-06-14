@@ -11,29 +11,52 @@ import { customAlert } from '../utils/dialog-utils.js';
 import { loadSchema, getSectionFields } from '../editor/schema/schema-loader.js';
 import { hydrateSections } from '../editor/schema/hydrate.js';
 
+/** Top-level frontmatter keys the editor manages; everything else is kept in
+ * `draft.extra` so an edited page round-trips its unknown keys unchanged. */
+const MANAGED_KEYS = new Set([
+  'layout', 'draft', 'bodyClass', 'seo', 'card', 'tags',
+  'ad_categories', 'ad_confidences', 'navigation', 'sections'
+]);
+
 /**
  * Builds a draft from a page's parsed frontmatter. Structured-content pages
  * carry the title/description/date in nested `seo`/`card` blocks rather than
  * top-level keys, and their content lives in the `sections` array, which is
- * hydrated back into editor sections. The schema must be loaded first.
+ * hydrated back into editor sections. The page type is inferred from the
+ * presence of a `card` block (posts have one; pages don't), navigation is
+ * read back into the menu fields, and any unmanaged top-level key is stashed
+ * in `extra`. The schema must be loaded first.
  * @param {Object} metadata - The parsed frontmatter.
  * @param {string} content - The markdown body (legacy fallback).
  * @param {string} id - The new draft id.
  * @return {Object} The draft object.
  */
+function navFields(nav) {
+  return {
+    showInMenu: Boolean(nav),
+    navLabel: nav ? nav.navLabel || '' : '',
+    navIndex: nav ? nav.navIndex ?? '' : ''
+  };
+}
+
 function draftFromMetadata(metadata, content, id) {
   const m = metadata || {};
   const card = m.card || {};
   const seo = m.seo || {};
+  const pageType = card.title || card.date || Array.isArray(m.tags) ? 'post' : 'page';
+  const extra = Object.fromEntries(Object.entries(m).filter(([ k ]) => !MANAGED_KEYS.has(k)));
   return {
     id,
+    pageType,
     title: card.title || seo.title || m.title || '',
     description: seo.description || m.description || '',
     date: card.date || m.date || '',
     tags: Array.isArray(m.tags) ? m.tags.join(', ') : m.tags || '',
     authors: Array.isArray(card.author) ? card.author : [],
+    ...navFields(m.navigation || null),
     ad_categories: m.ad_categories,
     ad_confidences: m.ad_confidences,
+    extra,
     sections: hydrateSections(m.sections, getSectionFields),
     content: content || '',
     imageFiles: [],

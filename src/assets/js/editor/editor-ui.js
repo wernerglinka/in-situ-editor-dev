@@ -30,6 +30,50 @@ export const sync = (ui, debouncedPreview, renderListFn) => {
 };
 
 /**
+ * Shows the fields that belong to the current page type: a post shows
+ * date/authors/tags, a page shows the menu (navigation) fields. Also sets the
+ * destination hint.
+ * @param {Object} ui - The UI elements.
+ */
+export function applyPageType(ui) {
+  const type = ui.getPageType ? ui.getPageType() : 'post';
+  const isPage = type === 'page';
+  for (const el of document.querySelectorAll('.post-only')) {
+    el.hidden = isPage;
+  }
+  for (const el of document.querySelectorAll('.page-only')) {
+    el.hidden = !isPage;
+  }
+  // The menu label/order only matter when the page opts into the menu.
+  const navFields = document.getElementById('page-nav-fields');
+  if (navFields) {
+    navFields.hidden = !isPage || !(ui.showInMenuToggle && ui.showInMenuToggle.checked);
+  }
+  if (ui.pageTypeHint) {
+    const slug = ui.getSlug(ui.titleInput.value);
+    ui.pageTypeHint.textContent = isPage ? `Publishes to src/${slug}.md` : `Publishes to src/blog/${slug}.md`;
+  }
+}
+
+/**
+ * Populates the page-type selector and menu fields from a draft, then applies
+ * the matching field visibility.
+ * @param {Object} ui - The UI elements.
+ * @param {Object} d - The draft.
+ */
+function populatePageType(ui, d) {
+  if (ui.pageTypeSelect) {
+    ui.pageTypeSelect.value = d.pageType === 'page' ? 'page' : 'post';
+  }
+  if (ui.showInMenuToggle) {
+    ui.showInMenuToggle.checked = Boolean(d.showInMenu);
+    ui.navLabelInput.value = d.navLabel || '';
+    ui.navIndexInput.value = d.navIndex ?? '';
+  }
+  applyPageType(ui);
+}
+
+/**
  * Loads a draft's data into the UI.
  * @param {string} id - The draft ID to load.
  * @param {Object} ui - The UI elements.
@@ -43,6 +87,7 @@ export async function loadDraft(id, ui, renderList, tagEditor) {
   }
   setCurrentDraftId(id);
   ui.titleInput.value = d.title || '';
+  populatePageType(ui, d); // after the title, so the destination hint uses the right slug
   ui.descInput.value = d.description || '';
   ui.dateInput.value = d.date || '';
   if (ui.authorsSelect) {

@@ -10,6 +10,11 @@ export const ui = {
   draftsListEl: document.getElementById('drafts-list'),
   newDraftBtn: document.getElementById('new-draft-btn'),
   loadDraftBtn: document.getElementById('load-draft-btn'),
+  pageTypeSelect: document.getElementById('post-page-type'),
+  pageTypeHint: document.getElementById('page-type-hint'),
+  showInMenuToggle: document.getElementById('page-show-in-menu'),
+  navLabelInput: document.getElementById('page-nav-label'),
+  navIndexInput: document.getElementById('page-nav-index'),
   titleInput: document.getElementById('post-title'),
   aiSuggestTitleBtn: document.getElementById('ai-suggest-title-btn'),
   descInput: document.getElementById('post-description'),
@@ -72,6 +77,7 @@ export const ui = {
       .map((t) => t.trim())
       .filter((t) => t && t !== 'posts'),
   getAuthors: () => (ui.authorsSelect ? Array.from(ui.authorsSelect.selectedOptions).map((o) => o.value) : []),
+  getPageType: () => (ui.pageTypeSelect && ui.pageTypeSelect.value === 'page' ? 'page' : 'post'),
   getSlug: (title) =>
     (title || 'untitled')
       .toLowerCase()

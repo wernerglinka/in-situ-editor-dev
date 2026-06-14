@@ -14,7 +14,7 @@ import { openAndLoadDraft } from '../drafts/load-draft.js';
 import { initEditorActions } from './editor-actions.js';
 import { initEditor } from './editor-init.js';
 import { initSectionBuilder } from './section-builder.js';
-import { sync, renderList, loadDraft } from './editor-ui.js';
+import { sync, renderList, loadDraft, applyPageType } from './editor-ui.js';
 
 /**
  * Debounced version of updatePreview to prevent excessive re-renders.
@@ -38,11 +38,28 @@ const doLoadDraft = (id) => loadDraft(id, ui, () => renderList(ui, doLoadDraft),
  */
 const tagEditor = initTagEditor(ui, doSync);
 
-ui.titleInput.oninput = doSync;
+ui.titleInput.oninput = () => {
+  doSync();
+  applyPageType(ui); // keep the destination hint in step with the slug
+};
 ui.descInput.oninput = doSync;
 ui.dateInput.oninput = doSync;
 if (ui.authorsSelect) {
   ui.authorsSelect.onchange = doSync;
+}
+if (ui.pageTypeSelect) {
+  ui.pageTypeSelect.onchange = () => {
+    applyPageType(ui);
+    doSync();
+  };
+}
+if (ui.showInMenuToggle) {
+  ui.showInMenuToggle.onchange = () => {
+    applyPageType(ui); // reveal/hide the menu label + order
+    doSync();
+  };
+  ui.navLabelInput.oninput = doSync;
+  ui.navIndexInput.oninput = doSync;
 }
 if (ui.contentInput) {
   ui.contentInput.oninput = doSync;

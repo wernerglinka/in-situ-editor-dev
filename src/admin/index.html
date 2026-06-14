@@ -83,6 +83,15 @@ seo:
 		<div class="editor-main">
 			<form id="post-form">
 				<div class="form-group">
+					<label for="post-page-type">Page type</label>
+					<select id="post-page-type">
+						<option value="post">Blog post</option>
+						<option value="page">Page</option>
+					</select>
+					<p class="field-hint" id="page-type-hint"></p>
+				</div>
+
+				<div class="form-group">
 					<label for="post-title">Title</label>
 					<div class="input-with-action">
 						<input type="text" id="post-title" required placeholder="My Awesome Post">
@@ -98,19 +107,19 @@ seo:
 					</div>
 				</div>
 
-				<div class="form-group">
+				<div class="form-group post-only">
 					<label for="post-date">Date</label>
-					<input type="date" id="post-date" required>
+					<input type="date" id="post-date">
 				</div>
 
-				<div class="form-group">
+				<div class="form-group post-only">
 					<label for="post-authors">Authors</label>
 					<select id="post-authors" multiple size="1">
 						<option value="Albert Einstein">Albert Einstein</option>
 					</select>
 				</div>
 
-				<div class="form-group">
+				<div class="form-group post-only">
 					<label for="tag-input">Tags</label>
 					<div class="tag-container">
 						<div id="tag-pills" class="tag-pills"></div>
@@ -124,6 +133,20 @@ seo:
 						</label>
 					</div>
 					<input type="hidden" id="post-tags">
+				</div>
+
+				<div class="form-group page-only">
+					<label class="ai-toggle-label">
+						🧭 Show in site menu
+						<input type="checkbox" switch id="page-show-in-menu">
+					</label>
+				</div>
+
+				<div class="form-group page-only" id="page-nav-fields">
+					<label for="page-nav-label">Menu label</label>
+					<input type="text" id="page-nav-label" placeholder="About">
+					<label for="page-nav-index">Menu order</label>
+					<input type="number" id="page-nav-index" min="0" step="1" placeholder="0">
 				</div>
 
 				<div class="form-group">

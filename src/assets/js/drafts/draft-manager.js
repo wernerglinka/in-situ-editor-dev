@@ -48,6 +48,7 @@ export async function createNewDraft(ui, loadDraftFn, renderListFn) {
   const id = Date.now().toString();
   const newDraft = {
     id,
+    pageType: 'post',
     title: '',
     description: '',
     date: '',
@@ -116,11 +117,17 @@ export function updateDraftData(id, ui) {
   if (!draft) {
     return;
   }
+  draft.pageType = ui.getPageType ? ui.getPageType() : 'post';
   draft.title = ui.titleInput.value;
   draft.description = ui.descInput.value;
   draft.date = ui.dateInput.value;
   draft.authors = ui.getAuthors ? ui.getAuthors() : [];
   draft.tags = ui.tagsInput.value;
+  if (ui.showInMenuToggle) {
+    draft.showInMenu = ui.showInMenuToggle.checked;
+    draft.navLabel = ui.navLabelInput ? ui.navLabelInput.value : '';
+    draft.navIndex = ui.navIndexInput ? ui.navIndexInput.value : '';
+  }
   if (ui.contentInput) {
     draft.content = ui.contentInput.value;
   }
