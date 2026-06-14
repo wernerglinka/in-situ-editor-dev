@@ -39,6 +39,22 @@ Anything the editor doesn't manage — a data-driven section like
 and written back unchanged when you save, so opening a page never loses
 content.
 
+## Post or page
+
+The **Page type** selector at the top of the form decides where the content
+publishes and what fields it carries:
+
+- **Blog post** — publishes to `src/blog/<slug>.md`, joins the blog
+  collection, and carries a date, authors, and tags. Images go under
+  `/assets/images/blog/<slug>/`.
+- **Page** — publishes to `src/<slug>.md` (a top-level page like `/about/`),
+  with no date/authors/tags. Turn on **🧭 Show in site menu** and set a menu
+  label and order to put it in the main navigation. Images go under
+  `/assets/images/<slug>/`.
+
+Both are built from the same sections. Switching type changes only which
+fields apply; your sections are untouched.
+
 ## Building a post
 
 A post is a stack of sections, composed in the **Sections** area:

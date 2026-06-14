@@ -233,13 +233,26 @@ gated on that artifact; hydration does not wait on it.
 ## Beyond sections: editing all pages
 
 Section coverage and faithful round-trips are the foundation, but "all
-pages" also means decoupling from blog. Output path, layout, image path,
-and `card` or collection membership are currently hardwired to
-`src/blog/<slug>`. A later pass introduces a page-type and destination
-concept in the draft model and widens the publish Function's path
-validation accordingly, with the Function staying the security boundary.
-That work is tracked separately and is not part of the first milestones; it
-builds on the schema-driven editor rather than blocking on it.
+pages" also means decoupling from blog.
+
+**Page abstraction landed.** A draft now has a `pageType` (`post` | `page`).
+A `PAGE_TYPES` registry in the emitter maps each type to its output directory
+and image root: a post lives under `src/blog/` with a `card` + `tags` +
+collection membership and images at `/assets/images/blog/<slug>/`; a page
+lives at the top level with an opt-in `navigation` block (no card/tags) and
+images at `/assets/images/<slug>/`. The emitter assembles the frontmatter per
+type and preserves unmanaged top-level keys via `draft.extra` (the
+document-level twin of the section-level lossless walk), so editing a page
+keeps its `bodyClasses`/`hasHero`/etc. The publish Function maps `pageType`
+to an allowlisted directory (never a client path) and builds the markdown and
+image paths from it, staying the security boundary. The editor UI offers a
+page-type selector, shows blog-only fields only for posts, and exposes a
+"show in menu" toggle with menu label/order for pages; hydration infers the
+type from the presence of a `card` block.
+
+What remains for "edit any page": a way to browse and open existing pages
+straight from the repo (a Function read endpoint), so editing isn't limited
+to local file loads. That builds on this rather than blocking on it.
 
 ## Sequence
 
