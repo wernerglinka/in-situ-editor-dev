@@ -136,6 +136,11 @@ function renderImage(node, obj, key, onChange, ctx) {
   thumb.className = 'section-thumb';
   thumb.alt = '';
   thumb.hidden = true;
+  // A hydrated path that doesn't resolve (e.g. an image not in this draft)
+  // should not leave a broken-image icon.
+  thumb.onerror = () => {
+    thumb.hidden = true;
+  };
 
   const refreshThumb = () => {
     const value = obj[key];

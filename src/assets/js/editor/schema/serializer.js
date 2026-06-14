@@ -54,6 +54,14 @@ function rewriteImage(value, slug) {
 function walk(fields, values, slug) {
   const out = {};
   const src = values && typeof values === 'object' ? values : {};
+  // Carry through anything the schema does not describe (wrapper fields like
+  // containerTag, and any field a hand-authored page has that the schema
+  // does not), so opening and saving a page never silently drops data.
+  for (const key of Object.keys(src)) {
+    if (!(key in fields)) {
+      out[key] = src[key];
+    }
+  }
   for (const [ key, node ] of Object.entries(fields)) {
     if (isArrayField(node)) {
       const arr = Array.isArray(src[key]) ? src[key] : [];

@@ -4,9 +4,13 @@
  */
 
 /**
- * Parses Jekyll/Eleventy style frontmatter from a string.
+ * Parses frontmatter from a string. Uses the bundled js-yaml (global
+ * `jsyaml`, loaded in admin.njk) so nested structures like the `sections`
+ * tree round-trip faithfully; falls back to a flat scalar parser only if the
+ * library is missing. Dates stay strings (JSON schema) to match the emitter,
+ * which quotes them.
  * @param {string} text - The input text containing frontmatter.
- * @return {Object} An object containing the parsed metadata and the remaining content.
+ * @return {Object} { metadata, content } (or { content } when no frontmatter).
  */
 export function parseFrontmatter(text) {
   const regex = /^---\s*\n([\s\S]*?)\n---\s*\n?([\s\S]*)$/;
@@ -17,28 +21,41 @@ export function parseFrontmatter(text) {
 
   const yaml = match[1];
   const content = match[2];
-  const metadata = {};
+  const lib = typeof globalThis !== 'undefined' ? globalThis.jsyaml : null;
+  if (lib) {
+    try {
+      return { metadata: lib.load(yaml, { schema: lib.JSON_SCHEMA }) || {}, content };
+    } catch (err) {
+      console.error('YAML parse failed; falling back to the flat parser', err);
+    }
+  }
+  return { metadata: parseFlatYaml(yaml), content };
+}
 
+/**
+ * Minimal flat-scalar fallback used only when js-yaml is unavailable. Reads
+ * top-level `key: value` pairs and simple inline `[a, b]` arrays; cannot
+ * represent nested structures like `sections`.
+ * @param {string} yaml - The frontmatter YAML block.
+ * @return {Object} The parsed flat metadata.
+ */
+function parseFlatYaml(yaml) {
+  const metadata = {};
   yaml.split('\n').forEach((line) => {
     const part = line.match(/^\s*([^:]+):\s*(.*)$/);
     if (part) {
       const key = part[1].trim();
-      let value = part[2].trim();
-
-      // Basic cleanup for values (remove quotes, handle arrays)
-      value = value.replace(/^["']|["']$/g, '');
+      let value = part[2].trim().replace(/^["']|["']$/g, '');
       if (value.startsWith('[') && value.endsWith(']')) {
         value = value
           .slice(1, -1)
           .split(',')
           .map((v) => v.trim().replace(/^["']|["']$/g, ''));
       }
-
       metadata[key] = value;
     }
   });
-
-  return { metadata, content };
+  return metadata;
 }
 
 /**

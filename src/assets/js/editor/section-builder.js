@@ -217,10 +217,12 @@ function renderCard(section, index) {
   if (fields) {
     body.append(renderFields(fields, section, onChangeRef, formContext()));
   } else {
-    const pending = document.createElement('p');
-    pending.className = 'field-hint';
-    pending.textContent = 'Loading schema...';
-    body.append(pending);
+    // No schema for this type (an auto/chrome or hand-authored section the
+    // editor does not own). It is preserved as-is on save, not editable here.
+    const note = document.createElement('p');
+    note.className = 'field-hint';
+    note.textContent = `This “${kind}” section isn’t editable here; it’s preserved unchanged when you save.`;
+    body.append(note);
   }
 
   card.append(header, body);

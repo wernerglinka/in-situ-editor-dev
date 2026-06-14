@@ -30,6 +30,15 @@ images). Two consequences worth knowing:
 The sidebar lists your drafts. **+** starts a new one, the trash icon
 deletes one, and **📂 Load Draft** restores a draft from a saved file.
 
+**📂 Load Draft** also opens an existing page for editing: pick a page's
+`.md` (or a `.zip` saved from here) and its sections load into the form
+ready to edit. The editor reads the page's frontmatter, so the title,
+description, date, tags, and every section come back as you left them.
+Anything the editor doesn't manage — a data-driven section like
+`featured-posts`, or any field it doesn't recognize — is shown as preserved
+and written back unchanged when you save, so opening a page never loses
+content.
+
 ## Building a post
 
 A post is a stack of sections, composed in the **Sections** area:

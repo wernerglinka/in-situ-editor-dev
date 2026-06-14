@@ -197,6 +197,39 @@ populating the form. Fields present in the page but absent from the schema
 are surfaced rather than silently dropped, so a hand-authored page never
 loses data by being opened in the editor.
 
+## Content boundary: frontmatter versus data files
+
+The editor is a frontmatter editor. A Metalsmith page can render content
+that lives in its own frontmatter or content resolved at build time from a
+data file (`lib/data/*.json`, merged into `metadata.data`) or from
+collections. The browser cannot run the build, so it cannot resolve that
+indirection, and it must not try.
+
+The schema draws the line cleanly. Where a section depends on a data file,
+the manifest exposes a **reference field**, not the content. The `blurbs`
+section is the worked example: its template renders
+`data.blurbs[section.blurbs.source]`, so the blurb items live in a data file
+and the section's `fields` carry only `blurbs.source` (a string naming the
+data key), `blurbs.layout`, the `text` header, and `ctas`. The editor edits
+the pointer and the surrounding config; the build owns the target. Writing
+changes is therefore unambiguous: the editor only ever writes the page
+frontmatter, and never the data file.
+
+Sections that take no authored input at all (the auto/chrome types like
+`featured-posts`, `blog-list`, `header`, `footer`) carry no `fields`, stay
+out of the schema, and are preserved verbatim on round-trip rather than
+edited. Two limits follow honestly from this: the editor shows no
+build-faithful preview of data-resolved content, and it cannot edit the
+referenced items (the blurbs themselves) through a section form.
+
+Editing data-file content is a separate future track. The natural shape
+mirrors `components-schema.json`: a build-emitted aggregate data artifact
+(every `lib/data` file, e.g. `data.blurbs`) that the editor fetches
+read-only to populate reference dropdowns and to preview or edit referenced
+content, with the publish Function gaining write access to `lib/data` and a
+rebuild regenerating the artifact. It needs a build-pipeline change and is
+gated on that artifact; hydration does not wait on it.
+
 ## Beyond sections: editing all pages
 
 Section coverage and faithful round-trips are the foundation, but "all
@@ -274,12 +307,24 @@ The change spans three repos, so it is staged to keep each shippable.
    `blog-navigation`) are aliased to their current names on load so old
    drafts render instead of showing empty cards.
 
-   Still to do on this stage: hydration (existing frontmatter back into the
-   form), so the editor can open and round-trip an already-published page.
-   The other library section types (hero, slider, columns, and the rest)
-   already render through the generic form when added to `SCHEMA_DRIVEN` and
-   given an add button; they are held back only until hydration and the page
-   abstraction land.
+   **Hydration landed.** Loading a `.md`/`.zip` page parses its frontmatter
+   with the bundled js-yaml (vendored at `src/assets/js/js-yaml/`, loaded as a
+   global in admin.njk; the old line-by-line `parseFrontmatter` couldn't read
+   the nested `sections` tree and is now a fallback). `schema/hydrate.js`
+   deep-merges each section over its schema defaults so the form renders
+   complete, the page's values win, and fields the schema doesn't describe are
+   preserved; sections whose type the editor doesn't own (auto/chrome types)
+   pass through untouched and show a read-only "preserved on save" note.
+   `load-draft.js` maps the nested `seo`/`card`/`tags` into the draft and
+   hydrates `sections`. The serializer's `walk` now carries unrecognized keys
+   through, so opening and saving a page never drops data. node:test covers
+   hydrate + a round-trip; verified in the browser (parse -> hydrate ->
+   render -> emit) including unknown-field and unsupported-type preservation.
+
+   Still to do on this stage: nothing blocking. The other library section
+   types (hero, slider, columns, and the rest) already render through the
+   generic form when added to `SCHEMA_DRIVEN` and given an add button; they
+   are held back only until the page abstraction lands.
 
 Validation derivation (folding the dotted `validation` block into `fields`)
 comes after the editor works, not before; it is a cleanup, not a

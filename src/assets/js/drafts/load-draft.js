@@ -8,6 +8,38 @@ import { parseFrontmatter } from '../editor/frontmatter-parser.js';
 import { drafts, saveDrafts, setCurrentDraftId } from './draft-manager.js';
 import { saveImage } from '../utils/db-storage.js';
 import { customAlert } from '../utils/dialog-utils.js';
+import { loadSchema, getSectionFields } from '../editor/schema/schema-loader.js';
+import { hydrateSections } from '../editor/schema/hydrate.js';
+
+/**
+ * Builds a draft from a page's parsed frontmatter. Structured-content pages
+ * carry the title/description/date in nested `seo`/`card` blocks rather than
+ * top-level keys, and their content lives in the `sections` array, which is
+ * hydrated back into editor sections. The schema must be loaded first.
+ * @param {Object} metadata - The parsed frontmatter.
+ * @param {string} content - The markdown body (legacy fallback).
+ * @param {string} id - The new draft id.
+ * @return {Object} The draft object.
+ */
+function draftFromMetadata(metadata, content, id) {
+  const m = metadata || {};
+  const card = m.card || {};
+  const seo = m.seo || {};
+  return {
+    id,
+    title: card.title || seo.title || m.title || '',
+    description: seo.description || m.description || '',
+    date: card.date || m.date || '',
+    tags: Array.isArray(m.tags) ? m.tags.join(', ') : m.tags || '',
+    authors: Array.isArray(card.author) ? card.author : [],
+    ad_categories: m.ad_categories,
+    ad_confidences: m.ad_confidences,
+    sections: hydrateSections(m.sections, getSectionFields),
+    content: content || '',
+    imageFiles: [],
+    lastModified: Date.now()
+  };
+}
 
 /**
  * Opens a file picker to load a draft from a .md or .zip file.
@@ -40,24 +72,15 @@ export async function openAndLoadDraft(ui, loadDraftFn, renderListFn) {
  * @param {Function} renderListFn - Function to render the drafts list.
  */
 async function handleLoadDraft(file, ui, loadDraftFn, renderListFn) {
+  // Hydration fills section defaults from the schema, so make sure it is
+  // loaded before building the draft.
+  await loadSchema().catch(() => {});
+
   if (file.name.endsWith('.md')) {
     const text = await file.text();
     const { metadata, content } = parseFrontmatter(text);
     const id = Date.now().toString();
-    const newDraft = {
-      id,
-      title: metadata.title || '',
-      description: metadata.description || '',
-      date: metadata.date || '',
-      tags: Array.isArray(metadata.tags)
-        ? metadata.tags.join(', ')
-        : metadata.tags || '',
-      ad_categories: metadata.ad_categories,
-      ad_confidences: metadata.ad_confidences,
-      content: content || '',
-      imageFiles: [],
-      lastModified: Date.now(),
-    };
+    const newDraft = draftFromMetadata(metadata, content, id);
     drafts.unshift(newDraft);
     setCurrentDraftId(id);
     saveDrafts();
@@ -74,20 +97,7 @@ async function handleLoadDraft(file, ui, loadDraftFn, renderListFn) {
     const text = await mdFile.async('text');
     const { metadata, content } = parseFrontmatter(text);
     const id = Date.now().toString();
-    const newDraft = {
-      id,
-      title: metadata.title || '',
-      description: metadata.description || '',
-      date: metadata.date || '',
-      tags: Array.isArray(metadata.tags)
-        ? metadata.tags.join(', ')
-        : metadata.tags || '',
-      ad_categories: metadata.ad_categories,
-      ad_confidences: metadata.ad_confidences,
-      content: content || '',
-      imageFiles: [],
-      lastModified: Date.now(),
-    };
+    const newDraft = draftFromMetadata(metadata, content, id);
 
     // Extract images
     for (const [filename, zipEntry] of Object.entries(zip.files)) {

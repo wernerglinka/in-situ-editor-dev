@@ -9,6 +9,7 @@ import assert from 'node:assert/strict';
 
 import { materializeDefaults, isLeaf, isGroup, isArrayField } from '../src/assets/js/editor/schema/field-utils.js';
 import { serializeSection, firstSectionImage } from '../src/assets/js/editor/schema/serializer.js';
+import { hydrateSection, hydrateSections } from '../src/assets/js/editor/schema/hydrate.js';
 
 // A field tree shaped like a real section: a group, an array of objects,
 // a leaf with an explicit default, and a nested containerFields subtree
@@ -97,6 +98,55 @@ test('serialization fills missing leaves and array entries from defaults', () =>
   assert.equal(out.image.src, ''); // filled
   assert.equal(out.ctas[0].url, '/go');
   assert.equal(out.ctas[0].isButton, true); // filled from item default
+});
+
+const fieldsFor = (type) => (type === 'rich-text' ? fields : null);
+
+test('hydrateSection fills schema defaults while the page values win', () => {
+  const page = {
+    sectionType: 'rich-text',
+    containerTag: 'section',
+    text: { title: 'From the page' }
+  };
+  const h = hydrateSection(page, fieldsFor);
+  assert.equal(h.text.title, 'From the page'); // page value wins
+  assert.equal(h.text.titleTag, 'h2'); // default filled
+  assert.deepEqual(h.image, { src: '', alt: '' }); // group filled
+  assert.equal(h.containerTag, 'section'); // wrapper preserved
+});
+
+test('hydrateSection preserves fields the schema does not describe', () => {
+  const page = { sectionType: 'rich-text', text: { title: 't' }, mystery: { keep: 1 } };
+  const h = hydrateSection(page, fieldsFor);
+  assert.deepEqual(h.mystery, { keep: 1 });
+});
+
+test('hydrateSection passes an unowned section type through untouched', () => {
+  const page = { sectionType: 'featured-posts', count: 3 };
+  assert.deepEqual(hydrateSection(page, fieldsFor), page);
+});
+
+test('round-trip preserves unknown fields and the wrapper through serialize', () => {
+  const page = {
+    sectionType: 'rich-text',
+    containerTag: 'div',
+    id: 'lead',
+    classes: 'highlight',
+    text: { title: 'Hi' },
+    mystery: 'keep me'
+  };
+  const out = serializeSection('rich-text', hydrateSection(page, fieldsFor), fields, 'p');
+  assert.equal(out.containerTag, 'div'); // page wrapper, not the default
+  assert.equal(out.id, 'lead');
+  assert.equal(out.classes, 'highlight');
+  assert.equal(out.text.title, 'Hi');
+  assert.equal(out.mystery, 'keep me'); // unknown field survived
+});
+
+test('hydrateSections maps an array and tolerates non-arrays', () => {
+  assert.deepEqual(hydrateSections(undefined, fieldsFor), []);
+  const out = hydrateSections([ { sectionType: 'rich-text', text: { title: 'a' } } ], fieldsFor);
+  assert.equal(out[0].text.titleTag, 'h2');
 });
 
 test('firstSectionImage finds the first content image across sections', () => {
