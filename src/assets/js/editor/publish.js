@@ -4,7 +4,7 @@
  * server-side GitHub PAT and decides what the user is allowed to do.
  */
 
-import { generateMarkdown } from '../utils/markdown-utils.js';
+import { generateMarkdown, pageTypeOf } from '../utils/markdown-utils.js';
 import { customAlert } from '../utils/dialog-utils.js';
 import { getImage } from '../utils/db-storage.js';
 import { bufferToBase64 } from '../utils/base64-utils.js';
@@ -62,7 +62,7 @@ export async function publish(ui, draft, mode) {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${accessToken()}`,
       },
-      body: JSON.stringify({ mode, slug, markdown, images }),
+      body: JSON.stringify({ mode, slug, markdown, images, pageType: pageTypeOf(draft) }),
     });
 
     const data = await res.json().catch(() => ({}));

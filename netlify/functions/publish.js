@@ -20,6 +20,18 @@
 const GH_API = 'https://api.github.com';
 
 /**
+ * Allowlisted publish destinations per page type. The directories are fixed
+ * here, never taken from the client, so a crafted payload cannot redirect a
+ * write outside these roots. A blog post lives under src/blog/; a page at the
+ * top level. Combined with the strict slug check, the only writable paths are
+ * <dir>/<slug>.md and <imageDir>/<slug>/<image-name>.
+ */
+const PAGE_DEST = {
+  post: { dir: 'src/blog', imageDir: 'src/assets/images/blog' },
+  page: { dir: 'src', imageDir: 'src/assets/images' }
+};
+
+/**
  * @param {number} status
  * @param {object} body
  */
@@ -100,15 +112,20 @@ export const handler = async (event, context) => {
   }
 
   const { mode, slug, markdown, images } = payload;
+  const pageType = payload.pageType || 'post';
   if (!mode || !slug || !markdown) {
     return json(400, { error: 'Missing required fields: mode, slug, markdown' });
   }
   if (mode !== 'pr' && mode !== 'direct') {
     return json(400, { error: 'mode must be "pr" or "direct"' });
   }
+  const dest = PAGE_DEST[pageType];
+  if (!dest) {
+    return json(400, { error: `pageType must be one of: ${Object.keys(PAGE_DEST).join(', ')}` });
+  }
   // slug and image names become Git paths; validate before any path is built
-  // so a crafted payload cannot write outside src/blog/ and the post's image
-  // folder (e.g. .github/workflows/ on a PR branch).
+  // so a crafted payload cannot write outside the allowlisted destination and
+  // its image folder (e.g. .github/workflows/ on a PR branch).
   if (!/^[a-z0-9-]{1,100}$/.test(slug)) {
     return json(400, { error: 'slug must be 1-100 lowercase letters, digits, or hyphens' });
   }
@@ -146,10 +163,10 @@ export const handler = async (event, context) => {
       });
     }
 
-    const postPath = `src/blog/${slug}.md`;
+    const postPath = `${dest.dir}/${slug}.md`;
     const markdownBase64 = Buffer.from(markdown, 'utf8').toString('base64');
     const existingSha = await getSha(repo, postPath, targetBranch);
-    const commitMessage = `${existingSha ? 'Update' : 'Add'} post ${slug}`;
+    const commitMessage = `${existingSha ? 'Update' : 'Add'} ${pageType} ${slug}`;
 
     const commit = await putContent(
       repo,
@@ -162,7 +179,7 @@ export const handler = async (event, context) => {
     if (Array.isArray(images)) {
       for (const img of images) {
         if (!img || !img.name || !img.base64) continue;
-        const imgPath = `src/assets/images/blog/${slug}/${img.name}`;
+        const imgPath = `${dest.imageDir}/${slug}/${img.name}`;
         await putContent(
           repo,
           targetBranch,
