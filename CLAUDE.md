@@ -38,7 +38,12 @@ behavior changes, update the guide in the same chunk.
   strings or YAML turns them into Date objects and breaks the sort).
 - Metalsmith 2.7 watch: pass plain directories to `.watch()` (chokidar 4
   ignores globs) and keep `.clean( isProduction )` (clean(true) + watch
-  races into ENOTEMPTY crashes).
+  races into ENOTEMPTY crashes). Its watcher is also fragile under the
+  command sandbox: chokidar 4 opens a per-file watch across the source
+  tree and crashes with `EMFILE: too many open files` under the sandbox's
+  tighter watch budget (the fd ulimit is already high, so that is not the
+  cause). Run the dev server unsandboxed (`dangerouslyDisableSandbox`); a
+  one-off `npm run build` is fine sandboxed.
 - `npm run format` repo-wide would reformat the vendored editor libs;
   they are listed in `.prettierignore` — keep them there.
 
