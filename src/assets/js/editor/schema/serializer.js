@@ -26,20 +26,20 @@ const WRAPPER = {
 
 /**
  * Rewrites an image widget's value. A bare uploaded filename becomes the
- * published path under the post's slug; a URL or already-rooted path is
+ * published path under the page's image base; a URL or already-rooted path is
  * left untouched.
  * @param {string} value - The stored image value.
- * @param {string} slug - The post slug.
+ * @param {string} imageBase - The published image directory (no trailing slash).
  * @return {string} The path to emit.
  */
-function rewriteImage(value, slug) {
+function rewriteImage(value, imageBase) {
   if (typeof value !== 'string' || value === '') {
     return value;
   }
   if (value.includes('/') || /^https?:/i.test(value) || /^data:/i.test(value)) {
     return value;
   }
-  return `/assets/images/blog/${slug}/${value}`;
+  return `${imageBase}/${value}`;
 }
 
 /**
@@ -48,10 +48,10 @@ function rewriteImage(value, slug) {
  * their entries through their `items` tree.
  * @param {Object} fields - The field tree.
  * @param {Object} values - The values object (may be partial).
- * @param {string} slug - The post slug, for image paths.
+ * @param {string} imageBase - The published image directory, for image paths.
  * @return {Object} The serialized nested object.
  */
-function walk(fields, values, slug) {
+function walk(fields, values, imageBase) {
   const out = {};
   const src = values && typeof values === 'object' ? values : {};
   // Carry through anything the schema does not describe (wrapper fields like
@@ -65,15 +65,15 @@ function walk(fields, values, slug) {
   for (const [ key, node ] of Object.entries(fields)) {
     if (isArrayField(node)) {
       const arr = Array.isArray(src[key]) ? src[key] : [];
-      out[key] = arr.map((item) => walk(node.items, item, slug));
+      out[key] = arr.map((item) => walk(node.items, item, imageBase));
     } else if (isLeaf(node)) {
       let val = key in src ? src[key] : node.default;
       if (node.widget === 'image') {
-        val = rewriteImage(val, slug);
+        val = rewriteImage(val, imageBase);
       }
       out[key] = val;
     } else if (isGroup(node)) {
-      out[key] = walk(node, src[key], slug);
+      out[key] = walk(node, src[key], imageBase);
     }
   }
   return out;
@@ -84,17 +84,17 @@ function walk(fields, values, slug) {
  * @param {string} type - The section type (its `sectionType`).
  * @param {Object} values - The section's values object.
  * @param {Object} fields - The resolved field tree for this type.
- * @param {string} slug - The post slug, for image paths.
+ * @param {string} imageBase - The published image directory, for image paths.
  * @return {Object} The library-schema section object.
  */
-export function serializeSection(type, values, fields, slug) {
+export function serializeSection(type, values, fields, imageBase) {
   const wrap = WRAPPER[type] || {};
   return {
     sectionType: type,
     containerTag: wrap.containerTag || 'section',
     id: '',
     classes: wrap.classes || '',
-    ...walk(fields, values, slug)
+    ...walk(fields, values, imageBase)
   };
 }
 
@@ -104,10 +104,10 @@ export function serializeSection(type, values, fields, slug) {
  * tree to locate image leaves so it works regardless of section type.
  * @param {Array<Object>} sections - Schema-driven section values objects.
  * @param {Function} fieldsFor - Maps a sectionType to its field tree.
- * @param {string} slug - The post slug, for the returned path.
+ * @param {string} imageBase - The published image directory, for the returned path.
  * @return {string} The published image path, or '' if none.
  */
-export function firstSectionImage(sections, fieldsFor, slug) {
+export function firstSectionImage(sections, fieldsFor, imageBase) {
   for (const section of sections || []) {
     if (!section || !section.sectionType) {
       continue;
@@ -118,7 +118,7 @@ export function firstSectionImage(sections, fieldsFor, slug) {
     }
     const found = findImage(fields, section);
     if (found) {
-      return rewriteImage(found, slug);
+      return rewriteImage(found, imageBase);
     }
   }
   return '';

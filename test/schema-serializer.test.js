@@ -83,9 +83,16 @@ test('image leaves rewrite bare filenames but pass URLs through', () => {
   const values = materializeDefaults(fields);
   values.image.src = 'photo.jpg';
   values.containerFields.background.image = 'https://cdn.example.com/bg.jpg';
-  const out = serializeSection('multi-media', values, fields, 'my-post');
+  const out = serializeSection('multi-media', values, fields, '/assets/images/blog/my-post');
   assert.equal(out.image.src, '/assets/images/blog/my-post/photo.jpg');
   assert.equal(out.containerFields.background.image, 'https://cdn.example.com/bg.jpg');
+});
+
+test('a page image base (no blog/) rewrites under the top-level path', () => {
+  const values = materializeDefaults(fields);
+  values.image.src = 'photo.jpg';
+  const out = serializeSection('image-only', values, fields, '/assets/images/about');
+  assert.equal(out.image.src, '/assets/images/about/photo.jpg');
 });
 
 test('serialization fills missing leaves and array entries from defaults', () => {
@@ -155,5 +162,5 @@ test('firstSectionImage finds the first content image across sections', () => {
     { sectionType: 'rich-text', image: { src: '', alt: '' } },
     { sectionType: 'rich-text', image: { src: 'hero.png', alt: 'x' } }
   ];
-  assert.equal(firstSectionImage(sections, fieldsFor, 'post'), '/assets/images/blog/post/hero.png');
+  assert.equal(firstSectionImage(sections, fieldsFor, '/assets/images/blog/post'), '/assets/images/blog/post/hero.png');
 });
