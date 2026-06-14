@@ -45,6 +45,7 @@ const json = (status, body) => ({
  * Thin wrapper around fetch() that throws with the GitHub error message.
  */
 async function gh(repo, path, init = {}) {
+  const method = init.method || 'GET';
   const url = path.startsWith('https://') ? path : `${GH_API}/repos/${repo}${path}`;
   const res = await fetch(url, {
     ...init,
@@ -63,7 +64,9 @@ async function gh(repo, path, init = {}) {
     } catch {
       msg = txt;
     }
-    throw new Error(`GitHub ${res.status}: ${msg || res.statusText}`);
+    // Include the failing operation so a 403/404 points at the exact call
+    // (and thus which PAT permission is short, e.g. POST /pulls).
+    throw new Error(`GitHub ${res.status} on ${method} ${path}: ${msg || res.statusText}`);
   }
   return res.json();
 }
