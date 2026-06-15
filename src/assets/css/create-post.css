@@ -26,15 +26,19 @@
 }
 
 body {
-  max-width: 90em;
   background-color: var(--background-color);
   color: var(--text-color);
 }
 
 /* The shared site header is position:fixed, so clear its height (it has no
    hero to sit under on the admin page) before the editor content begins. The
-   offset tracks the header's own responsive clamp. */
+   offset tracks the header's own responsive clamp. The body spans the full
+   viewport (overriding the base stylesheet's centered max-width) so the
+   header and footer stretch edge to edge; the editor content below carries
+   its own width constraint. */
 body.admin {
+  max-width: none;
+  margin: 0;
   padding-top: calc(clamp(3.25rem, 3.25rem + 1.75vw, 5rem) + 1rem);
 }
 
@@ -97,7 +101,10 @@ body.admin {
   display: grid;
   grid-template-columns: 250px minmax(0, 1fr) minmax(0, 1fr);
   gap: 2rem;
-  margin-top: 2rem;
+  /* Width constraint moved here from body so the footer can span the viewport;
+     centered, with generous space above the footer. */
+  max-width: 90em;
+  margin: 2rem auto 50rem;
 }
 
 .editor-main,
