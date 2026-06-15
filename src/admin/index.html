@@ -27,6 +27,7 @@ seo:
 			<ul id="drafts-list"></ul>
 			<div class="sidebar-actions">
 				<button id="load-draft-btn" class="btn" title="Load Draft from file system">📂 Load Draft</button>
+				<button id="open-site-btn" class="btn" title="Open an existing published page">🌐 Open from site</button>
 			</div>
 			<div class="sidebar-footer">
 				<details class="settings-details">
@@ -248,6 +249,17 @@ seo:
 		</details>
 		<div class="dialog-actions">
 			<button class="btn">OK</button>
+		</div>
+	</form>
+</dialog>
+
+<dialog id="open-site-dialog" class="open-site-dialog">
+	<form method="dialog">
+		<h2>Open a published page</h2>
+		<p class="open-site-note">Pages as of the last deploy. Drafts and unmerged changes are not listed.</p>
+		<ul id="open-site-list" class="open-site-list"></ul>
+		<div class="dialog-actions">
+			<button value="cancel" class="btn btn-secondary">Cancel</button>
 		</div>
 	</form>
 </dialog>

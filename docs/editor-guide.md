@@ -39,6 +39,17 @@ Anything the editor doesn't manage — a data-driven section like
 and written back unchanged when you save, so opening a page never loses
 content.
 
+**🌐 Open from site** lists every published page straight from the site, so
+you can edit existing content without first finding its file. It reads a
+snapshot the build emits (`/assets/pages.json`), groups the pages into posts
+and other pages, and on pick loads the page through the same path as a file —
+sections, menu settings, and unmanaged fields all come back intact. Two
+things to know: the list reflects the **last deploy**, so a page you just
+submitted as a PR appears only once that PR merges and the site rebuilds; and
+because the destination slug is derived from the title, renaming the title
+before publishing writes a new file rather than updating the original. To
+update a page in place, keep its title.
+
 ## Post or page
 
 The **Page type** selector at the top of the form decides where the content

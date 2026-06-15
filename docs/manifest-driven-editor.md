@@ -250,9 +250,20 @@ page-type selector, shows blog-only fields only for posts, and exposes a
 "show in menu" toggle with menu label/order for pages; hydration infers the
 type from the presence of a `card` block.
 
-What remains for "edit any page": a way to browse and open existing pages
-straight from the repo (a Function read endpoint), so editing isn't limited
-to local file loads. That builds on this rather than blocking on it.
+**Browse and open landed.** "Edit any page" no longer needs a local file:
+the build emits a snapshot of every published page's source frontmatter to
+`build/assets/pages.json` (a small plugin, `lib/plugins/emit-pages-artifact.js`,
+placed after `drafts()` and before `collections()`/`permalinks()` so the
+captured frontmatter is the clean authored shape and the keys are the source
+`.md` paths). The editor's "Open from site" button fetches that artifact,
+lists posts and pages, and on pick hydrates the chosen page through the same
+`draftFromMetadata` path as a file load. This reuses the artifact pattern
+(`components-schema.json`) rather than adding a Function read endpoint, so the
+read path stays a static fetch with no GitHub access and no new security
+surface. Its one limit is freshness: the artifact reflects the last deploy,
+so unmerged-PR and `draft:true` pages are not listed. A repo read endpoint
+(Function + PAT read) remains the follow-up if in-flight editing becomes a
+real need; it builds on this rather than blocking on it.
 
 ## Sequence
 

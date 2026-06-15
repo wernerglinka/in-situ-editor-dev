@@ -39,7 +39,7 @@ function navFields(nav) {
   };
 }
 
-function draftFromMetadata(metadata, content, id) {
+export function draftFromMetadata(metadata, content, id) {
   const m = metadata || {};
   const card = m.card || {};
   const seo = m.seo || {};

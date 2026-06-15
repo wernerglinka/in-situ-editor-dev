@@ -11,6 +11,7 @@ import { initPasteHandler } from './paste-handler.js';
 import { initTagEditor } from './tag-editor.js';
 import { debounce } from '../utils/debounce.js';
 import { openAndLoadDraft } from '../drafts/load-draft.js';
+import { openFromSite } from '../drafts/open-from-site.js';
 import { initEditorActions } from './editor-actions.js';
 import { initEditor } from './editor-init.js';
 import { initSectionBuilder } from './section-builder.js';
@@ -68,6 +69,9 @@ window.addEventListener('classifier-updated', doSync);
 
 ui.newDraftBtn.onclick = () => createNewDraft(ui, doLoadDraft, () => renderList(ui, doLoadDraft));
 ui.loadDraftBtn.onclick = () => openAndLoadDraft(ui, doLoadDraft, () => renderList(ui, doLoadDraft));
+if (ui.openSiteBtn) {
+  ui.openSiteBtn.onclick = () => openFromSite(ui, doLoadDraft, () => renderList(ui, doLoadDraft));
+}
 
 initEditorActions(ui);
 // Legacy body-textarea paths: only wire them if the markup still has the

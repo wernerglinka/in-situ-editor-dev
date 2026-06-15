@@ -26,6 +26,8 @@ import prism from 'metalsmith-prism';
 
 import componentDependencyBundler from 'metalsmith-bundled-components';
 
+import emitPagesArtifact from './lib/plugins/emit-pages-artifact.js'; // Snapshots page frontmatter for the admin editor
+
 import seo from 'metalsmith-seo'; // Adds SEO metadata to pages
 import optimizeImages from 'metalsmith-optimize-images'; // Optimizes images for web
 import htmlMinifier from 'metalsmith-optimize-html'; // Minifies HTML in production
@@ -147,6 +149,15 @@ metalsmith
 
   // Exclude draft content in production mode
   .use( drafts( !isProduction ) )
+
+  /**
+   * Snapshot every page's source frontmatter to build/assets/pages.json for
+   * the admin editor to browse and open existing pages. Runs here, after
+   * drafts() and before collections()/permalinks()/layouts(), so the captured
+   * frontmatter is the clean authored shape and the keys are the source .md
+   * paths. See lib/plugins/emit-pages-artifact.js.
+   */
+  .use( emitPagesArtifact() )
 
   /**
    * Create a collection of blog posts

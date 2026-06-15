@@ -246,9 +246,65 @@ body {
   flex-wrap: wrap;
 }
 
-#load-draft-btn {
+#load-draft-btn,
+#open-site-btn {
   font-size: 0.9rem;
   padding: 0.5rem;
+}
+
+.open-site-dialog {
+  min-width: 28rem;
+  max-width: 90vw;
+}
+
+.open-site-note {
+  margin: 0 0 0.75rem;
+  font-size: 0.85rem;
+  opacity: 0.7;
+}
+
+.open-site-list {
+  list-style: none;
+  margin: 0 0 1rem;
+  padding: 0;
+  max-height: 50vh;
+  overflow-y: auto;
+}
+
+.open-site-group {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.6;
+  margin: 0.75rem 0 0.25rem;
+}
+
+.open-site-item {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.15rem;
+  width: 100%;
+  text-align: left;
+  padding: 0.5rem 0.6rem;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.open-site-item:hover {
+  background: rgba(127, 127, 127, 0.12);
+  border-color: rgba(127, 127, 127, 0.25);
+}
+
+.open-site-item-title {
+  font-weight: 600;
+}
+
+.open-site-item-path {
+  font-size: 0.78rem;
+  opacity: 0.6;
 }
 
 .delete-draft-btn {
