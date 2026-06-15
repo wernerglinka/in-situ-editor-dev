@@ -1,7 +1,0 @@
-{
-  "name": "page-transitions",
-  "type": "partial",
-  "styles": ["page-transitions.css"],
-  "scripts": ["page-transitions.js"],
-  "requires": []
-}
