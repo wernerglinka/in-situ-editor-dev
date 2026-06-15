@@ -2,7 +2,7 @@
   "name": "banner",
   "type": "section",
   "styles": ["banner.css"],
-  "scripts": [],
+  "scripts": ["banner.js"],
   "requires": ["ctas", "text", "image", "commons"],
   "validation": {
     "required": ["sectionType"],
