@@ -7,6 +7,14 @@
     <meta name="description" content="{{ seo.description }}" />
     <meta name="color-scheme" content="light dark" />
     <link rel="icon" type="image/png" sizes="32x32" href="/assets/icons/favicon-32x32.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;500&family=Open+Sans:wght@300;500&display=swap"
+    />
+    <!-- Bundled component styles first so the editor's own CSS below wins any conflict -->
+    <link rel="stylesheet" href="/assets/main.css" />
     <link rel="stylesheet" href="/assets/css/index.css" />
     <link rel="stylesheet" href="/assets/css/create-post.css" />
     <link rel="stylesheet" href="/assets/css/message-box.css" />
@@ -16,7 +24,11 @@
   </head>
 
   <body class="{{ bodyClass }}">
+    {% include "components/sections/header/header.njk" %}
+
     {{ contents | safe }}
+
+    {% include "components/sections/footer/footer.njk" %}
 
     <script type="importmap">
       {
@@ -91,6 +103,10 @@
     <script src="/assets/js/turndown/turndown.js"></script>
     <script src="/assets/js/jszip/jszip.js"></script>
     <script src="/assets/js/js-yaml/js-yaml.min.js"></script>
+
+    <!-- Shared site chrome (header/footer) interactivity. SWUP self-disables on
+         the admin body class, so this does not add page transitions here. -->
+    <script src="/assets/main.js"></script>
 
     <script type="module" src="/assets/js/editor/create-post.js"></script>
   </body>

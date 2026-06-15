@@ -31,6 +31,13 @@ body {
   color: var(--text-color);
 }
 
+/* The shared site header is position:fixed, so clear its height (it has no
+   hero to sit under on the admin page) before the editor content begins. The
+   offset tracks the header's own responsive clamp. */
+body.admin {
+  padding-top: calc(clamp(3.25rem, 3.25rem + 1.75vw, 5rem) + 1rem);
+}
+
 .btn {
   padding: 0.6rem 1.2rem;
   cursor: pointer;
