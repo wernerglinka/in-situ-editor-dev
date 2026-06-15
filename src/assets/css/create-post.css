@@ -850,10 +850,37 @@ dialog p {
 }
 
 .section-card-type {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
   font-weight: 600;
   font-size: 0.85rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
+  background: transparent;
+  border: none;
+  padding: 0.15rem 0;
+  color: inherit;
+  cursor: pointer;
+}
+
+.section-card-caret {
+  display: inline-block;
+  font-size: 0.7rem;
+  transition: transform 0.15s ease;
+  transform: rotate(90deg);
+}
+
+.section-card.is-collapsed .section-card-caret {
+  transform: rotate(0deg);
+}
+
+.section-card.is-collapsed .section-card-body {
+  display: none;
+}
+
+.section-card.is-collapsed .section-card-header {
+  border-bottom: none;
 }
 
 .section-card-controls {

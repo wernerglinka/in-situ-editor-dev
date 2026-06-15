@@ -44,6 +44,12 @@ let onChangeRef = () => {};
 let sections = [];
 let currentDraft = null;
 
+/** Sections whose form body is expanded. Keyed by the section object so the
+ * state survives re-render and reorder; empty by default, so a freshly loaded
+ * page renders with every section collapsed and the user sees the page's
+ * makeup at a glance. */
+const expanded = new WeakSet();
+
 /**
  * Creates a new empty section of the given type by materializing its
  * defaults from the loaded schema. The schema must be loaded first (callers
@@ -176,14 +182,35 @@ function formContext() {
  */
 function renderCard(section, index) {
   const kind = section.sectionType || section.type;
+  const isOpen = expanded.has(section);
   const card = document.createElement('div');
-  card.className = `section-card section-card-${kind}`;
+  card.className = `section-card section-card-${kind}${isOpen ? '' : ' is-collapsed'}`;
 
   const header = document.createElement('div');
   header.className = 'section-card-header';
-  const typeEl = document.createElement('span');
+  // The type label doubles as the collapse toggle; controls sit beside it and
+  // stop propagation so moving/removing never also toggles the body.
+  const typeEl = document.createElement('button');
+  typeEl.type = 'button';
   typeEl.className = 'section-card-type';
-  typeEl.textContent = typeLabel(kind);
+  typeEl.setAttribute('aria-expanded', String(isOpen));
+  const caret = document.createElement('span');
+  caret.className = 'section-card-caret';
+  caret.textContent = '▸';
+  caret.setAttribute('aria-hidden', 'true');
+  const label = document.createElement('span');
+  label.textContent = typeLabel(kind);
+  typeEl.append(caret, label);
+  typeEl.onclick = () => {
+    const nowOpen = !expanded.has(section);
+    if (nowOpen) {
+      expanded.add(section);
+    } else {
+      expanded.delete(section);
+    }
+    card.classList.toggle('is-collapsed', !nowOpen);
+    typeEl.setAttribute('aria-expanded', String(nowOpen));
+  };
   const controls = document.createElement('div');
   controls.className = 'section-card-controls';
   for (const [ act, symbol, title ] of [
@@ -291,7 +318,9 @@ export function initSectionBuilder(ui, onChange) {
       if (SCHEMA_DRIVEN.has(type)) {
         await loadSchema();
       }
-      sections.push(newSection(type));
+      const added = newSection(type);
+      expanded.add(added); // open the new section so the user can fill it in
+      sections.push(added);
       render();
       onChangeRef();
     };
