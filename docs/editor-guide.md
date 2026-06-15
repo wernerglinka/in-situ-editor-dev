@@ -88,14 +88,19 @@ A post is a stack of sections, composed in the **Sections** area:
   whether it uses a dark background are set in **Container settings**, not
   fixed; a plain banner is contained and light by default.
 
-Add sections with the buttons below the stack; reorder with ↑/↓; remove
-with ✕.
+Add a section from the **Add a section** menu below the stack; reorder with
+↑/↓; remove with ✕.
 
 Each section's form is collapsible. A page opens with every section
 collapsed, so the stack reads as a short list of section types and you can
 see the page's makeup at a glance and jump to the one you want. Click a
 section's header to open or close its form; a section you just added opens
 automatically so you can fill it in.
+
+The drafts panel on the left and the live preview on the right each collapse
+from the toolbar toggles (**◧ Drafts** and **Preview ◨**) above the form.
+Hide both for a full-width, distraction-free editor; the choice is remembered
+per browser.
 
 Rich Text, Image Only, and CTA Banner generate their forms straight from the
 component library's schema rather than from hand-written editor code, which

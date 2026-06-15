@@ -82,6 +82,10 @@ seo:
 		</div>
 
 		<div class="editor-main">
+			<div class="editor-toolbar">
+				<button type="button" id="toggle-sidebar-btn" class="pane-toggle" aria-pressed="true" title="Show or hide the drafts panel">◧ Drafts</button>
+				<button type="button" id="toggle-preview-btn" class="pane-toggle" aria-pressed="true" title="Show or hide the preview panel">Preview ◨</button>
+			</div>
 			<form id="post-form">
 				<div class="form-group">
 					<label for="post-page-type">Page type</label>
@@ -155,10 +159,13 @@ seo:
 					<p class="field-hint">💡 Build the page from sections. Add, reorder, and remove below. Prose fields take Markdown.</p>
 					<div id="sections-list"></div>
 					<div class="section-add-actions">
-						<button type="button" class="btn" data-add-section="rich-text">+ Rich Text</button>
-						<button type="button" class="btn" data-add-section="image-only">+ Image Only</button>
-						<button type="button" class="btn" data-add-section="multi-media">+ Multi Media</button>
-						<button type="button" class="btn" data-add-section="banner">+ CTA Banner</button>
+						<select id="section-add-select" class="section-add-select" aria-label="Add a section">
+							<option value="">+ Add a section…</option>
+							<option value="rich-text">Rich Text</option>
+							<option value="image-only">Image Only</option>
+							<option value="multi-media">Multi Media</option>
+							<option value="banner">CTA Banner</option>
+						</select>
 					</div>
 					<!-- Hidden legacy body field: keeps dormant AI/paste modules
 					     that reference #post-content from crashing until they are

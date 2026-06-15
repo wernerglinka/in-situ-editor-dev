@@ -112,6 +112,57 @@ body.admin {
   min-width: 0;
 }
 
+/* Collapsible panes (toggled from the editor toolbar). A collapsed pane is
+   removed from flow so the grid reflows the remaining columns with no empty
+   track or stray gap left behind. */
+.editor-container.no-sidebar .editor-sidebar,
+.editor-container.no-preview .editor-preview {
+  display: none;
+}
+
+@media (min-width: 1001px) {
+  .editor-container.no-sidebar:not(.no-preview) {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+  .editor-container.no-preview:not(.no-sidebar) {
+    grid-template-columns: 250px minmax(0, 1fr);
+  }
+  .editor-container.no-sidebar.no-preview {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.editor-toolbar {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-end;
+  margin-bottom: 1rem;
+}
+
+.pane-toggle {
+  font-size: 0.8rem;
+  padding: 0.3rem 0.7rem;
+  background: transparent;
+  border: 1px solid var(--color-border, #ddd);
+  border-radius: 4px;
+  color: inherit;
+  cursor: pointer;
+  opacity: 0.65;
+  transition:
+    opacity 0.15s,
+    background 0.15s;
+}
+
+.pane-toggle:hover {
+  opacity: 1;
+}
+
+/* Pressed = pane visible; collapsed gets a filled, clearly-off look. */
+.pane-toggle[aria-pressed='false'] {
+  opacity: 1;
+  background: rgba(127, 127, 127, 0.14);
+}
+
 .editor-sidebar {
   padding-right: 0;
   display: flex;
@@ -941,6 +992,29 @@ dialog p {
   display: flex;
   gap: 0.5rem;
   flex-wrap: wrap;
+}
+
+.section-add-select {
+  padding: 0.55rem 0.9rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: white;
+  background: var(--primary-color);
+  border: 1px solid var(--primary-color);
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.section-add-select:hover {
+  background: var(--primary-hover);
+  border-color: var(--primary-hover);
+}
+
+/* The dropdown list inherits the control colors otherwise; keep options
+   readable on the native popup. */
+.section-add-select option {
+  color: var(--text-color);
+  background: var(--background-color);
 }
 
 /* Schema-driven section forms (form-renderer.js) */

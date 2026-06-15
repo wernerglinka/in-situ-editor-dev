@@ -312,9 +312,14 @@ export function initSectionBuilder(ui, onChange) {
   ui.getSections = () => sections;
   // Warm the schema cache so schema-driven cards render without a flash.
   loadSchema().catch((err) => console.error('schema load failed', err));
-  for (const btn of document.querySelectorAll('[data-add-section]')) {
-    const type = btn.dataset.addSection;
-    btn.onclick = async () => {
+  const addSelect = document.getElementById('section-add-select');
+  if (addSelect) {
+    addSelect.onchange = async () => {
+      const type = addSelect.value;
+      addSelect.value = ''; // snap back to the placeholder for the next add
+      if (!type) {
+        return;
+      }
       if (SCHEMA_DRIVEN.has(type)) {
         await loadSchema();
       }
