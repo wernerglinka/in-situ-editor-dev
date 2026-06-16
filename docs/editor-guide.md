@@ -67,7 +67,11 @@ fields apply; your sections are untouched.
 
 ## Building a post
 
-A post is a stack of sections, composed in the **Sections** area:
+A post is a stack of sections, composed in the **Sections** area. The
+**Add a section** menu lists every section the site's component library
+defines; each one generates its form straight from that component's schema,
+so it exposes exactly the fields the library section supports. A few of the
+most common:
 
 - **Rich Text** — a title and prose plus the full set of fields the
   library's text section supports: lead-in, title level (h1–h6), centering,
@@ -101,15 +105,14 @@ from the toolbar toggles (**Drafts** and **Preview**) above the form.
 Hide both for a full-width, distraction-free editor; the choice is remembered
 per browser.
 
-Rich Text, Image Only, and CTA Banner generate their forms straight from the
-component library's schema rather than from hand-written editor code, which
-is why they expose every field the library supports and are named after
-their library section. The remaining section types are being moved onto the
-same schema-driven path, after which more of them (hero, slider, columns, …)
-become available without new editor code. Within a section, repeatable fields like
-call-to-action buttons add, remove, and reorder the same way the section
-stack does. Drafts made before the section types were renamed open without
-losing content.
+Every section generates its form from the component library's schema rather
+than from hand-written editor code, which is why each exposes the full set of
+fields its library section supports and is named after that section. The menu
+is built from the schema the build emits, so the editor offers whatever
+components a site defines with no per-type editor code. Within a section,
+repeatable fields like call-to-action buttons add, remove, and reorder the
+same way the section stack does. Drafts made before the section types were
+renamed open without losing content.
 
 Above the sections sit the post's metadata: title, description, date,
 authors, and tags. The title doubles as the post's URL slug

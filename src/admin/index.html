@@ -220,11 +220,9 @@ seo:
           <div id="sections-list"></div>
           <div class="section-add-actions">
             <select id="section-add-select" class="section-add-select" aria-label="Add a section">
+              <!-- Options are populated from the component schema at runtime
+                   by section-builder.js (populateAddMenu). -->
               <option value="">+ Add a section…</option>
-              <option value="rich-text">Rich Text</option>
-              <option value="image-only">Image Only</option>
-              <option value="multi-media">Multi Media</option>
-              <option value="banner">CTA Banner</option>
             </select>
           </div>
           <!-- Hidden legacy body field: keeps dormant AI/paste modules

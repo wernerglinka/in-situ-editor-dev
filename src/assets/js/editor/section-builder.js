@@ -5,8 +5,9 @@
  * Every section is schema-driven: a library-shaped values object
  * materialized from the component schema and tagged with `sectionType`,
  * rendered generically by form-renderer.js and serialized generically by
- * schema/serializer.js (see docs/manifest-driven-editor.md). `SCHEMA_DRIVEN`
- * lists the types the add buttons offer.
+ * schema/serializer.js (see docs/manifest-driven-editor.md). The add menu
+ * offers every type in the loaded schema (populateAddMenu), so the editor
+ * adapts to whatever components a site's manifests emit.
  *
  * Drafts authored before this used a lean per-type model
  * (`{ type, title, prose, ... }`); migrateSection converts those on load,
@@ -15,12 +16,18 @@
 
 import { getImage } from '../utils/db-storage.js';
 import { processImage } from './image-handler.js';
-import { loadSchema, getSectionFields } from './schema/schema-loader.js';
+import { loadSchema, getSectionFields, getSectionTypes } from './schema/schema-loader.js';
 import { materializeDefaults } from './schema/field-utils.js';
 import { renderFields } from './schema/form-renderer.js';
 
-/** Section types the add buttons offer, all on the schema-driven path. */
-const SCHEMA_DRIVEN = new Set([ 'rich-text', 'image-only', 'multi-media', 'banner' ]);
+/**
+ * Legacy lean section types this site's old drafts used that carryLegacyFields
+ * knows how to convert into their schema-driven shape. This is draft-history
+ * baggage specific to this site (a fresh install has no legacy drafts), kept
+ * separate from the add menu, which now derives from the full schema. See
+ * migrateSection.
+ */
+const LEGACY_CONVERTIBLE = new Set([ 'rich-text', 'image-only', 'multi-media', 'banner' ]);
 
 /**
  * The card header label for a section type: its section name, title-cased
@@ -54,7 +61,7 @@ const expanded = new WeakSet();
  * Creates a new empty section of the given type by materializing its
  * defaults from the loaded schema. The schema must be loaded first (callers
  * await loadSchema()).
- * @param {string} type - A SCHEMA_DRIVEN section type.
+ * @param {string} type - A schema section type (a key in the loaded schema).
  * @return {Object} The section values object, tagged with sectionType.
  */
 function newSection(type) {
@@ -86,7 +93,7 @@ function migrateSection(s) {
     return s;
   }
   const type = TYPE_ALIASES[s.type] || s.type;
-  if (!SCHEMA_DRIVEN.has(type)) {
+  if (!LEGACY_CONVERTIBLE.has(type)) {
     return type === s.type ? s : { ...s, type };
   }
   const next = newSection(type);
@@ -310,9 +317,12 @@ export function initSectionBuilder(ui, onChange) {
   uiRef = ui;
   onChangeRef = onChange;
   ui.getSections = () => sections;
-  // Warm the schema cache so schema-driven cards render without a flash.
-  loadSchema().catch((err) => console.error('schema load failed', err));
   const addSelect = document.getElementById('section-add-select');
+  // Warm the schema cache, then fill the add menu from it so the offered
+  // sections are exactly whatever the site's manifests emitted.
+  loadSchema()
+    .then(() => populateAddMenu(addSelect))
+    .catch((err) => console.error('schema load failed', err));
   if (addSelect) {
     addSelect.onchange = async () => {
       const type = addSelect.value;
@@ -320,14 +330,35 @@ export function initSectionBuilder(ui, onChange) {
       if (!type) {
         return;
       }
-      if (SCHEMA_DRIVEN.has(type)) {
-        await loadSchema();
-      }
+      await loadSchema();
       const added = newSection(type);
       expanded.add(added); // open the new section so the user can fill it in
       sections.push(added);
       render();
       onChangeRef();
     };
+  }
+}
+
+/**
+ * Fills the add-section <select> with one option per schema section type,
+ * labelled the same way the card headers are. Idempotent: clears any prior
+ * options (keeping the placeholder) before repopulating.
+ * @param {HTMLSelectElement|null} addSelect - The add-section select.
+ */
+function populateAddMenu(addSelect) {
+  if (!addSelect) {
+    return;
+  }
+  const placeholder = addSelect.querySelector('option[value=""]');
+  addSelect.replaceChildren();
+  if (placeholder) {
+    addSelect.append(placeholder);
+  }
+  for (const type of getSectionTypes()) {
+    const opt = document.createElement('option');
+    opt.value = type;
+    opt.textContent = typeLabel(type);
+    addSelect.append(opt);
   }
 }

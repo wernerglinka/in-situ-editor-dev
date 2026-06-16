@@ -61,3 +61,14 @@ export function getSectionFields(type) {
 export function isSchemaType(type) {
   return Boolean(schemaCache && schemaCache[type]);
 }
+
+/**
+ * The section types present in the loaded schema, sorted alphabetically. This
+ * is the full set the add menu offers: it is whatever the build emitted from
+ * the site's component manifests, so the editor adapts to a site's component
+ * set with no per-type code. Empty until loadSchema() has resolved.
+ * @return {string[]} The sorted sectionType keys.
+ */
+export function getSectionTypes() {
+  return schemaCache ? Object.keys(schemaCache).sort() : [];
+}
