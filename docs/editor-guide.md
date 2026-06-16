@@ -27,10 +27,9 @@ images). Two consequences worth knowing:
 - Clearing site data in your browser deletes your drafts. Use
   **💾 Save (.zip)** to keep a copy outside the browser.
 
-The sidebar lists your drafts. **+** starts a new one, the trash icon
-deletes one, and **📂 Load Draft** restores a draft from a saved file.
+The sidebar lists your drafts. **+** starts a new one, **×** deletes one, and **Load Draft** restores a draft from a saved file.
 
-**📂 Load Draft** also opens an existing page for editing: pick a page's
+**Load Draft** also opens an existing page for editing: pick a page's
 `.md` (or a `.zip` saved from here) and its sections load into the form
 ready to edit. The editor reads the page's frontmatter, so the title,
 description, date, tags, and every section come back as you left them.
@@ -39,7 +38,7 @@ Anything the editor doesn't manage — a data-driven section like
 and written back unchanged when you save, so opening a page never loses
 content.
 
-**🌐 Open from site** lists every published page straight from the site, so
+**Open from site** lists every published page straight from the site, so
 you can edit existing content without first finding its file. It reads a
 snapshot the build emits (`/assets/pages.json`), groups the pages into posts
 and other pages, and on pick loads the page through the same path as a file —
@@ -76,7 +75,7 @@ A post is a stack of sections, composed in the **Sections** area:
   settings** pane for width, spacing, and background. Prose fields take
   Markdown (headings, bold, lists, code blocks).
 - **Image Only** — one image with alt text, caption, an optional link, and
-  call-to-action buttons. Type a filename or URL, or use **📂 Choose image**
+  call-to-action buttons. Type a filename or URL, or use **Choose image**
   to upload; alt and caption are filled in for you when you upload, and a
   thumbnail appears.
 - **Multi Media** — a richer media section: a text block plus media that can
@@ -98,7 +97,7 @@ section's header to open or close its form; a section you just added opens
 automatically so you can fill it in.
 
 The drafts panel on the left and the live preview on the right each collapse
-from the toolbar toggles (**◧ Drafts** and **Preview ◨**) above the form.
+from the toolbar toggles (**Drafts** and **Preview**) above the form.
 Hide both for a full-width, distraction-free editor; the choice is remembered
 per browser.
 
@@ -126,7 +125,7 @@ edit. Note that long lines are clipped at the pane's edge.
 
 ## Images
 
-Pick an image with the **📂 Choose image** button on an Image section.
+Pick an image with the **Choose image** button on an Image section.
 The file can come from anywhere — your desktop, downloads, wherever. The
 editor stores a copy in your browser and, on publish, commits it to the
 site alongside the post at `src/assets/images/blog/<slug>/<filename>`.
