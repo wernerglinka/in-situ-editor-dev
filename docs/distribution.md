@@ -26,8 +26,7 @@ Metalsmith plugins, not bespoke glue in the consuming site:
   `schema.enabled: true` (`metalsmith.js`). Already published; a starter
   site already runs the plugin, so this is one option to turn on.
 - **Editor artifacts** — `metalsmith-site-data`, a formal plugin package
-  (`../plugins/metalsmith-site-data`, a `file:` dependency until published)
-  exporting two plugins:
+  (published on npm, a normal `^0.1.0` dependency) exporting two plugins:
   - `pagesArtifact()` → `assets/pages.json`, the page-frontmatter snapshot the
     "Open from site" feature fetches. Runs before `collections()`/`permalinks()`.
   - `dataArtifact()` → `assets/site-data.json`, the `metadata.data` namespace
@@ -113,11 +112,11 @@ The editor proper is a contained set the install script copies:
 
    The legacy-migration baggage (`migrateSection` and friends) has since been
    dropped outright, so `section-builder.js` carries no this-site history.
-3. **Package + publish the build plugins.** Done as a package: the two
-   artifact emitters are consolidated into `metalsmith-site-data`
-   (`../plugins/metalsmith-site-data`), a `file:` dependency here with its own
-   tests and README. Remaining: publish it to npm and write the install script
-   that copies the editor files and wires the plugins into a new site.
+3. **Package + publish the build plugins.** Done: the two artifact emitters
+   are consolidated into `metalsmith-site-data`, published on npm and consumed
+   here as a normal `^0.1.0` dependency, with its own tests and README.
+   Remaining: write the install script that copies the editor files and wires
+   the plugins (this one and `metalsmith-bundled-components`) into a new site.
 4. **Live in-situ preview** — render section cards (or a preview pane) with
    the actual component njk + css so the editor matches published output.
    A separate effort on top of the above.
