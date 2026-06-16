@@ -103,9 +103,9 @@
         }
       },
       "logoWidth": {
-        "widget": "text",
+        "widget": "number",
         "label": "Logo width (px)",
-        "default": "100"
+        "default": 100
       },
       "showTitle": {
         "widget": "checkbox",

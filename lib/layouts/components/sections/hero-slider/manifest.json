@@ -100,9 +100,9 @@
       "default": false
     },
     "autoPlayDelay": {
-      "widget": "text",
+      "widget": "number",
       "label": "Autoplay delay (ms)",
-      "default": "5000"
+      "default": 5000
     },
     "slides": {
       "widget": "array",

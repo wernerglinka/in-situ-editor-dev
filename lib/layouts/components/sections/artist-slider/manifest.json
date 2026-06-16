@@ -74,9 +74,9 @@
       }
     },
     "cycleTime": {
-      "widget": "text",
+      "widget": "number",
       "label": "Cycle time (ms)",
-      "default": "5000"
+      "default": 5000
     },
     "showDots": {
       "widget": "checkbox",

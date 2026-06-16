@@ -65,6 +65,25 @@ function renderLeaf(node, obj, key, onChange, ctx) {
       obj[key] = input.value;
       onChange();
     };
+  } else if (node.widget === 'number') {
+    input = document.createElement('input');
+    input.type = 'number';
+    if (node.step !== undefined) {
+      input.step = node.step;
+    }
+    if (node.min !== undefined) {
+      input.min = node.min;
+    }
+    if (node.max !== undefined) {
+      input.max = node.max;
+    }
+    input.value = obj[key] ?? '';
+    input.oninput = () => {
+      // Keep the value a real number so it serializes as one; an empty box
+      // stays '' (unset) rather than becoming 0.
+      obj[key] = input.value === '' ? '' : Number(input.value);
+      onChange();
+    };
   } else if (node.widget === 'checkbox') {
     return renderCheckbox(node, obj, key, onChange);
   } else {

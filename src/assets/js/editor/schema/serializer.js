@@ -70,6 +70,10 @@ function walk(fields, values, imageBase) {
       let val = key in src ? src[key] : node.default;
       if (node.widget === 'image') {
         val = rewriteImage(val, imageBase);
+      } else if (node.widget === 'number') {
+        // Emit a real number so it satisfies the component's number validation;
+        // leave an empty (unset) value as '' rather than coercing to 0.
+        val = val === '' || val === null || val === undefined ? val : Number(val);
       }
       out[key] = val;
     } else if (isGroup(node)) {

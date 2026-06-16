@@ -81,14 +81,14 @@
     },
     "options": {
       "maxEpisodes": {
-        "widget": "text",
+        "widget": "number",
         "label": "Max episodes",
-        "default": "10"
+        "default": 10
       },
       "initialEpisodes": {
-        "widget": "text",
+        "widget": "number",
         "label": "Initial episodes",
-        "default": "5"
+        "default": 5
       },
       "showEpisodeList": {
         "widget": "checkbox",

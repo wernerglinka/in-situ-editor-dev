@@ -63,7 +63,7 @@
         "default": ""
       },
       "year": {
-        "widget": "text",
+        "widget": "number",
         "label": "Year",
         "default": ""
       },
@@ -74,17 +74,17 @@
       },
       "dimensions": {
         "width": {
-          "widget": "text",
+          "widget": "number",
           "label": "Width",
           "default": ""
         },
         "height": {
-          "widget": "text",
+          "widget": "number",
           "label": "Height",
           "default": ""
         },
         "depth": {
-          "widget": "text",
+          "widget": "number",
           "label": "Depth",
           "default": ""
         },

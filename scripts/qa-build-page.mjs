@@ -25,6 +25,9 @@ function sampleLeaf(key, node) {
   if (w === 'checkbox') {
     return 'default' in node ? node.default : false;
   }
+  if (w === 'number') {
+    return typeof node.default === 'number' ? node.default : 10;
+  }
   if (w === 'select') {
     return node.default ?? (Array.isArray(node.enum) ? node.enum[0] : '');
   }
