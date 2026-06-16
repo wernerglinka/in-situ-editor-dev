@@ -35,7 +35,7 @@ function zeroFor(widget) {
   if (widget === 'checkbox') {
     return false;
   }
-  if (widget === 'array') {
+  if (widget === 'array' || widget === 'multiselect') {
     return [];
   }
   return '';

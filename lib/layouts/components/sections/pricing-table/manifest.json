@@ -58,8 +58,8 @@
       "layout": {
         "widget": "select",
         "label": "Layout",
-        "enum": ["grid", "columns"],
-        "default": "grid"
+        "enum": ["cards", "comparison"],
+        "default": "cards"
       }
     },
     "ctas": {

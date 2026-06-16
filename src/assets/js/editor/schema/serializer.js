@@ -43,6 +43,25 @@ function rewriteImage(value, imageBase) {
 }
 
 /**
+ * Produces the emitted value for one leaf: image leaves are path-rewritten,
+ * number leaves are coerced to a real number (an empty/unset value stays as
+ * is so optional numbers don't become 0), everything else passes through.
+ * @param {Object} node - The leaf field definition.
+ * @param {any} val - The raw value (or the node default).
+ * @param {string} imageBase - The published image directory, for image paths.
+ * @return {any} The value to emit.
+ */
+function serializeLeaf(node, val, imageBase) {
+  if (node.widget === 'image') {
+    return rewriteImage(val, imageBase);
+  }
+  if (node.widget === 'number') {
+    return val === '' || val === null || val === undefined ? val : Number(val);
+  }
+  return val;
+}
+
+/**
  * Walks a field tree alongside a values object, producing a clean nested
  * object: defaults fill gaps, image leaves are path-rewritten, arrays map
  * their entries through their `items` tree.
@@ -67,15 +86,7 @@ function walk(fields, values, imageBase) {
       const arr = Array.isArray(src[key]) ? src[key] : [];
       out[key] = arr.map((item) => walk(node.items, item, imageBase));
     } else if (isLeaf(node)) {
-      let val = key in src ? src[key] : node.default;
-      if (node.widget === 'image') {
-        val = rewriteImage(val, imageBase);
-      } else if (node.widget === 'number') {
-        // Emit a real number so it satisfies the component's number validation;
-        // leave an empty (unset) value as '' rather than coercing to 0.
-        val = val === '' || val === null || val === undefined ? val : Number(val);
-      }
-      out[key] = val;
+      out[key] = serializeLeaf(node, key in src ? src[key] : node.default, imageBase);
     } else if (isGroup(node)) {
       out[key] = walk(node, src[key], imageBase);
     }

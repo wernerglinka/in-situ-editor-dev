@@ -33,8 +33,16 @@ function groupLabel(key) {
  * @return {HTMLElement} The form-group element.
  */
 function renderLeaf(node, obj, key, onChange, ctx) {
+  // Widgets that build their own full layout return early; the rest produce a
+  // single labelled control via INPUT_BUILDERS.
   if (node.widget === 'image' && ctx && typeof ctx.processFile === 'function') {
     return renderImage(node, obj, key, onChange, ctx);
+  }
+  if (node.widget === 'checkbox') {
+    return renderCheckbox(node, obj, key, onChange);
+  }
+  if (node.widget === 'multiselect') {
+    return renderMultiselect(node, obj, key, onChange);
   }
 
   const group = document.createElement('div');
@@ -43,17 +51,34 @@ function renderLeaf(node, obj, key, onChange, ctx) {
   const labelEl = document.createElement('label');
   labelEl.textContent = node.label || key;
 
-  let input;
-  if (node.widget === 'markdown') {
-    input = document.createElement('textarea');
+  const build = INPUT_BUILDERS[node.widget] || INPUT_BUILDERS.text;
+  group.append(labelEl, build(node, obj, key, onChange));
+  if (node.help) {
+    group.append(hint(node.help));
+  }
+  return group;
+}
+
+/**
+ * Builders for the widgets that render as one control bound to obj[key].
+ * Each returns the wired element; renderLeaf wraps it in the labelled group.
+ * Widgets with their own layout (image, checkbox, multiselect) are not here.
+ */
+const INPUT_BUILDERS = {
+  /** Multiline markdown/prose. */
+  markdown(node, obj, key, onChange) {
+    const input = document.createElement('textarea');
     input.rows = 6;
     input.value = obj[key] ?? '';
     input.oninput = () => {
       obj[key] = input.value;
       onChange();
     };
-  } else if (node.widget === 'select') {
-    input = document.createElement('select');
+    return input;
+  },
+  /** Single choice from node.enum. */
+  select(node, obj, key, onChange) {
+    const input = document.createElement('select');
     for (const opt of node.enum || []) {
       const o = document.createElement('option');
       o.value = opt;
@@ -65,8 +90,11 @@ function renderLeaf(node, obj, key, onChange, ctx) {
       obj[key] = input.value;
       onChange();
     };
-  } else if (node.widget === 'number') {
-    input = document.createElement('input');
+    return input;
+  },
+  /** Numeric input that keeps the bound value a real number. */
+  number(node, obj, key, onChange) {
+    const input = document.createElement('input');
     input.type = 'number';
     if (node.step !== undefined) {
       input.step = node.step;
@@ -79,30 +107,24 @@ function renderLeaf(node, obj, key, onChange, ctx) {
     }
     input.value = obj[key] ?? '';
     input.oninput = () => {
-      // Keep the value a real number so it serializes as one; an empty box
-      // stays '' (unset) rather than becoming 0.
+      // An empty box stays '' (unset) rather than becoming 0.
       obj[key] = input.value === '' ? '' : Number(input.value);
       onChange();
     };
-  } else if (node.widget === 'checkbox') {
-    return renderCheckbox(node, obj, key, onChange);
-  } else {
-    // text, image (URL/filename), and any not-yet-specialized widget.
-    input = document.createElement('input');
+    return input;
+  },
+  /** Plain text; also the fallback for any not-yet-specialized widget. */
+  text(node, obj, key, onChange) {
+    const input = document.createElement('input');
     input.type = 'text';
     input.value = obj[key] ?? '';
     input.oninput = () => {
       obj[key] = input.value;
       onChange();
     };
+    return input;
   }
-
-  group.append(labelEl, input);
-  if (node.help) {
-    group.append(hint(node.help));
-  }
-  return group;
-}
+};
 
 /**
  * Builds a checkbox control, rendered label-after-control for readability.
@@ -126,6 +148,55 @@ function renderCheckbox(node, obj, key, onChange) {
   inline.className = 'checkbox-label';
   inline.append(input, document.createTextNode(` ${node.label || key}`));
   group.append(inline);
+  if (node.help) {
+    group.append(hint(node.help));
+  }
+  return group;
+}
+
+/**
+ * Builds a multi-select widget: one checkbox per `enum` value, binding an
+ * array of the selected values in enum order. For closed sets like
+ * social-shares platforms, where the section wants an array of known strings.
+ * @param {Object} node - The multiselect field definition (has `enum`).
+ * @param {Object} obj - The parent values object.
+ * @param {string} key - The property on obj (an array).
+ * @param {Function} onChange - Called after every edit.
+ * @return {HTMLElement} The form-group element.
+ */
+function renderMultiselect(node, obj, key, onChange) {
+  const group = document.createElement('div');
+  group.className = 'form-group section-field section-field-multiselect';
+  const labelEl = document.createElement('label');
+  labelEl.textContent = node.label || key;
+  group.append(labelEl);
+
+  if (!Array.isArray(obj[key])) {
+    obj[key] = Array.isArray(node.default) ? [ ...node.default ] : [];
+  }
+  const options = document.createElement('div');
+  options.className = 'multiselect-options';
+  for (const opt of node.enum || []) {
+    const optLabel = document.createElement('label');
+    optLabel.className = 'checkbox-label';
+    const box = document.createElement('input');
+    box.type = 'checkbox';
+    box.checked = obj[key].includes(opt);
+    box.onchange = () => {
+      const set = new Set(obj[key]);
+      if (box.checked) {
+        set.add(opt);
+      } else {
+        set.delete(opt);
+      }
+      // Keep enum order so the serialized array is stable and predictable.
+      obj[key] = (node.enum || []).filter((v) => set.has(v));
+      onChange();
+    };
+    optLabel.append(box, document.createTextNode(` ${opt}`));
+    options.append(optLabel);
+  }
+  group.append(options);
   if (node.help) {
     group.append(hint(node.help));
   }

@@ -55,9 +55,10 @@
         "default": ""
       },
       "theme": {
-        "widget": "text",
-        "label": "Theme (optional)",
-        "default": ""
+        "widget": "select",
+        "label": "Theme",
+        "enum": ["default", "tomorrow", "okaidia", "twilight", "prism", "dark", "solarizedlight", "coy"],
+        "default": "default"
       },
       "filename": {
         "widget": "text",

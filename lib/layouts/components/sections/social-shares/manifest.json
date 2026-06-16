@@ -97,15 +97,10 @@
         "default": ""
       },
       "platforms": {
-        "widget": "array",
+        "widget": "multiselect",
         "label": "Platforms",
-        "items": {
-          "name": {
-            "widget": "text",
-            "label": "Platform",
-            "default": ""
-          }
-        }
+        "enum": ["bluesky", "linkedin", "facebook", "twitter", "mail"],
+        "default": ["bluesky", "linkedin", "facebook", "twitter", "mail"]
       },
       "custom": {
         "widget": "array",

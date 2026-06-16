@@ -28,8 +28,11 @@ function sampleLeaf(key, node) {
   if (w === 'number') {
     return typeof node.default === 'number' ? node.default : 10;
   }
+  if (w === 'multiselect') {
+    return Array.isArray(node.default) ? node.default : (node.enum || []);
+  }
   if (w === 'select') {
-    return node.default ?? (Array.isArray(node.enum) ? node.enum[0] : '');
+    return Array.isArray(node.enum) ? node.enum[0] : (node.default ?? '');
   }
   if (w === 'image') {
     return SAMPLE_IMG;
