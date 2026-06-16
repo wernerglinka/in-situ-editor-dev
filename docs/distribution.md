@@ -25,15 +25,20 @@ Metalsmith plugins, not bespoke glue in the consuming site:
 - **Schema generation** — `metalsmith-bundled-components` with
   `schema.enabled: true` (`metalsmith.js`). Already published; a starter
   site already runs the plugin, so this is one option to turn on.
-- **Pages artifact** — `lib/plugins/emit-pages-artifact.js`, the read-only
-  snapshot of page frontmatter the "Open from site" feature fetches. Local
-  today; to be published as `metalsmith-emit-pages-artifact` (work item 3).
-- **Data artifact** — `lib/plugins/emit-data-artifact.js`, the read-only
-  snapshot of the `metadata.data` namespace plus collection membership
-  (`assets/site-data.json`), so sections that consume data files or
-  collections can be authored/previewed against the site's real data. Local
-  today; another publishable module. Collection members are the source `.md`
-  keys, so the editor joins to `pages.json` rather than duplicating entries.
+- **Editor artifacts** — `metalsmith-site-data`, a formal plugin package
+  (`../plugins/metalsmith-site-data`, a `file:` dependency until published)
+  exporting two plugins:
+  - `pagesArtifact()` → `assets/pages.json`, the page-frontmatter snapshot the
+    "Open from site" feature fetches. Runs before `collections()`/`permalinks()`.
+  - `dataArtifact()` → `assets/site-data.json`, the `metadata.data` namespace
+    plus collection membership, backing the source-driven pickers and preview
+    of data-driven sections. Runs after `collections()`, before `permalinks()`.
+    Members are the source `.md` keys, so the editor joins to `pages.json`
+    rather than duplicating entries.
+
+  This replaced the two ad-hoc `lib/plugins/emit-*-artifact.js` files; the
+  package has its own tests and README and is the second leg of the
+  plugin-based distribution story (alongside `metalsmith-bundled-components`).
 
 The editor proper is a contained set the install script copies:
 
@@ -108,8 +113,11 @@ The editor proper is a contained set the install script copies:
 
    The legacy-migration baggage (`migrateSection` and friends) has since been
    dropped outright, so `section-builder.js` carries no this-site history.
-3. **Publish `metalsmith-emit-pages-artifact`** and write the install
-   script. Largely independent; lands once 1 and 2 settle the editor shape.
+3. **Package + publish the build plugins.** Done as a package: the two
+   artifact emitters are consolidated into `metalsmith-site-data`
+   (`../plugins/metalsmith-site-data`), a `file:` dependency here with its own
+   tests and README. Remaining: publish it to npm and write the install script
+   that copies the editor files and wires the plugins into a new site.
 4. **Live in-situ preview** — render section cards (or a preview pane) with
    the actual component njk + css so the editor matches published output.
    A separate effort on top of the above.

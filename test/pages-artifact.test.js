@@ -1,13 +1,15 @@
 /**
- * Unit coverage for the pages artifact: the build-side frontmatter snapshot
- * (buildPagesArtifact) and the editor-side display list (listPages). Pure
- * logic, no DOM or fetch, so it runs under node:test directly.
+ * Coverage for the pages artifact contract: buildPagesArtifact (now provided
+ * by the metalsmith-site-data package) feeds the editor-side display list
+ * (listPages, local). Pure logic, no DOM or fetch, so it runs under node:test
+ * directly. Keeping buildPagesArtifact here is a light check that the package
+ * still produces the shape the editor's listPages expects.
  */
 
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
-import { buildPagesArtifact } from '../lib/plugins/emit-pages-artifact.js';
+import { buildPagesArtifact } from 'metalsmith-site-data';
 import { listPages } from '../src/assets/js/drafts/pages-loader.js';
 
 // A Metalsmith files object as it looks early in the pipeline: parsed

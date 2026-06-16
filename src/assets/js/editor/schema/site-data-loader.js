@@ -1,6 +1,6 @@
 /**
  * Loads the build artifact `site-data.json` once and caches it. The artifact
- * (emitted by lib/plugins/emit-data-artifact.js) is the site's build-time data
+ * (emitted by the metalsmith-site-data package) is the site's build-time data
  * the editor cannot otherwise see: the `data` namespace (the lib/data/*.json
  * files) and `collections` (each name mapped to its member source-.md paths,
  * which key assets/pages.json). It backs select fields whose options come from

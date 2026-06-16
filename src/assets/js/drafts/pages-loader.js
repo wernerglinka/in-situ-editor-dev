@@ -5,8 +5,8 @@
 
 /**
  * Loads the build artifact `pages.json` and caches it. The artifact is a
- * snapshot of every published page's source frontmatter (see
- * lib/plugins/emit-pages-artifact.js), emitted at build time so the editor can
+ * snapshot of every published page's source frontmatter (from the
+ * metalsmith-site-data package), emitted at build time so the editor can
  * browse and open existing pages with a static fetch and no GitHub access.
  * It reflects the last deploy: draft pages and unmerged PRs are not in it.
  */

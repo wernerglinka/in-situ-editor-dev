@@ -65,6 +65,7 @@
     "metalsmith-safe-links": "^2.1.0",
     "metalsmith-sectioned-blog-pagination": "^1.2.0",
     "metalsmith-seo": "^0.4.0",
+    "metalsmith-site-data": "file:../plugins/metalsmith-site-data",
     "metalsmith-sitemap": "^1.2.2",
     "postcss": "^8.5.6"
   },
