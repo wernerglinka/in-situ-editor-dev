@@ -29,7 +29,7 @@ export function createTranslationDetails(ui, locale, updateCallback) {
   details.innerHTML = `
     <summary style="cursor: pointer; font-weight: bold; display: flex; align-items: center; justify-content: space-between;">
       <span>${displayName}</span>
-      <button type="button" class="btn ai-button translate-btn" data-ai-available="true" title="Translate whole post" style="font-size: 0.8rem; padding: 2px 8px;">✨</button>
+      <button type="button" class="btn ai-button translate-btn" data-ai-available="true" title="Translate whole post" style="font-size: 0.8rem; padding: 2px 8px;">AI</button>
     </summary>
     <div class="translation-content-wrapper" style="margin-top: 0.5rem; display: flex; flex-direction: column; gap: 0.5rem;">
       <input type="text" class="translation-title" placeholder="Translated Title..." style="width: 100%; padding: 0.4rem; border: 1px solid var(--border-color); border-radius: 4px;">

@@ -30,7 +30,7 @@ export function renderList(ui, loadDraft) {
     title.textContent = d.title || 'Untitled Draft';
     const del = document.createElement('button');
     del.className = 'delete-draft-btn';
-    del.textContent = '🗑️';
+    del.textContent = '×';
     del.onclick = async (e) => {
       e.stopPropagation();
       const { deleteDraft, createNewDraft } =

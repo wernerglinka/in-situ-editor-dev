@@ -42,6 +42,12 @@ button {
     background-color: transparent; /* Override global anchor hover */
   }
 
+  &:disabled {
+    opacity: 0.5;
+    cursor: default;
+    pointer-events: none;
+  }
+
   &.primary {
     color: var(--primary-button-text-color);
     background: var(--primary-button-color);

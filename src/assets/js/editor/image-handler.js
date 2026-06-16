@@ -104,7 +104,7 @@ export async function handleFiles(
 
   ui.uploadBtn.disabled = true;
   const oldBtnText = ui.uploadBtn.textContent;
-  ui.uploadBtn.textContent = '⏳ Processing...';
+  ui.uploadBtn.textContent = 'Processing...';
   ui.dropZone.setAttribute('data-disabled', 'true');
 
   try {

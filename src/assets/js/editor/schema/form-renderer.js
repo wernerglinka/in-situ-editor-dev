@@ -170,7 +170,7 @@ function renderImage(node, obj, key, onChange, ctx) {
   const btn = document.createElement('button');
   btn.type = 'button';
   btn.className = 'btn';
-  btn.textContent = '📂 Choose image';
+  btn.textContent = 'Choose image';
 
   const fileInput = document.createElement('input');
   fileInput.type = 'file';
@@ -182,7 +182,7 @@ function renderImage(node, obj, key, onChange, ctx) {
       return;
     }
     btn.disabled = true;
-    btn.textContent = '⏳ Processing...';
+    btn.textContent = 'Processing...';
     try {
       const info = await ctx.processFile(file);
       if (info && info.name) {
@@ -205,7 +205,7 @@ function renderImage(node, obj, key, onChange, ctx) {
       }
     } finally {
       btn.disabled = false;
-      btn.textContent = '📂 Choose image';
+      btn.textContent = 'Choose image';
     }
   };
   btn.onclick = () => fileInput.click();

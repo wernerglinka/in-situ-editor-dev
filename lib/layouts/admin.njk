@@ -13,12 +13,11 @@
       rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;500&family=Open+Sans:wght@300;500&display=swap"
     />
-    <!-- Bundled component styles first so the editor's own CSS below wins any conflict -->
+    <!-- The site's bundled styles are the base; admin-styles.css only adds the
+         editor-specific styles on top. -->
     <link rel="stylesheet" href="/assets/main.css" />
-    <link rel="stylesheet" href="/assets/css/index.css" />
-    <link rel="stylesheet" href="/assets/css/create-post.css" />
-    <link rel="stylesheet" href="/assets/css/message-box.css" />
-    <link rel="stylesheet" href="/assets/css/prism-diff.css" />
+    <link rel="stylesheet" href="/assets/css/admin-styles.css" />
+    <!-- Vendored PrismJS theme for code blocks in the markdown preview. -->
     <link rel="stylesheet" href="/assets/js/prismjs/themes/prism-okaidia.css" />
     <script src="https://identity.netlify.com/v1/netlify-identity-widget.js" defer></script>
   </head>

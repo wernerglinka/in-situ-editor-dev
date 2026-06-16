@@ -26,12 +26,12 @@ seo:
 			</div>
 			<ul id="drafts-list"></ul>
 			<div class="sidebar-actions">
-				<button id="load-draft-btn" class="btn" title="Load Draft from file system">📂 Load Draft</button>
-				<button id="open-site-btn" class="btn" title="Open an existing published page">🌐 Open from site</button>
+				<button id="load-draft-btn" class="btn" title="Load Draft from file system">Load Draft</button>
+				<button id="open-site-btn" class="btn" title="Open an existing published page">Open from site</button>
 			</div>
 			<div class="sidebar-footer">
 				<details class="settings-details">
-					<summary>⚙️ Settings</summary>
+					<summary>Settings</summary>
 					<div class="settings-content">
 						<section class="settings-section">
 							<h3>Account</h3>
@@ -51,7 +51,7 @@ seo:
 						<section class="settings-section">
 							<h3>AI Features</h3>
 							<label class="ai-toggle-label">
-								✨ Use AI Features
+								Use AI Features
 								<input type="checkbox" switch id="ai-features-toggle">
 							</label>
 
@@ -62,7 +62,7 @@ seo:
 						<section class="settings-section">
 							<h3>Translations</h3>
 							<label class="ai-toggle-label">
-								🌐 Translate blog posts
+								Translate blog posts
 								<input type="checkbox" switch id="ai-translate-toggle">
 							</label>
 							<div id="ai-translation-locales-container" style="display: none; padding-left: 1.5rem;"></div>
@@ -72,8 +72,8 @@ seo:
 
 						<section class="settings-section">
 							<div class="settings-file-actions">
-								<button type="button" id="save-settings-btn" class="btn" title="Save settings to a file">💾 Save Settings</button>
-								<button type="button" id="load-settings-btn" class="btn" title="Load settings from a file">📂 Load Settings</button>
+								<button type="button" id="save-settings-btn" class="btn" title="Save settings to a file">Save Settings</button>
+								<button type="button" id="load-settings-btn" class="btn" title="Load settings from a file">Load Settings</button>
 							</div>
 						</section>
 					</div>
@@ -83,8 +83,8 @@ seo:
 
 		<div class="editor-main">
 			<div class="editor-toolbar">
-				<button type="button" id="toggle-sidebar-btn" class="pane-toggle" aria-pressed="true" title="Show or hide the drafts panel">◧ Drafts</button>
-				<button type="button" id="toggle-preview-btn" class="pane-toggle" aria-pressed="true" title="Show or hide the preview panel">Preview ◨</button>
+				<button type="button" id="toggle-sidebar-btn" class="pane-toggle" aria-pressed="true" title="Show or hide the drafts panel">Drafts</button>
+				<button type="button" id="toggle-preview-btn" class="pane-toggle" aria-pressed="true" title="Show or hide the preview panel">Preview</button>
 			</div>
 			<form id="post-form">
 				<div class="form-group">
@@ -100,7 +100,7 @@ seo:
 					<label for="post-title">Title</label>
 					<div class="input-with-action">
 						<input type="text" id="post-title" required placeholder="My Awesome Post">
-						<button type="button" id="ai-suggest-title-btn" class="btn ai-button" style="display: none;" title="Suggest title using AI">✨</button>
+						<button type="button" id="ai-suggest-title-btn" class="btn ai-button" style="display: none;" title="Suggest title using AI">AI</button>
 					</div>
 				</div>
 
@@ -108,7 +108,7 @@ seo:
 					<label for="post-description">Description</label>
 					<div class="input-with-action">
 						<input type="text" id="post-description" placeholder="A brief summary of the post">
-						<button type="button" id="ai-suggest-description-btn" class="btn ai-button" style="display: none;" title="Suggest description using AI">✨</button>
+						<button type="button" id="ai-suggest-description-btn" class="btn ai-button" style="display: none;" title="Suggest description using AI">AI</button>
 					</div>
 				</div>
 
@@ -130,10 +130,10 @@ seo:
 						<div id="tag-pills" class="tag-pills"></div>
 						<div class="tag-input-wrapper">
 							<input type="text" id="tag-input" placeholder="Add tag and press Enter...">
-							<button type="button" id="ai-suggest-tags-btn" class="btn ai-button" style="display: none;" title="Suggest tags using AI">✨</button>
+							<button type="button" id="ai-suggest-tags-btn" class="btn ai-button" style="display: none;" title="Suggest tags using AI">AI</button>
 						</div>
 						<label class="ai-toggle-label only-existing-tags-label">
-							🏷️ Only Allow Existing Tags
+							Only Allow Existing Tags
 							<input type="checkbox" switch id="ai-only-existing-tags-toggle">
 						</label>
 					</div>
@@ -142,7 +142,7 @@ seo:
 
 				<div class="form-group page-only">
 					<label class="ai-toggle-label">
-						🧭 Show in site menu
+						Show in site menu
 						<input type="checkbox" switch id="page-show-in-menu">
 					</label>
 				</div>
@@ -156,7 +156,7 @@ seo:
 
 				<div class="form-group">
 					<label>Sections</label>
-					<p class="field-hint">💡 Build the page from sections. Add, reorder, and remove below. Prose fields take Markdown.</p>
+					<p class="field-hint">Build the page from sections. Add, reorder, and remove below. Prose fields take Markdown.</p>
 					<div id="sections-list"></div>
 					<div class="section-add-actions">
 						<select id="section-add-select" class="section-add-select" aria-label="Add a section">
@@ -175,17 +175,17 @@ seo:
 
 				<div class="form-group ai-writer-section" style="display: none;">
 					<label for="ai-writer-input">Help me write</label>
-					<p class="field-hint">💡 Enter a few bullet points or a teaser, and AI will expand it into a full post.</p>
+					<p class="field-hint">Enter a few bullet points or a teaser, and AI will expand it into a full post.</p>
 					<div class="input-with-action">
 						<textarea id="ai-writer-input" rows="3" placeholder="- My trip to Tokyo&#10;- Visited Tsukiji market&#10;- Amazing sushi at 5am"></textarea>
-						<button type="button" id="ai-writer-btn" class="btn ai-button" style="display: none;" title="Expand into a full post">✨</button>
+						<button type="button" id="ai-writer-btn" class="btn ai-button" style="display: none;" title="Expand into a full post">AI</button>
 					</div>
 				</div>
 
 				<div class="form-group ai-rewriter-section" style="display: none;">
 					<label for="post-content">Rewrite content</label>
-					<p class="field-hint">💡 Refine your post content with specific tone and length. (Markdown layout is preserved)</p>
-					<p class="field-hint">💡 If you select text in the editor, only the selection will be rewritten.</p>
+					<p class="field-hint">Refine your post content with specific tone and length. (Markdown layout is preserved)</p>
+					<p class="field-hint">If you select text in the editor, only the selection will be rewritten.</p>
 					<div class="rewriter-options">
 						<div class="rewriter-option-group">
 							<label for="ai-rewriter-tone">Tone</label>
@@ -203,15 +203,15 @@ seo:
 								<option value="longer">Longer</option>
 							</select>
 						</div>
-						<button type="button" id="ai-rewriter-btn" class="btn ai-button" style="display: none;" title="Rewrite content">✨</button>
+						<button type="button" id="ai-rewriter-btn" class="btn ai-button" style="display: none;" title="Rewrite content">AI</button>
 					</div>
 				</div>
 
 				<div class="form-group ai-classifier-section" hidden>
 					<label>Advertising categories</label>
 					<div class="classifier-actions">
-						<p class="field-hint">💡 This uses <a href="https://github.com/InteractiveAdvertisingBureau/Taxonomies/blob/develop/Content%20Taxonomies/Content%20Taxonomy%203.1.tsv" target="_blank" rel="noopener">IAB Content Taxonomy 3.1</a> ads categories.</p>
-						<button type="button" id="ai-classifier-btn" class="btn ai-button" style="display: none;" title="Classify content">✨</button>
+						<p class="field-hint">This uses <a href="https://github.com/InteractiveAdvertisingBureau/Taxonomies/blob/develop/Content%20Taxonomies/Content%20Taxonomy%203.1.tsv" target="_blank" rel="noopener">IAB Content Taxonomy 3.1</a> ads categories.</p>
+						<button type="button" id="ai-classifier-btn" class="btn ai-button" style="display: none;" title="Classify content">AI</button>
 					</div>
 					<div id="ai-classifier-results" style="margin-top: 1rem;"></div>
 				</div>
@@ -219,9 +219,9 @@ seo:
 				<div class="form-group ai-translation-section" style="display: none;">
 					<div class="classifier-actions">
 						<label style="flex-grow: 1;">Translations</label>
-						<button type="button" id="ai-translate-all-btn" class="btn ai-button" style="display: none;" title="Translate all enabled locales">✨</button>
+						<button type="button" id="ai-translate-all-btn" class="btn ai-button" style="display: none;" title="Translate all enabled locales">AI</button>
 					</div>
-					<p class="field-hint">💡 AI will translate your post paragraph by paragraph. Markdown structure is preserved.</p>
+					<p class="field-hint">AI will translate your post paragraph by paragraph. Markdown structure is preserved.</p>
 					<div id="ai-translations-container"></div>
 				</div>
 
@@ -234,10 +234,10 @@ seo:
 			</form>
 
 			<div class="editor-actions">
-				<button id="copy-btn" class="btn">📋 Copy Markdown</button>
-				<button id="download-btn" class="btn">💾 Save (.zip)</button>
-				<button id="publish-pr-btn" class="btn" disabled title="Sign in to publish">🚀 Publish (as PR)</button>
-				<button id="publish-direct-btn" class="btn" style="display: none;" disabled title="Admins only">⚡ Publish directly to main</button>
+				<button id="copy-btn" class="btn">Copy Markdown</button>
+				<button id="download-btn" class="btn">Save (.zip)</button>
+				<button id="publish-pr-btn" class="btn" disabled title="Sign in to publish">Publish (as PR)</button>
+				<button id="publish-direct-btn" class="btn" style="display: none;" disabled title="Admins only">Publish directly to main</button>
 			</div>
 		</div>
 

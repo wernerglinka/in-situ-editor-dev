@@ -39,7 +39,7 @@ export const getMonitor = (ui, lang, modelName) => ({
 export async function runAIAction(ui, btn, actionFn, updateCallback) {
   btn.disabled = true;
   const oldText = btn.textContent;
-  btn.textContent = '⏳';
+  btn.textContent = '…';
   ui.activeAiStreams++;
   try {
     await actionFn();
@@ -49,7 +49,7 @@ export async function runAIAction(ui, btn, actionFn, updateCallback) {
   } finally {
     ui.activeAiStreams--;
     btn.disabled = false;
-    btn.textContent = oldText === '⏳' ? '✨' : oldText;
+    btn.textContent = oldText === '…' ? 'AI' : oldText;
     if (typeof updateCallback === 'function') {
       updateCallback();
     }

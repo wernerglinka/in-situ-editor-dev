@@ -133,6 +133,7 @@
   /* Typography */
   --font-primary: 'Open Sans', sans-serif;
   --font-heading: 'Montserrat', sans-serif;
+  --font-monospace: ui-monospace, 'SF Mono', 'SFMono-Regular', Menlo, Consolas, monospace;
   --default-font-weight: 300;
   --default-line-height: 1.5;
   --smaller-line-height: 1;
