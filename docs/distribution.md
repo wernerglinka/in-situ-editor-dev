@@ -82,9 +82,23 @@ The editor proper is a contained set the install script copies:
    NaN / `[object Object]` / undefined in any section. Data-driven sections
    (collection-links, collection-list, related-posts, blog-author) render
    empty on the QA page because they need the site's collections/author
-   data, not because the editor can't author them. **Still open:** compound
-   (authoring nested child sections) and the legacy-migration baggage
-   (`migrateSection`) still to be isolated into a droppable module.
+   data, not because the editor can't author them.
+
+   **Postponed: compound.** Its template loops `compoundSections` and renders
+   each child as a full section via the recursive `renderSection` helper, so
+   each item is a complete section object (its own `sectionType` plus that
+   type's fields). The field-tree schema can't express polymorphic
+   section-typed array items, so authoring it needs a new `sections` widget: a
+   mini section-builder per child reusing `getSectionTypes` (the type picker)
+   + `renderFields(getSectionFields(childType), …)` + `serializeSection` per
+   child (thread a `fieldsFor` lookup into the serializer, as `firstSectionImage`
+   already does). Decision when resumed: one level only (a compound's type
+   picker omits `compound`). The library side is itself unfinished here
+   (`compound.yml` has no `compoundSections`, validation has none), so it also
+   needs a real example and a validation entry. Deferred by choice for now.
+
+   **Still open:** the legacy-migration baggage (`migrateSection`) to be
+   isolated into a droppable module for fresh installs.
 3. **Publish `metalsmith-emit-pages-artifact`** and write the install
    script. Largely independent; lands once 1 and 2 settle the editor shape.
 4. **Live in-situ preview** — render section cards (or a preview pane) with
