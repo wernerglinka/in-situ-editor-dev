@@ -200,7 +200,7 @@ export const handler = async (event, context) => {
           title: `${existingSha ? 'Update' : 'Post'}: ${slug}`,
           head: targetBranch,
           base: baseBranch,
-          body: `Submitted by ${user.email || 'editor'} via the in-suit-editor admin.`,
+          body: `Submitted by ${user.email || 'editor'} via the in-situ-editor admin.`,
         }),
       });
       return json(200, { mode: 'pr', url: pr.html_url, number: pr.number });

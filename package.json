@@ -1,5 +1,5 @@
 {
-  "name": "in-suit-editor",
+  "name": "in-situ-editor",
   "version": "0.1.0",
   "description": "In-site section-builder editor on the Metalsmith 2025 structured-content starter, with Chrome built-in AI and Netlify Identity publishing",
   "type": "module",

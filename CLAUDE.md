@@ -1,4 +1,4 @@
-# Working on in-suit-editor
+# Working on in-situ-editor
 
 A section-builder admin editor living inside a Metalsmith site built on
 metalsmith2025-structured-content-starter. Chrome-AI-only, publishing via
