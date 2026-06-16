@@ -305,12 +305,6 @@ body.admin {
   flex-wrap: wrap;
 }
 
-#load-draft-btn,
-#open-site-btn {
-  font-size: 0.9rem;
-  padding: 0.5rem;
-}
-
 .open-site-dialog {
   min-width: 28rem;
   max-width: 90vw;
@@ -807,11 +801,6 @@ body.admin {
   gap: 0.5rem;
   margin-top: 0.5rem;
   flex-wrap: wrap;
-}
-
-.settings-file-actions .btn {
-  font-size: 0.9rem;
-  padding: 0.5rem;
 }
 
 @media (prefers-color-scheme: dark) {
