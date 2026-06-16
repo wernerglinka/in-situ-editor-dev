@@ -18,6 +18,9 @@
       "isDisabled": {
         "type": "boolean"
       },
+      "logoWidth": {
+        "type": "number"
+      },
       "containerFields.inContainer": {
         "type": "boolean"
       },
@@ -43,14 +46,20 @@
   },
   "fields": {
     "name": {
-      "widget": "text",
-      "label": "Author name (must match an entry in data/author)",
+      "widget": "select",
+      "label": "Author",
+      "source": { "data": "author", "valueKey": "name" },
       "default": ""
     },
     "isReverse": {
       "widget": "checkbox",
       "label": "Reverse layout",
       "default": false
+    },
+    "logoWidth": {
+      "widget": "number",
+      "label": "Social logo width (px)",
+      "default": 30
     },
     "$extends": ["commons"]
   }

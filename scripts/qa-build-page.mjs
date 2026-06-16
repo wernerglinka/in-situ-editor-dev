@@ -16,7 +16,26 @@ import { serializeSection } from '../src/assets/js/editor/schema/serializer.js';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const schema = JSON.parse(readFileSync(resolve(root, 'build/assets/components-schema.json'), 'utf8'));
+let siteData = { data: {}, collections: {} };
+try {
+  siteData = JSON.parse(readFileSync(resolve(root, 'build/assets/site-data.json'), 'utf8'));
+} catch {
+  // no site-data artifact; source-backed fields fall back to empty
+}
 const SAMPLE_IMG = '/assets/images/sample12.jpg';
+
+/** A representative value for a source-backed select, drawn from the real
+ * site data so data-driven sections render with genuine content. */
+function sampleFromSource(source) {
+  if (source.data) {
+    const arr = siteData.data[source.data];
+    return Array.isArray(arr) && arr.length ? arr[0][source.valueKey || 'name'] : '';
+  }
+  if (source.collections) {
+    return Object.keys(siteData.collections || {})[0] || '';
+  }
+  return '';
+}
 
 /** A representative value for a leaf, chosen by widget and key name so the
  * rendered section has visible, plausible content. */
@@ -32,6 +51,9 @@ function sampleLeaf(key, node) {
     return Array.isArray(node.default) ? node.default : (node.enum || []);
   }
   if (w === 'select') {
+    if (node.source) {
+      return sampleFromSource(node.source);
+    }
     return Array.isArray(node.enum) ? node.enum[0] : (node.default ?? '');
   }
   if (w === 'image') {

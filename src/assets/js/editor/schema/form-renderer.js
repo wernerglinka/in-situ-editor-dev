@@ -11,6 +11,29 @@
  */
 
 import { isLeaf, isArrayField, isGroup, materializeDefaults } from './field-utils.js';
+import { getDataArray, getCollectionNames } from './site-data-loader.js';
+
+/**
+ * The { value, label } options for a select/multiselect. A `source` resolves
+ * options from the loaded site data (a `data` namespace array keyed by field,
+ * or the collection names); otherwise the static `enum` is used.
+ * @param {Object} node - The field definition.
+ * @return {Array<{value: string, label: string}>} The options.
+ */
+function fieldOptions(node) {
+  if (node.source && node.source.data) {
+    const valueKey = node.source.valueKey || 'name';
+    const labelKey = node.source.labelKey || valueKey;
+    return getDataArray(node.source.data).map((item) => ({
+      value: item[valueKey],
+      label: item[labelKey] ?? item[valueKey]
+    }));
+  }
+  if (node.source && node.source.collections) {
+    return getCollectionNames().map((name) => ({ value: name, label: name }));
+  }
+  return (node.enum || []).map((value) => ({ value, label: value }));
+}
 
 /** Human headings for group keys that need more than a capitalized key. */
 const GROUP_LABELS = {
@@ -76,16 +99,24 @@ const INPUT_BUILDERS = {
     };
     return input;
   },
-  /** Single choice from node.enum. */
+  /** Single choice from node.enum, or from node.source (site data). */
   select(node, obj, key, onChange) {
     const input = document.createElement('select');
-    for (const opt of node.enum || []) {
+    if (node.source) {
+      // A source-backed select starts unselected so an unset field is visible
+      // rather than silently taking the first option's value.
+      const placeholder = document.createElement('option');
+      placeholder.value = '';
+      placeholder.textContent = '— Select —';
+      input.append(placeholder);
+    }
+    for (const opt of fieldOptions(node)) {
       const o = document.createElement('option');
-      o.value = opt;
-      o.textContent = opt;
+      o.value = opt.value;
+      o.textContent = opt.label;
       input.append(o);
     }
-    input.value = obj[key] ?? node.default;
+    input.value = obj[key] ?? node.default ?? '';
     input.onchange = () => {
       obj[key] = input.value;
       onChange();

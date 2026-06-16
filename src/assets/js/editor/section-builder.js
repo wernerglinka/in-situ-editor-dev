@@ -13,6 +13,7 @@
 import { getImage } from '../utils/db-storage.js';
 import { processImage } from './image-handler.js';
 import { loadSchema, getSectionFields, getSectionTypes } from './schema/schema-loader.js';
+import { loadSiteData } from './schema/site-data-loader.js';
 import { materializeDefaults } from './schema/field-utils.js';
 import { renderFields } from './schema/form-renderer.js';
 
@@ -214,9 +215,9 @@ export function loadSections(draft) {
   if (!Array.isArray(draft.sections)) {
     draft.sections = [];
   }
-  // Schema-driven types need the schema loaded before they can render, so
-  // defer to ensure the cache is warm.
-  loadSchema()
+  // Schema-driven types need the schema loaded before they can render, and
+  // source-backed fields need the site data; warm both before rendering.
+  Promise.all([ loadSchema(), loadSiteData() ])
     .then(() => {
       sections = draft.sections;
       render();
@@ -242,7 +243,9 @@ export function initSectionBuilder(ui, onChange) {
   ui.getSections = () => sections;
   const addSelect = document.getElementById('section-add-select');
   // Warm the schema cache, then fill the add menu from it so the offered
-  // sections are exactly whatever the site's manifests emitted.
+  // sections are exactly whatever the site's manifests emitted. Warm the site
+  // data too so a newly added section's source-backed selects have options.
+  loadSiteData();
   loadSchema()
     .then(() => populateAddMenu(addSelect))
     .catch((err) => console.error('schema load failed', err));

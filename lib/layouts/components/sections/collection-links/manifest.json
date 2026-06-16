@@ -20,8 +20,9 @@
   },
   "fields": {
     "collectionName": {
-      "widget": "text",
-      "label": "Collection name",
+      "widget": "select",
+      "label": "Collection",
+      "source": { "collections": true },
       "default": "blog"
     },
     "$extends": ["commons"]
