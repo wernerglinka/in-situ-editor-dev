@@ -8,10 +8,6 @@
  * schema/serializer.js (see docs/manifest-driven-editor.md). The add menu
  * offers every type in the loaded schema (populateAddMenu), so the editor
  * adapts to whatever components a site's manifests emit.
- *
- * Drafts authored before this used a lean per-type model
- * (`{ type, title, prose, ... }`); migrateSection converts those on load,
- * including the pre-rename type names, so old drafts open without loss.
  */
 
 import { getImage } from '../utils/db-storage.js';
@@ -21,19 +17,10 @@ import { materializeDefaults } from './schema/field-utils.js';
 import { renderFields } from './schema/form-renderer.js';
 
 /**
- * Legacy lean section types this site's old drafts used that carryLegacyFields
- * knows how to convert into their schema-driven shape. This is draft-history
- * baggage specific to this site (a fresh install has no legacy drafts), kept
- * separate from the add menu, which now derives from the full schema. See
- * migrateSection.
- */
-const LEGACY_CONVERTIBLE = new Set([ 'rich-text', 'image-only', 'multi-media', 'banner' ]);
-
-/**
  * The card header label for a section type: its section name, title-cased
  * from the kebab type so it always matches the library (rich-text -> "Rich
  * Text", multi-media -> "Multi Media").
- * @param {string} type - The sectionType (or legacy type).
+ * @param {string} type - The sectionType.
  * @return {string} The display label.
  */
 function typeLabel(type) {
@@ -66,67 +53,6 @@ const expanded = new WeakSet();
  */
 function newSection(type) {
   return { sectionType: type, ...materializeDefaults(getSectionFields(type)) };
-}
-
-/**
- * Pre-rename lean type names -> their current names. Drafts saved before the
- * library rename (text-only -> rich-text, etc.) carry the old names; without
- * this they match no render branch and show an empty card.
- */
-const TYPE_ALIASES = {
-  'text-only': 'rich-text',
-  'media-image': 'multi-media',
-  composed: 'columns',
-  'blog-navigation': 'collection-links'
-};
-
-/**
- * Migrates a legacy lean section: renames pre-rename types to current names
- * and converts types that have moved onto the schema path into their
- * schema-driven values object. Already-migrated (schema-driven) sections and
- * legacy types still on the lean path pass through unchanged.
- * @param {Object} s - A section state object.
- * @return {Object} The (possibly migrated) section.
- */
-function migrateSection(s) {
-  if (s.sectionType) {
-    return s;
-  }
-  const type = TYPE_ALIASES[s.type] || s.type;
-  if (!LEGACY_CONVERTIBLE.has(type)) {
-    return type === s.type ? s : { ...s, type };
-  }
-  const next = newSection(type);
-  carryLegacyFields(type, s, next);
-  return next;
-}
-
-/**
- * Copies a legacy lean section's fields into its fresh schema-driven values
- * object. Each former per-type editor shape maps onto the library fields.
- * @param {string} type - The schema section type.
- * @param {Object} s - The legacy lean section.
- * @param {Object} next - The fresh schema-driven section (mutated).
- */
-function carryLegacyFields(type, s, next) {
-  if (type === 'rich-text' || type === 'banner') {
-    next.text.title = s.title || '';
-    next.text.prose = s.prose || '';
-  }
-  if (type === 'banner' && (s.ctaUrl || s.ctaLabel)) {
-    const cta = materializeDefaults(getSectionFields('banner').ctas.items);
-    cta.url = s.ctaUrl || '';
-    cta.label = s.ctaLabel || '';
-    next.ctas.push(cta);
-  }
-  if (type === 'multi-media') {
-    // The lean shape stored a single uploaded image; the blob stays linked
-    // through draft.imageFiles by filename, so only the name is carried.
-    next.mediaType = 'image';
-    next.image.src = s.imageName || '';
-    next.image.alt = s.alt || '';
-    next.image.caption = s.caption || '';
-  }
 }
 
 /**
@@ -280,21 +206,18 @@ function render() {
 }
 
 /**
- * Loads a draft's sections into the builder, migrating legacy
- * markdown-body drafts into a single text section.
+ * Loads a draft's sections into the builder.
  * @param {Object} draft - The draft object (mutated in place).
  */
 export function loadSections(draft) {
   currentDraft = draft;
   if (!Array.isArray(draft.sections)) {
-    draft.sections =
-      draft.content && draft.content.trim() ? [ { type: 'rich-text', title: '', prose: draft.content } ] : [];
+    draft.sections = [];
   }
-  // Schema-driven types need the schema loaded before they can render or be
-  // migrated, so defer to ensure the cache is warm.
+  // Schema-driven types need the schema loaded before they can render, so
+  // defer to ensure the cache is warm.
   loadSchema()
     .then(() => {
-      draft.sections = draft.sections.map(migrateSection);
       sections = draft.sections;
       render();
       // Re-emit now that the schema is loaded: the first preview may have

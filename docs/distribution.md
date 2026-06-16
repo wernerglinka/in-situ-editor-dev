@@ -44,11 +44,14 @@ The editor proper is a contained set the install script copies:
 - **The add-menu allowlist.** Done (work item 1): the menu now derives from
   the loaded schema (`getSectionTypes` + `populateAddMenu`), so it offers
   whatever the site emits. The former four-type `SCHEMA_DRIVEN` gate is gone.
-- **Legacy draft migration.** `migrateSection` / `TYPE_ALIASES` /
-  `carryLegacyFields` in `section-builder.js` exist only to open this site's
-  pre-rename drafts. A fresh install has no legacy drafts, so this is dead
-  weight there. Kept behind the `LEGACY_CONVERTIBLE` set, to be pulled into a
-  droppable module the install script can omit (part of work item 2).
+- **Legacy draft migration.** Removed. `migrateSection` / `TYPE_ALIASES` /
+  `carryLegacyFields` and the bare-`content` wrap existed only to open this
+  site's pre-schema drafts. Migration was a self-completing upgrade (it ran on
+  open and the next save persisted the new shape), the active draft store was
+  already all new-format, and POC drafts live under a different origin and were
+  never reachable, so the exposure was nil. `loadSections` keeps a one-line
+  crash guard (`sections` defaults to `[]`) and nothing else. If `content`
+  authoring is ever wanted, reintroduce a wrap then.
 - **Hardcoded paths/hostnames** (basePath, `localhost:3000`,
   `wernerglinka.github.io`) belong to this deployment and must be
   parameterized for the install.
@@ -97,8 +100,8 @@ The editor proper is a contained set the install script copies:
    (`compound.yml` has no `compoundSections`, validation has none), so it also
    needs a real example and a validation entry. Deferred by choice for now.
 
-   **Still open:** the legacy-migration baggage (`migrateSection`) to be
-   isolated into a droppable module for fresh installs.
+   The legacy-migration baggage (`migrateSection` and friends) has since been
+   dropped outright, so `section-builder.js` carries no this-site history.
 3. **Publish `metalsmith-emit-pages-artifact`** and write the install
    script. Largely independent; lands once 1 and 2 settle the editor shape.
 4. **Live in-situ preview** — render section cards (or a preview pane) with
