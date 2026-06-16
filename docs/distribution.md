@@ -115,8 +115,12 @@ The editor proper is a contained set the install script copies:
 3. **Package + publish the build plugins.** Done: the two artifact emitters
    are consolidated into `metalsmith-site-data`, published on npm and consumed
    here as a normal `^0.1.0` dependency, with its own tests and README.
-   Remaining: write the install script that copies the editor files and wires
-   the plugins (this one and `metalsmith-bundled-components`) into a new site.
+   `scripts/install-editor.mjs <target-site>` copies the editor surface (the
+   admin page + `admin.njk` layout, the editor JS tree and its vendored libs,
+   `admin-styles.css`, the Netlify Function + `netlify.toml`) into a target
+   site and prints the remaining wiring (the `npm install`, the `metalsmith.js`
+   plugin calls, and the Netlify Identity / Function setup), which are too
+   site-specific to patch safely.
 4. **Live in-situ preview** — render section cards (or a preview pane) with
    the actual component njk + css so the editor matches published output.
    A separate effort on top of the above.
