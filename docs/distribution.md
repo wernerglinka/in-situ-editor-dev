@@ -28,6 +28,12 @@ Metalsmith plugins, not bespoke glue in the consuming site:
 - **Pages artifact** — `lib/plugins/emit-pages-artifact.js`, the read-only
   snapshot of page frontmatter the "Open from site" feature fetches. Local
   today; to be published as `metalsmith-emit-pages-artifact` (work item 3).
+- **Data artifact** — `lib/plugins/emit-data-artifact.js`, the read-only
+  snapshot of the `metadata.data` namespace plus collection membership
+  (`assets/site-data.json`), so sections that consume data files or
+  collections can be authored/previewed against the site's real data. Local
+  today; another publishable module. Collection members are the source `.md`
+  keys, so the editor joins to `pages.json` rather than duplicating entries.
 
 The editor proper is a contained set the install script copies:
 

@@ -27,6 +27,7 @@ import prism from 'metalsmith-prism';
 import componentDependencyBundler from 'metalsmith-bundled-components';
 
 import emitPagesArtifact from './lib/plugins/emit-pages-artifact.js'; // Snapshots page frontmatter for the admin editor
+import emitDataArtifact from './lib/plugins/emit-data-artifact.js'; // Snapshots data files + collections for the admin editor
 
 import seo from 'metalsmith-seo'; // Adds SEO metadata to pages
 import optimizeImages from 'metalsmith-optimize-images'; // Optimizes images for web
@@ -171,6 +172,16 @@ metalsmith
       }
     } )
   )
+
+  /**
+   * Snapshot the data namespace and collection membership to
+   * build/assets/site-data.json for the admin editor, so sections that consume
+   * data files or collections can be previewed against the site's real data.
+   * Runs after collections() (membership is populated) and before permalinks()
+   * (member keys are still source .md paths, matching pages.json). See
+   * lib/plugins/emit-data-artifact.js.
+   */
+  .use( emitDataArtifact() )
 
   /**
    * Create metadata for blog pagination as pages are built
