@@ -22,7 +22,6 @@ import permalinks from '@metalsmith/permalinks'; // Creates clean URLs
 import menus from 'metalsmith-menu-plus'; // Generates navigation menus
 import layouts from '@metalsmith/layouts'; // Applies templates to content
 import safeLinks from 'metalsmith-safe-links';
-import prism from 'metalsmith-prism';
 
 import componentDependencyBundler from 'metalsmith-bundled-components';
 
@@ -265,16 +264,6 @@ metalsmith
     safeLinks( {
       hostnames: [ 'http://localhost:3000/', 'wernerglinka.github.io' ],
       basePath: basePath
-    } )
-  )
-
-  /**
-   * Syntax highlight code blocks using Prism.js
-   * Learn more: https://github.com/wernerglinka/metalsmith-prism
-   */
-  .use(
-    prism( {
-      decode: true
     } )
   )
 
