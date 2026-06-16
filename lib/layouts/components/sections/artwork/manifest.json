@@ -73,9 +73,27 @@
         "default": ""
       },
       "dimensions": {
-        "widget": "text",
-        "label": "Dimensions",
-        "default": ""
+        "width": {
+          "widget": "text",
+          "label": "Width",
+          "default": ""
+        },
+        "height": {
+          "widget": "text",
+          "label": "Height",
+          "default": ""
+        },
+        "depth": {
+          "widget": "text",
+          "label": "Depth",
+          "default": ""
+        },
+        "unit": {
+          "widget": "select",
+          "label": "Unit",
+          "enum": ["in", "cm"],
+          "default": "in"
+        }
       },
       "status": {
         "widget": "text",

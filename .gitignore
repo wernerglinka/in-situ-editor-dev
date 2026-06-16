@@ -64,3 +64,5 @@ metalsmith-components/
 
 # Local-only autonomous-mode docs (pairs with .claude/settings.local.json)
 docs/autonomous.md
+# Generated QA page (scripts/qa-build-page.mjs)
+src/qa-all-sections.md
