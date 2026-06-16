@@ -24,71 +24,6 @@ body.admin {
   padding-top: calc(clamp(3.25rem, 3.25rem + 1.75vw, 5rem) + 1rem);
 }
 
-/*
-.btn {
-  padding: 0.6rem 1.2rem;
-  cursor: pointer;
-  border: 1px solid var(--color-primary);
-  background: var(--color-primary);
-  color: white;
-  border-radius: 6px;
-  font-weight: 600;
-  transition:
-    background 0.2s,
-    transform 0.2s,
-    box-shadow 0.2s;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  white-space: nowrap;
-}
-
-.btn:hover {
-  background: var(--color-secondary);
-  border-color: var(--color-secondary);
-  transform: scale(1.05);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-}
-
-.btn:disabled {
-  background: var(--color-link-inactive);
-  border-color: var(--color-link-inactive);
-  cursor: not-allowed;
-  transform: none;
-  box-shadow: none;
-}
-
-.btn-secondary {
-  background: var(--color-link-inactive);
-  border-color: var(--color-link-inactive);
-}
-
-.btn-secondary:hover {
-  background: var(--color-dark-background);
-  border-color: var(--color-dark-background);
-}
-
-.btn-danger {
-  background: var(--color-primary);
-  border-color: var(--color-primary);
-}
-
-.btn-danger:hover {
-  background: var(--color-secondary);
-  border-color: var(--color-secondary);
-}
-*/
-
-/* The starter styles every <button> (including .btn) and, on hover, fades the
-   background to transparent — meant for buttons over hero/glass backgrounds.
-   On the admin's solid background that hides the light button text, so keep a
-   solid fill on hover (the starter still supplies the scale). */
-.btn:hover {
-  background-color: var(--color-secondary);
-}
-
 .editor-container {
   display: grid;
   grid-template-columns: 250px minmax(0, 1fr) minmax(0, 1fr);
@@ -179,30 +114,6 @@ body.admin {
 
 .sidebar-header h2 {
   margin: 0;
-}
-
-#new-draft-btn {
-  padding: 0;
-  font-size: 1.5rem;
-  border-radius: 50%;
-  width: 32px;
-  height: 32px;
-  background: var(--color-primary);
-  color: white;
-  border: 1px solid var(--color-primary);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition:
-    background 0.2s,
-    transform 0.2s;
-}
-
-#new-draft-btn:hover {
-  background: var(--color-secondary);
-  border-color: var(--color-secondary);
-  transform: scale(1.1);
 }
   
 

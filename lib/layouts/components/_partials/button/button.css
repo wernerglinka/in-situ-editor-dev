@@ -26,7 +26,7 @@ button {
   display: inline-block;
   text-align: center;
   padding: var(--space-2xs-xs) var(--space-s-m);
-  transition: transform 0.5s ease-in-out, background-color 0.5s ease-in-out;
+  transition: all 0.5s ease-in-out;
   font-weight: 500;
   letter-spacing: var(--default-letter-spacing);
   background: rgb(218 30 40 / 80%);
@@ -39,6 +39,7 @@ button {
 
   &:hover {
     transform: scale(1.05);
+    opacity: 0.7;
     background-color: transparent; /* Override global anchor hover */
   }
 
@@ -67,6 +68,18 @@ button {
   &.small {
     padding: 0.5rem 1.5rem;
     font-size: var(--font-xs);
+  }
+
+  &.round {
+    padding: 0;
+    font-size: 1.5rem;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
   }
 
   &.none {

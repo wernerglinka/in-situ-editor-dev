@@ -12,19 +12,21 @@
  */
 
 footer {
-  background: var(--color-dark-background);
-  padding: var(--space-s-l);
-  font-size: var(--font-p);
-  color: var(--color-footer-text-light);
-  margin-top: auto; /* Push footer to bottom */
+  &.main-footer {
+    background: var(--color-dark-background);
+    padding: var(--space-s-l);
+    font-size: var(--font-p);
+    color: var(--color-footer-text-light);
+    margin-top: auto; /* Push footer to bottom */
 
-  a {
-    color: inherit;
-    text-decoration: underline;
-    transition: opacity var(--transition-fade);
+    a {
+      color: inherit;
+      text-decoration: underline;
+      transition: opacity var(--transition-fade);
 
-    &:hover {
-      opacity: 0.8;
+      &:hover {
+        opacity: 0.8;
+      }
     }
   }
 }
