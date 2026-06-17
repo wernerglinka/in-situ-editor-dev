@@ -124,3 +124,43 @@ The editor proper is a contained set the install script copies:
 4. **Live in-situ preview** — render section cards (or a preview pane) with
    the actual component njk + css so the editor matches published output.
    A separate effort on top of the above.
+
+## Status (end of last session) and next step
+
+Everything above through work item 3 is done and committed. The
+`nunjucks-components` library is up to date (all the manifest/widget fixes, the
+source-backed select convention, and the code-section Shiki redesign were
+merged there).
+
+**Next step (planned for next session): test `scripts/install-editor.mjs`
+against a fresh "virgin" `metalsmith2025-structured-content-starter` site.**
+Run the script at a clean checkout of the starter, follow the printed manual
+steps, and confirm the admin comes up and can author/publish. Things to watch
+during that test:
+
+- The starter likely already runs `metalsmith-bundled-components`; the install
+  just needs `schema: { enabled: true }` turned on for the editor schema.
+- `dataArtifact()` needs `metadata.data` populated before it runs — confirm the
+  starter loads `lib/data/*.json` (inline loader or `@metalsmith/metadata`).
+- Hardcoded host/basePath values (see "This-site coupling to sever") may need
+  parameterizing for a different deploy.
+- The install manifest copies the editor frontend + Netlify backend, but **not**
+  `nunjucks-filters/markdown-filter.js`: code highlighting is a site-render
+  concern, not the editor's. The starter renders prose with its own filter. If
+  Shiki highlighting is wanted on the new site too, that is a separate site
+  change (this repo's `markdown-filter.js` is the reference — Shiki in marked's
+  `code()` renderer; see below).
+
+## Code highlighting (Shiki)
+
+Build-time code highlighting moved from `metalsmith-prism` to **Shiki**, inside
+marked's `code()` renderer in `nunjucks-filters/markdown-filter.js` (monokai,
+JS regex engine so the filter stays synchronous). Colors are inlined; no theme
+stylesheet is needed. This covers prose fenced blocks and the code section
+(which also pipes through `mdToHTML`). `metalsmith-prism` is removed.
+
+Open highlighting follow-ups: the editor's **browser preview** still uses the
+vendored prism for live highlighting (so preview won't match published output
+until it moves to Shiki); and the demo `code-highlighting-demo.md` body text
+still says "Prism.js" (stale copy). The code **section** component's Shiki
+redesign was handed to the library.
