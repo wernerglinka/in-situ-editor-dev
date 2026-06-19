@@ -115,7 +115,23 @@ body.admin {
 .sidebar-header h2 {
   margin: 0;
 }
-  
+
+/* The "new draft" add button is circular. The site's button partial may not
+   ship a `.round` modifier (it is editor chrome, not a site button), so carry
+   the shape here rather than relying on the host stylesheet. The id beats the
+   host `.button` rules on specificity. */
+#new-draft-btn {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  font-size: 1.5rem;
+  line-height: 1;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
 #drafts-list {
   list-style: none;
