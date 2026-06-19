@@ -152,6 +152,14 @@ Re-run with \`--force\` to overwrite an existing install.
   console.log('  ✓ README.md (scaffolded)');
 }
 
+// .gitignore: scaffold if absent (the editor-only repo has no node_modules —
+// it is zero-dependency — but npm pack leaves *.tgz behind).
+const gitignorePath = join(target, '.gitignore');
+if (!existsSync(gitignorePath)) {
+  writeFileSync(gitignorePath, 'node_modules/\n*.tgz\n.DS_Store\n');
+  console.log('  ✓ .gitignore (scaffolded)');
+}
+
 console.log(`
 Done. The editor-only package is ready at:
   ${target}
