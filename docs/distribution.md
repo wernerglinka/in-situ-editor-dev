@@ -161,11 +161,20 @@ The editor proper is a contained set the install script copies:
    copies the surface, adapts the chrome, builds, admin renders. The bin's
    `import './editor-manifest.mjs'` resolves correctly from `node_modules`.
 
-   **Still yours (outward-facing):** rename the GitHub repos to match the flip
-   (this fixture → `in-situ-editor-dev`; the editor-only repo → `in-situ-editor`),
-   point the exported package's remote at it, and `npm publish`. Until then
-   `npx @wernerglinka/in-situ-editor` 404s; install from a checkout
-   (`node scripts/install-editor.mjs <site>`) or a local `npm pack` tarball.
+   The editor-only repo is already seeded locally at
+   `~/Documents/Projects/metalsmith/in-situ-editor-package` (git-initialized,
+   first commit, publish-ready: not private, zero deps, executable bin, 76
+   files). To refresh it after editor changes here: `npm run export --
+   ../in-situ-editor-package` (re-copies the surface, leaves its
+   version/README alone).
+
+   **Still yours (outward-facing):** from the editor-only repo,
+   `git remote add origin git@github.com:wernerglinka/in-situ-editor.git`,
+   push, and `npm publish`; rename the GitHub repos to match the flip (this
+   fixture → `in-situ-editor-dev`; the editor-only repo → `in-situ-editor`).
+   Until the npm publish, `npx @wernerglinka/in-situ-editor` 404s; install from
+   a checkout (`node scripts/install-editor.mjs <site>`) or a local `npm pack`
+   tarball.
 5. **Live in-situ preview** — render section cards (or a preview pane) with
    the actual component njk + css so the editor matches published output.
    A separate effort on top of the above.
