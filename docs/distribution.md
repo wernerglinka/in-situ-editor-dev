@@ -132,16 +132,42 @@ Everything above through work item 3 is done and committed. The
 source-backed select convention, and the code-section Shiki redesign were
 merged there).
 
-**Next step (planned for next session): test `scripts/install-editor.mjs`
-against a fresh "virgin" `metalsmith2025-structured-content-starter` site.**
-Run the script at a clean checkout of the starter, follow the printed manual
-steps, and confirm the admin comes up and can author/publish. Things to watch
-during that test:
+**Virgin-starter install test: passed (2026-06-19).** Ran
+`scripts/install-editor.mjs` against a fresh local clone of
+`metalsmith2025-structured-content-starter`, built it, and confirmed in the
+browser that the admin comes up and authors against the starter's own emitted
+schema. What the test established:
 
-- The starter likely already runs `metalsmith-bundled-components`; the install
-  just needs `schema: { enabled: true }` turned on for the editor schema.
-- `dataArtifact()` needs `metadata.data` populated before it runs — confirm the
-  starter loads `lib/data/*.json` (inline loader or `@metalsmith/metadata`).
+- The starter is already aligned on the two heavy prerequisites and needs no
+  hand-editing for them: it runs `metalsmith-bundled-components` with
+  `schema: { enabled: true }` (emits `components-schema.json`), and it loads
+  `lib/data/*.json` into `metadata().data` via an inline loader.
+- The editor mounted inside the starter's chrome, the add-section menu was
+  populated from the starter's schema (its 12 authorable sections, not this
+  repo's 42), and the live frontmatter preview emitted
+  `layout: pages/sections.njk` with the `seo`/`card` blocks the starter renders.
+- The one console 404 was `assets/site-data.json` — the not-yet-wired
+  `metalsmith-site-data` artifact (`dataArtifact()`), expected and non-blocking
+  for authoring. `components-schema.json` served 200.
+
+**The one fix the test forced** is now in `install-editor.mjs`: `admin.njk`
+hardcodes this repo's chrome convention
+(`{% include "components/sections/header/header.njk" %}` / `footer`), but a
+starter-derived site renders chrome from `pages/parts/header.njk` / `footer.njk`.
+Copying `admin.njk` verbatim made Nunjucks throw on the missing include. The
+install script now reads the target's own page layout
+(`lib/layouts/pages/default.njk`, falling back to `sections.njk`) and rewrites
+`admin.njk`'s header/footer includes to whatever convention that site uses. It
+also prints a step to review the POC globals in `admin.njk` (`window.AUTHORS`,
+the locale globals).
+
+**Remaining to exercise the full path on a real deploy** (the manual steps the
+script prints, untested locally because they touch npm + Netlify): `npm install
+metalsmith-site-data`, wiring `pagesArtifact()`/`dataArtifact()` into the
+pipeline (which clears the `site-data.json` 404 and lights up "Open from site"
+and the data pickers), and Netlify Identity + the Function PAT for real
+publishing. Other notes still in force:
+
 - Hardcoded host/basePath values (see "This-site coupling to sever") may need
   parameterizing for a different deploy.
 - The install manifest copies the editor frontend + Netlify backend, but **not**

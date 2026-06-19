@@ -15,7 +15,7 @@
  * metalsmith.js, package.json, or any Netlify dashboard settings — those steps
  * are printed at the end.
  */
-import { cpSync, existsSync, statSync } from 'node:fs';
+import { cpSync, existsSync, readFileSync, statSync, writeFileSync } from 'node:fs';
 import { resolve, dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -103,6 +103,61 @@ for (const rel of MANIFEST) {
 
 console.log(`\nCopied ${copied} item(s)${skipped ? `, skipped ${skipped} existing` : ''}.`);
 
+/**
+ * Adapt the admin layout's chrome includes to the target site.
+ *
+ * `admin.njk` shares the site's header/footer so the editor matches the rest
+ * of the site. This repo keeps those as section components
+ * (`components/sections/header/header.njk`), but a starter-derived site may
+ * render its chrome from a different path (the public starter uses
+ * `pages/parts/header.njk`). Copying admin.njk verbatim would then make
+ * Nunjucks throw on a missing include. So rewrite admin.njk's header/footer
+ * includes to whatever the target's own page layout uses.
+ */
+function adaptAdminChrome() {
+  const adminPath = join(target, 'lib/layouts/admin.njk');
+  if (!existsSync(adminPath)) {
+    return;
+  }
+  // Find a reference page layout in the target to copy the convention from.
+  const refPath = ['lib/layouts/pages/default.njk', 'lib/layouts/pages/sections.njk']
+    .map((p) => join(target, p))
+    .find((p) => existsSync(p));
+  if (!refPath) {
+    console.warn(
+      '\n  ⚠ Could not find a page layout in the target to copy the header/footer\n' +
+        '    convention from. Check lib/layouts/admin.njk includes resolve before building.'
+    );
+    return;
+  }
+  const ref = readFileSync(refPath, 'utf8');
+  const findInclude = (word) => {
+    const m = ref.match(
+      new RegExp(`\\{%\\s*include\\s+["']([^"']*${word}[^"']*)["'][^%]*%\\}`, 'i')
+    );
+    return m ? m[1] : null;
+  };
+  let admin = readFileSync(adminPath, 'utf8');
+  const rewritten = [];
+  for (const word of ['header', 'footer']) {
+    const inc = findInclude(word);
+    if (!inc) {
+      continue;
+    }
+    const re = new RegExp(`\\{%\\s*include\\s+["'][^"']*${word}[^"']*["'][^%]*%\\}`, 'i');
+    if (re.test(admin) && !admin.includes(`"${inc}"`)) {
+      admin = admin.replace(re, `{% include "${inc}" %}`);
+      rewritten.push(`${word} → ${inc}`);
+    }
+  }
+  if (rewritten.length) {
+    writeFileSync(adminPath, admin);
+    console.log(`\n  ✓ Adapted admin.njk chrome to this site: ${rewritten.join(', ')}`);
+  }
+}
+
+adaptAdminChrome();
+
 // Remaining steps that are not safe to automate.
 const steps = `
 Next steps (not automated — they touch your metalsmith.js and Netlify setup):
@@ -139,7 +194,10 @@ Next steps (not automated — they touch your metalsmith.js and Netlify setup):
      never in the client.
    - Run locally with \`netlify dev\` so Identity and the Function are proxied.
 
-5. The admin is at /admin/. Build, then open /admin/?admin=true. Sign in to
+5. Review the POC globals near the bottom of lib/layouts/admin.njk
+   (window.AUTHORS, the locale globals) and set them for this site.
+
+6. The admin is at /admin/. Build, then open /admin/?admin=true. Sign in to
    edit and publish.
 `;
 
