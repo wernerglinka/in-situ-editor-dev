@@ -44,10 +44,15 @@ const mainFile = process.argv[ 1 ]; // Gets the file that was executed by Node.j
 
 /**
  * ESM (ECMAScript Modules) doesn't support importing JSON directly
- * So we read the package.json file manually to get dependency information
+ * So we read the package.json file manually to get dependency information.
+ *
+ * This repo doubles as the editor's dev site and as the published installer
+ * package. The installer must stay zero-dependency, so the site/build packages
+ * live under devDependencies; merge both so build metadata still resolves.
  * @type {Object}
  */
-const dependencies = JSON.parse( fs.readFileSync( './package.json' ) ).dependencies;
+const pkg = JSON.parse( fs.readFileSync( './package.json' ) );
+const dependencies = { ...pkg.devDependencies, ...pkg.dependencies };
 
 
 /**

@@ -121,7 +121,30 @@ The editor proper is a contained set the install script copies:
    site and prints the remaining wiring (the `npm install`, the `metalsmith.js`
    plugin calls, and the Netlify Identity / Function setup), which are too
    site-specific to patch safely.
-4. **Live in-situ preview** — render section cards (or a preview pane) with
+4. **Publish the editor as an npx installer.** Done. This repo is now also the
+   published package `@wernerglinka/in-situ-editor`: `scripts/install-editor.mjs`
+   is the `bin`, a `files` whitelist ships only the editor surface (the 75 files
+   in the install manifest — admin page + layout, the editor JS tree + vendored
+   libs, `admin-styles.css`, the Netlify Function + `netlify.toml`), and the
+   target defaults to the current directory. The intended workflow is now: clone
+   the aligned starter, `cd` in, run `npx @wernerglinka/in-situ-editor`, then
+   follow the printed wiring. **Vendor-everything by design** — the editor is
+   copied into the site and committed there (that is the point of an in-situ
+   editor); updates are a re-run with `--force`.
+
+   Because the installer only uses Node built-ins, the published package is
+   zero-dependency: the site/build packages were moved to `devDependencies` so
+   `npx` does not drag metalsmith/shiki/`sharp` through a file-copy install (the
+   dev site still gets them via `npm install`; `metalsmith.js` now merges
+   dev+prod deps for its version metadata). This also retires any need to
+   conform this repo's own chrome to the library's chrome model — the install
+   adapts `admin.njk`'s header/footer includes to whatever the cloned starter
+   uses, so the editor never has to move header/footer out of its component set.
+
+   Verified end to end (2026-06-19): `npm pack` → install the tarball into a
+   fresh starter clone → `npx in-situ-editor` (no args, target = cwd) → copies
+   the surface, adapts the chrome, builds, admin renders.
+5. **Live in-situ preview** — render section cards (or a preview pane) with
    the actual component njk + css so the editor matches published output.
    A separate effort on top of the above.
 

@@ -1,7 +1,7 @@
 {
-  "name": "in-situ-editor",
+  "name": "@wernerglinka/in-situ-editor",
   "version": "0.1.0",
-  "description": "In-site section-builder editor on the Metalsmith 2025 structured-content starter, with Chrome built-in AI and Netlify Identity publishing",
+  "description": "In-site section-builder editor on the Metalsmith 2025 structured-content starter, with Chrome built-in AI and Netlify Identity publishing. Run `npx @wernerglinka/in-situ-editor` inside a starter-derived site to install the editor.",
   "type": "module",
   "keywords": [
     "metalsmith",
@@ -14,7 +14,33 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/wernerglinka/metalsmith2025-structured-content-starter.git"
+    "url": "https://github.com/wernerglinka/in-situ-editor.git"
+  },
+  "bin": {
+    "in-situ-editor": "scripts/install-editor.mjs"
+  },
+  "files": [
+    "scripts/install-editor.mjs",
+    "src/admin/index.html",
+    "src/assets/js/editor",
+    "src/assets/js/drafts",
+    "src/assets/js/utils",
+    "src/assets/js/ai",
+    "src/assets/js/export",
+    "src/assets/js/helpers",
+    "src/assets/js/marked",
+    "src/assets/js/turndown",
+    "src/assets/js/prismjs",
+    "src/assets/js/jszip",
+    "src/assets/js/js-yaml",
+    "src/assets/js/browser-fs-access",
+    "src/assets/css/admin-styles.css",
+    "lib/layouts/admin.njk",
+    "netlify/functions/publish.js",
+    "netlify.toml"
+  ],
+  "publishConfig": {
+    "access": "public"
   },
   "scripts": {
     "dev": "metalsmith -c metalsmith.js --env NODE_ENV=development",
@@ -36,26 +62,21 @@
     "release:minor": "./scripts/release.sh minor --ci",
     "release:major": "./scripts/release.sh major --ci"
   },
+  "comment:devDependencies": "This package publishes as a zero-dependency installer (the bin only uses Node built-ins). The Metalsmith site/build packages below are dev-only from the published package's point of view: they run this repo's own editor dev site, and a consuming site installs its own metalsmith-bundled-components + metalsmith-site-data per the install steps. Keeping them out of `dependencies` stops `npx` from dragging metalsmith/shiki/sharp into a file-copy install.",
   "devDependencies": {
-    "auto-changelog": "^2.5.0",
-    "browser-sync": "^3.0.4",
-    "eslint": "^10.0.1",
-    "gray-matter": "^4.0.3",
-    "mocha": "^11.7.5",
-    "prettier": "^3.8.1",
-    "prettier-plugin-jinja-template": "^2.1.0",
-    "release-it": "^19.2.4"
-  },
-  "dependencies": {
     "@metalsmith/collections": "^2.0.0",
     "@metalsmith/drafts": "^1.3.0",
     "@metalsmith/layouts": "^3.0.0",
     "@metalsmith/permalinks": "^3.2.0",
     "@shikijs/langs": "^4.2.0",
     "@shikijs/themes": "^4.2.0",
+    "auto-changelog": "^2.5.0",
     "autoprefixer": "^10.4.24",
+    "browser-sync": "^3.0.4",
     "cssnano": "^7.1.2",
     "depcheck": "^1.4.7",
+    "eslint": "^10.0.1",
+    "gray-matter": "^4.0.3",
     "jstransformer-nunjucks": "^1.2.0",
     "marked": "^17.0.3",
     "metalsmith": "^2.7.0",
@@ -68,7 +89,11 @@
     "metalsmith-seo": "^0.4.0",
     "metalsmith-site-data": "^0.1.0",
     "metalsmith-sitemap": "^1.2.2",
+    "mocha": "^11.7.5",
     "postcss": "^8.5.6",
+    "prettier": "^3.8.1",
+    "prettier-plugin-jinja-template": "^2.1.0",
+    "release-it": "^19.2.4",
     "shiki": "^4.2.0"
   },
   "engines": {

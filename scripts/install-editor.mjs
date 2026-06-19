@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 /**
  * Install the in-situ editor into a Metalsmith structured-content site.
  *
@@ -8,12 +9,17 @@
  * Function setup, which are too site-specific to patch safely).
  *
  * Usage:
+ *   # inside a freshly cloned starter-derived site:
+ *   npx @wernerglinka/in-situ-editor [--force]
+ *
+ *   # or from a checkout of this repo, targeting another site:
  *   node scripts/install-editor.mjs <target-site-dir> [--force]
  *
- * Run it from this repo; it copies from here into <target-site-dir>. Existing
- * files are skipped unless --force is given. It does not touch the target's
- * metalsmith.js, package.json, or any Netlify dashboard settings — those steps
- * are printed at the end.
+ * The source is this package's own files (SRC_ROOT), so it works whether run
+ * from a repo checkout or from node_modules via npx. The target defaults to the
+ * current directory. Existing files are skipped unless --force is given. It does
+ * not touch the target's metalsmith.js, package.json, or any Netlify dashboard
+ * settings — those steps are printed at the end.
  */
 import { cpSync, existsSync, readFileSync, statSync, writeFileSync } from 'node:fs';
 import { resolve, dirname, join } from 'node:path';
@@ -60,11 +66,9 @@ function fail(message) {
 
 const args = process.argv.slice(2);
 const force = args.includes('--force');
-const targetArg = args.find((a) => !a.startsWith('--'));
-
-if (!targetArg) {
-  fail('Usage: node scripts/install-editor.mjs <target-site-dir> [--force]');
-}
+// Target defaults to the current directory so `npx @wernerglinka/in-situ-editor`
+// installs into the site you are standing in; an explicit path still works.
+const targetArg = args.find((a) => !a.startsWith('--')) || '.';
 
 const target = resolve(process.cwd(), targetArg);
 
