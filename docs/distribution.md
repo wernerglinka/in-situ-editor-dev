@@ -121,29 +121,51 @@ The editor proper is a contained set the install script copies:
    site and prints the remaining wiring (the `npm install`, the `metalsmith.js`
    plugin calls, and the Netlify Identity / Function setup), which are too
    site-specific to patch safely.
-4. **Publish the editor as an npx installer.** Done. This repo is now also the
-   published package `@wernerglinka/in-situ-editor`: `scripts/install-editor.mjs`
-   is the `bin`, a `files` whitelist ships only the editor surface (the 75 files
-   in the install manifest — admin page + layout, the editor JS tree + vendored
-   libs, `admin-styles.css`, the Netlify Function + `netlify.toml`), and the
-   target defaults to the current directory. The intended workflow is now: clone
-   the aligned starter, `cd` in, run `npx @wernerglinka/in-situ-editor`, then
-   follow the printed wiring. **Vendor-everything by design** — the editor is
-   copied into the site and committed there (that is the point of an in-situ
-   editor); updates are a re-run with `--force`.
+4. **Two-repo distribution: dev fixture + published editor-only package.** Done.
+   The split (Werner's call, "flip the names"):
 
-   Because the installer only uses Node built-ins, the published package is
-   zero-dependency: the site/build packages were moved to `devDependencies` so
-   `npx` does not drag metalsmith/shiki/`sharp` through a file-copy install (the
-   dev site still gets them via `npm install`; `metalsmith.js` now merges
-   dev+prod deps for its version metadata). This also retires any need to
-   conform this repo's own chrome to the library's chrome model — the install
-   adapts `admin.njk`'s header/footer includes to whatever the cloned starter
-   uses, so the editor never has to move header/footer out of its component set.
+   - **This repo is the dev/test fixture** — a full Metalsmith site where the
+     editor is developed and exercised. It keeps all its site dependencies and
+     demo content and changes freely. It is `private: true` (named
+     `in-situ-editor-dev`) so it can never be published by accident.
+   - **A separate, constant editor-only instance** is what ships to npm as
+     `@wernerglinka/in-situ-editor`: its own git repo, its own clean
+     zero-dependency `package.json`, containing only the editor surface plus the
+     installer. The canonical `in-situ-editor` name belongs to this published
+     artifact, not the fixture.
+   - **`scripts/export-editor.mjs <dir>`** (`npm run export -- <dir>`)
+     materializes the editor-only package from the fixture: it copies the shared
+     `MANIFEST` surface + the installer scripts at the same relative paths, then
+     scaffolds `package.json`/`README`/`LICENSE` only if absent (so the
+     editor-only repo owns its version + release config), refreshing the `files`
+     whitelist each run. The fixture is the source of truth; the package is
+     regenerated from it.
 
-   Verified end to end (2026-06-19): `npm pack` → install the tarball into a
-   fresh starter clone → `npx in-situ-editor` (no args, target = cwd) → copies
-   the surface, adapts the chrome, builds, admin renders.
+   The surface list lives in `scripts/editor-manifest.mjs`, imported by both the
+   exporter and `install-editor.mjs` (the package's `bin`), so the two never
+   drift. The installer is unchanged in behavior: `npx @wernerglinka/in-situ-editor`
+   inside a cloned starter vendors the editor in (you own and commit the copied
+   files — the point of an in-situ editor; re-run with `--force` to update),
+   adapts `admin.njk`'s header/footer includes to that site's chrome, and prints
+   the remaining wiring. Because the installer is zero-dependency, `npx` never
+   drags metalsmith/shiki/`sharp` through the copy.
+
+   This also retires any need to conform the fixture's own chrome to the
+   library's chrome model — the install adapts `admin.njk` to whatever the cloned
+   starter uses, so the editor never has to move header/footer out of its
+   component set.
+
+   Verified end to end (2026-06-19): `export-editor.mjs` → editor-only package
+   (zero-dep, `@wernerglinka/in-situ-editor`) → `npm pack` → install the tarball
+   into a fresh starter clone → `npx in-situ-editor` (no args, target = cwd) →
+   copies the surface, adapts the chrome, builds, admin renders. The bin's
+   `import './editor-manifest.mjs'` resolves correctly from `node_modules`.
+
+   **Still yours (outward-facing):** rename the GitHub repos to match the flip
+   (this fixture → `in-situ-editor-dev`; the editor-only repo → `in-situ-editor`),
+   point the exported package's remote at it, and `npm publish`. Until then
+   `npx @wernerglinka/in-situ-editor` 404s; install from a checkout
+   (`node scripts/install-editor.mjs <site>`) or a local `npm pack` tarball.
 5. **Live in-situ preview** — render section cards (or a preview pane) with
    the actual component njk + css so the editor matches published output.
    A separate effort on top of the above.
