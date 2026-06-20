@@ -23,13 +23,16 @@
 import { chmodSync, cpSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { resolve, dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { MANIFEST, NPM_DEPS } from './editor-manifest.mjs';
+import { MANIFEST, NPM_DEPS, SCRIPTS } from './editor-manifest.mjs';
 
 const FIXTURE_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-// The installer (the package's bin) and the manifest it imports at runtime.
-const SCRIPTS = ['scripts/install-editor.mjs', 'scripts/editor-manifest.mjs'];
-// Everything the published package ships = the editor surface + the installer.
+// Everything the published package ships = the editor surface + the scripts (the
+// installer, this manifest, and the exporter; see SCRIPTS in editor-manifest.mjs).
 const FILES = [...MANIFEST, ...SCRIPTS];
+// Consumer-facing docs maintained in this fixture and copied into the package
+// repo on export. Package-authored docs (e.g. docs/theory-of-operations.md) are
+// deliberately not listed here, so the export never overwrites them.
+const CONSUMER_DOCS = ['docs/editor-guide.md', 'docs/validation.md'];
 const PKG_NAME = '@wernerglinka/in-situ-editor';
 
 function fail(message) {
@@ -51,26 +54,36 @@ if (target === FIXTURE_ROOT) {
 mkdirSync(target, { recursive: true });
 console.log(`\nExporting the editor-only package into:\n  ${target}\n`);
 
-// Copy the surface + scripts, replacing existing copies so deletions in the
-// fixture propagate to the package (rmSync then cpSync covers files and dirs).
-let copied = 0;
-for (const rel of FILES) {
+// Copy a fixture path into the package, replacing any existing copy so deletions
+// in the fixture propagate (rmSync then cpSync covers both files and dirs).
+function copyFromFixture(rel) {
   const from = join(FIXTURE_ROOT, rel);
   if (!existsSync(from)) {
     console.warn(`  ⚠ missing in fixture, skipped: ${rel}`);
-    continue;
+    return false;
   }
   const to = join(target, rel);
   mkdirSync(dirname(to), { recursive: true });
   rmSync(to, { recursive: true, force: true });
   cpSync(from, to, { recursive: true });
   console.log(`  ✓ ${rel}`);
-  copied += 1;
+  return true;
+}
+
+// The editor surface + installer scripts.
+let copied = 0;
+for (const rel of FILES) {
+  if (copyFromFixture(rel)) copied += 1;
 }
 // The installer is the package bin; keep it executable after the copy.
 chmodSync(join(target, 'scripts/install-editor.mjs'), 0o755);
 
 console.log(`\nCopied ${copied} surface item(s).`);
+
+// The consumer docs maintained in the fixture; package-authored docs untouched.
+for (const rel of CONSUMER_DOCS) {
+  copyFromFixture(rel);
+}
 
 // Scaffold package identity only when absent; refresh the files whitelist when
 // it exists so the published payload tracks the surface without clobbering the
@@ -149,6 +162,10 @@ that is the point of an in-situ editor) and prints the remaining wiring:
 6. Build, then open \`/admin/?admin=true\`. Sign in to edit and publish.
 
 Re-run with \`--force\` to overwrite an existing install.
+
+Add \`--dev\` to also copy the distribution scripts into the site, turning it into
+a self-contained dev fixture you can develop the editor in and re-export from
+(\`node scripts/export-editor.mjs <dir>\`). A plain content install omits it.
 
 ## Author
 

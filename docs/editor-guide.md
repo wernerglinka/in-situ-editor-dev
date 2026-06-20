@@ -111,8 +111,7 @@ fields its library section supports and is named after that section. The menu
 is built from the schema the build emits, so the editor offers whatever
 components a site defines with no per-type editor code. Within a section,
 repeatable fields like call-to-action buttons add, remove, and reorder the
-same way the section stack does. Drafts made before the section types were
-renamed open without losing content.
+same way the section stack does.
 
 Above the sections sit the post's metadata: title, description, date,
 authors, and tags. The title doubles as the post's URL slug

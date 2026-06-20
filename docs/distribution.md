@@ -161,20 +161,20 @@ The editor proper is a contained set the install script copies:
    copies the surface, adapts the chrome, builds, admin renders. The bin's
    `import './editor-manifest.mjs'` resolves correctly from `node_modules`.
 
-   The editor-only repo is already seeded locally at
-   `~/Documents/Projects/metalsmith/in-situ-editor-package` (git-initialized,
-   first commit, publish-ready: not private, zero deps, executable bin, 76
-   files). To refresh it after editor changes here: `npm run export --
-   ../in-situ-editor-package` (re-copies the surface, leaves its
-   version/README alone).
+   The editor-only package repo lives at
+   `~/Documents/Projects/metalsmith/in-situ-editor` (GitHub
+   `wernerglinka/in-situ-editor`). To refresh it after editor changes here:
+   `npm run export -- ../in-situ-editor` (re-copies the surface and the consumer
+   docs `editor-guide.md` / `validation.md`, leaving its
+   version/README/LICENSE/`theory-of-operations.md` alone).
 
-   **Still yours (outward-facing):** from the editor-only repo,
-   `git remote add origin git@github.com:wernerglinka/in-situ-editor.git`,
-   push, and `npm publish`; rename the GitHub repos to match the flip (this
-   fixture → `in-situ-editor-dev`; the editor-only repo → `in-situ-editor`).
-   Until the npm publish, `npx @wernerglinka/in-situ-editor` 404s; install from
-   a checkout (`node scripts/install-editor.mjs <site>`) or a local `npm pack`
-   tarball.
+   **Done (2026-06-19, outward-facing):** the GitHub repos were renamed to match
+   the flip (this fixture → `in-situ-editor-dev`; the editor-only repo →
+   `in-situ-editor`), and `@wernerglinka/in-situ-editor` 0.1.0 is published to
+   npm, so `npx @wernerglinka/in-situ-editor` now works. One gotcha to remember:
+   the two repos share a `wernerglinka` namespace and the fixture's `origin` was
+   briefly crossed to the package repo, so verify `git remote -v` before any
+   push (fixture → `in-situ-editor-dev.git`, package → `in-situ-editor.git`).
 5. **Live in-situ preview** — render section cards (or a preview pane) with
    the actual component njk + css so the editor matches published output.
    A separate effort on top of the above.

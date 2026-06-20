@@ -222,10 +222,10 @@ The `componentDependencyBundler` automatically:
 This starter includes built-in validation to catch common configuration errors:
 
 - **Type validation**: Ensures booleans are actual booleans (not strings like `"false"`)
-- **Enum validation**: Validates values like `titleTag` (h1-h6) and `buttonStyle` (primary, secondary, ghost)
+- **Enum validation**: Validates values like `titleTag` (h1-h6) and `buttonStyle` (primary, secondary, tertiary, inverted)
 - **Component validation**: Ensures referenced section types exist
 
-See [Content Validation Guide](docs/VALIDATION.md) for complete details.
+See [Content Validation Guide](docs/validation.md) for complete details.
 
 ## Learn more about Metalsmith
 
