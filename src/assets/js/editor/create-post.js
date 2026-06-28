@@ -48,17 +48,20 @@ ui.dateInput.oninput = doSync;
 if (ui.authorsSelect) {
   ui.authorsSelect.onchange = doSync;
 }
-if (ui.pageTypeSelect) {
-  ui.pageTypeSelect.onchange = () => {
+for (const radio of ui.pageTypeRadios || []) {
+  radio.onchange = () => {
     applyPageType(ui);
     doSync();
   };
 }
-if (ui.bodyModeSelect) {
-  ui.bodyModeSelect.onchange = () => {
+if (ui.bodyModeToggle) {
+  ui.bodyModeToggle.onchange = () => {
     applyBodyMode(ui);
     doSync();
   };
+}
+if (ui.hasHeroToggle) {
+  ui.hasHeroToggle.onchange = doSync;
 }
 // Page meta fields all feed the same sync; the dismissible toggle is a change.
 for (const el of [

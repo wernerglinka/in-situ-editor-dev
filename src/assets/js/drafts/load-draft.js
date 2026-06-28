@@ -14,7 +14,7 @@ import { hydrateSections } from '../editor/schema/hydrate.js';
 /** Top-level frontmatter keys the editor manages; everything else is kept in
  * `draft.extra` so an edited page round-trips its unknown keys unchanged. */
 const MANAGED_KEYS = new Set([
-  'layout', 'draft', 'bodyClass', 'bodyClasses', 'topMessage', 'seo', 'card', 'tags',
+  'layout', 'draft', 'bodyClass', 'bodyClasses', 'hasHero', 'topMessage', 'seo', 'card', 'tags',
   'ad_categories', 'ad_confidences', 'navigation', 'sections'
 ]);
 
@@ -76,6 +76,7 @@ export function draftFromMetadata(metadata, content, id) {
     socialImage: seo.socialImage || card.thumbnail || '',
     canonicalUrl: seo.canonicalURL || '',
     bodyClasses: m.bodyClasses || '',
+    hasHero: m.hasHero === true,
     ...topMessageFields(m.topMessage),
     tags: Array.isArray(m.tags) ? m.tags.join(', ') : m.tags || '',
     authors: Array.isArray(card.author) ? card.author : [],

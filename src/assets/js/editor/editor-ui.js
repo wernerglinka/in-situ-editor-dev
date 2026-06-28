@@ -77,11 +77,15 @@ export function applyBodyMode(ui) {
  * @param {Object} d - The draft.
  */
 function populatePageType(ui, d) {
-  if (ui.pageTypeSelect) {
-    ui.pageTypeSelect.value = d.pageType === 'page' ? 'page' : 'post';
+  const type = d.pageType === 'page' ? 'page' : 'post';
+  for (const radio of ui.pageTypeRadios || []) {
+    radio.checked = radio.value === type;
   }
-  if (ui.bodyModeSelect) {
-    ui.bodyModeSelect.value = d.bodyMode === 'content' ? 'content' : 'sections';
+  if (ui.bodyModeToggle) {
+    ui.bodyModeToggle.checked = d.bodyMode === 'content';
+  }
+  if (ui.hasHeroToggle) {
+    ui.hasHeroToggle.checked = Boolean(d.hasHero);
   }
   if (ui.showInMenuToggle) {
     ui.showInMenuToggle.checked = Boolean(d.showInMenu);

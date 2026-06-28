@@ -59,6 +59,7 @@ export async function createNewDraft(ui, loadDraftFn, renderListFn) {
     socialImage: '',
     canonicalUrl: '',
     bodyClasses: '',
+    hasHero: false,
     topMessageText: '',
     topMessageLinkUrl: '',
     topMessageLinkLabel: '',
@@ -145,6 +146,7 @@ export function updateDraftData(id, ui) {
     draft.socialImage = ui.socialImageInput.value;
     draft.canonicalUrl = ui.canonicalUrlInput.value;
     draft.bodyClasses = ui.bodyClassesInput.value;
+    draft.hasHero = ui.hasHeroToggle ? ui.hasHeroToggle.checked : Boolean(draft.hasHero);
     draft.topMessageText = ui.topMessageTextInput.value;
     draft.topMessageLinkUrl = ui.topMessageLinkUrlInput.value;
     draft.topMessageLinkLabel = ui.topMessageLinkLabelInput.value;

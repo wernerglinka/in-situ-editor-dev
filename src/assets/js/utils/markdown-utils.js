@@ -146,29 +146,14 @@ function topMessageOf(draft) {
 }
 
 /**
- * Section-layout-only frontmatter keys. The editor carries unknown top-level
- * keys through `draft.extra` so section pages round-trip losslessly, but
- * `hasHero` is a presentation hint that only means something to the section
- * layout. A content page sheds it on emit so converting a section page to
- * content mode doesn't drag stale layout hints along (they accumulate and bite
- * later). The draft keeps it, so switching back to section mode re-emits it.
- */
-const SECTION_LAYOUT_KEYS = [ 'hasHero' ];
-
-/**
- * The unmanaged top-level keys to carry onto the emitted page. Section mode
- * carries them all; content mode drops the section-layout presentation keys.
+ * Unmanaged top-level keys carried onto the emitted page from the source. The
+ * editor now manages every key a starter page uses (bodyClasses, hasHero,
+ * topMessage, navigation, seo, ...), so `extra` is normally empty; it only
+ * preserves a genuinely unknown key so an edited page never silently loses it.
  * @param {Object} draft - The draft.
- * @param {boolean} isContent - Whether the page is a content-body page.
  * @return {Object} The keys to spread into the frontmatter.
  */
-function carriedExtra(draft, isContent) {
-  const extra = draft.extra && typeof draft.extra === 'object' ? draft.extra : {};
-  if (!isContent) {
-    return extra;
-  }
-  return Object.fromEntries(Object.entries(extra).filter(([ k ]) => !SECTION_LAYOUT_KEYS.includes(k)));
-}
+const carriedExtra = (draft) => (draft.extra && typeof draft.extra === 'object' ? draft.extra : {});
 
 /**
  * The post-only frontmatter blocks: the card (collections sort on card.date,
@@ -210,9 +195,9 @@ function pageBlocks(draft, title) {
  * empty body) from draft data. The shape depends on the draft's page type:
  * a post carries seo + card + tags, a page carries seo and (optionally) a
  * navigation block. The page-level metadata (social image, canonical URL,
- * body classes, top message, menu) is edited in the Page meta section. Any
- * remaining top-level key the editor does not manage (e.g. `hasHero`) is
- * carried through `draft.extra` so an edited page never loses it.
+ * body classes, hasHero, top message, menu) is edited in dedicated form
+ * sections. Any genuinely unknown top-level key is carried through
+ * `draft.extra` so an edited page never silently loses it.
  *
  * @param {Object} draft - The draft object.
  * @param {string} title - The title.
@@ -251,10 +236,12 @@ export function generateMarkdown(draft, title, description, date, tagsValue, con
     draft: false,
     ...(isPost ? { bodyClass: '' } : {}),
     bodyClasses: bodyClassesOf(draft, isContent),
+    // hasHero drives section-layout hero styling; only meaningful (and only
+    // emitted) for a section page that opts in.
+    ...(!isContent && draft.hasHero ? { hasHero: true } : {}),
     ...(topMessage ? { topMessage } : {}),
-    // Top-level keys the editor doesn't manage, preserved from the source page
-    // (content mode sheds the section-layout presentation keys).
-    ...carriedExtra(draft, isContent),
+    // Any genuinely unknown top-level key from the source page, preserved.
+    ...carriedExtra(draft),
     seo: {
       title: title || '',
       description: description || '',

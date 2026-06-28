@@ -13,9 +13,10 @@ export const ui = {
   openSiteBtn: document.getElementById('open-site-btn'),
   openSiteDialog: document.getElementById('open-site-dialog'),
   openSiteList: document.getElementById('open-site-list'),
-  pageTypeSelect: document.getElementById('post-page-type'),
+  pageTypeRadios: Array.from(document.querySelectorAll('input[name="page-type"]')),
   pageTypeHint: document.getElementById('page-type-hint'),
-  bodyModeSelect: document.getElementById('post-body-mode'),
+  bodyModeToggle: document.getElementById('post-body-mode'),
+  hasHeroToggle: document.getElementById('post-has-hero'),
   socialImageInput: document.getElementById('post-social-image'),
   canonicalUrlInput: document.getElementById('post-canonical-url'),
   bodyClassesInput: document.getElementById('post-body-classes'),
@@ -88,8 +89,11 @@ export const ui = {
       .map((t) => t.trim())
       .filter((t) => t && t !== 'posts'),
   getAuthors: () => (ui.authorsSelect ? Array.from(ui.authorsSelect.selectedOptions).map((o) => o.value) : []),
-  getPageType: () => (ui.pageTypeSelect && ui.pageTypeSelect.value === 'page' ? 'page' : 'post'),
-  getBodyMode: () => (ui.bodyModeSelect && ui.bodyModeSelect.value === 'content' ? 'content' : 'sections'),
+  getPageType: () => {
+    const checked = ui.pageTypeRadios.find((r) => r.checked);
+    return checked && checked.value === 'page' ? 'page' : 'post';
+  },
+  getBodyMode: () => (ui.bodyModeToggle && ui.bodyModeToggle.checked ? 'content' : 'sections'),
   getSlug: (title) =>
     (title || 'untitled')
       .toLowerCase()
