@@ -49,57 +49,51 @@ because the destination slug is derived from the title, renaming the title
 before publishing writes a new file rather than updating the original. To
 update a page in place, keep its title.
 
-## Post or page
+## The form at a glance
 
-The **Page type** selector at the top of the form decides where the content
-publishes and what fields it carries:
+The top of the form holds the four things you always set, in order: **Title**,
+**Description**, **Page type**, and the **Simple page** toggle. Everything else
+lives in labeled, collapsible sections below, each grouping its fields on a
+faint background so the form stays scannable.
+
+**Page type** (radio buttons) decides where the content publishes and what
+fields it carries:
 
 - **Blog post** — publishes to `src/blog/<slug>.md`, joins the blog
   collection, and carries a date, authors, and tags. Images go under
   `/assets/images/blog/<slug>/`.
 - **Page** — publishes to `src/<slug>.md` (a top-level page like `/about/`),
-  with no date/authors/tags. Use **Show in site menu** in the Page meta
-  section (below) to put it in the main navigation. Images go under
-  `/assets/images/<slug>/`.
+  with no date/authors/tags. Images go under `/assets/images/<slug>/`.
 
-Switching type changes only which fields apply; your work is untouched.
+**Simple page** is the body-mode toggle. Off (the default) builds the page from
+the site's components in the **Sections** area. On makes it a single Markdown
+body in the **Content** field — no sections, rendered through the simple
+layout (headings, bold, lists, code blocks, links). Switching swaps the editing
+surface; your other fields carry across. Publishing a simple page with an empty
+body is refused — the body is the page.
 
-## Body mode: sections or content
+Switching page type or body mode only changes which fields apply; your work is
+untouched.
 
-The **Body mode** selector decides how the page is built. It is independent
-of page type, so a post or a page can be either:
+## The form sections
 
-- **Section builder** (the default) — compose the page from the site's
-  components in the **Sections** area, described below.
-- **Markdown content** — write the page as a single Markdown body in the
-  **Content** field, with no sections. The page renders through the simple
-  layout, and the Markdown becomes the page body (headings, bold, lists,
-  code blocks, links).
+Below the primary controls, the collapsible sections (each appears only where
+it's relevant):
 
-Switching mode swaps the editing surface: the section builder in section
-mode, the Content textarea in content mode. Your other fields (title,
-description, page meta) carry across either way. Publishing a content page
-with an empty body is refused — the body is the page.
-
-## Page meta
-
-The collapsible **Page meta** section at the top of the form holds the
-page-level metadata that you set once and rarely revisit. It applies to both
-posts and pages, in either body mode:
-
-- **Social image** — the share/social image (Open Graph). For a **post** it
-  also becomes the card thumbnail, so there's one path to keep current. Leave
-  it blank and a section-built page falls back to its first section image.
-- **Canonical URL** — overrides the page's canonical link. Leave blank to use
-  the page's own URL.
-- **Body classes** — classes added to the page's `<body>`. Defaults to
-  `sections-page` or `content-page` by body mode when left blank.
-- **Top message** — a dismissible banner shown above the site header. The
-  message body takes Markdown (bold, italics, an inline link), and you can
-  add a separate **Link URL** and **Link label** for a trailing call to
-  action. Clear the message to remove the banner.
-- **Show in site menu** (pages only) — adds the page to the main navigation
-  with a menu label and order.
+- **Navigation** (pages only) — **Show in site menu**, plus the menu label and
+  order, to place the page in the main navigation.
+- **Page meta** — **Body classes** added to the page's `<body>` (defaults to
+  `sections-page` / `content-page` by mode), and **Has hero** (section mode
+  only), which flags a page that opens with a hero for the section layout's
+  styling.
+- **Top message** — a dismissible banner above the site header. The message
+  body takes Markdown (bold, italics, an inline link), with an optional
+  separate **Link URL** and **Link label** for a trailing call to action.
+  Clear the message to remove the banner.
+- **Blog post** (posts only) — **Date**, **Authors**, and **Tags**.
+- **SEO** — **Social image** (Open Graph; for a post it also becomes the card
+  thumbnail, falling back to the first section image when blank) and
+  **Canonical URL** (overrides the page's canonical link).
 
 ## Building a post
 
