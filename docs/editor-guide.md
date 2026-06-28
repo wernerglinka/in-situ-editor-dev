@@ -162,7 +162,7 @@ Every Markdown field — a section's prose fields and the **Content** body in
 simple-page mode — is a plain text box you can type into directly. Below each
 one is an **⤢ Expand** button that opens a full-screen Markdown editor with a
 small toolbar (bold, italic, heading, quote, bulleted and numbered lists,
-link) and a preview toggle (👁). Use it when a field needs more room than the
+link) and a preview toggle. Use it when a field needs more room than the
 inline box gives, or when you want the toolbar and live preview; keep typing in
 the box for quick edits.
 

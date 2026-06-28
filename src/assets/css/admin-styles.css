@@ -1165,7 +1165,8 @@ dialog p {
   min-height: 0;
 }
 
-/* The toolbar uses text glyphs, not FontAwesome; give them weight and italics. */
+/* The toolbar mixes text letters/numbers (B, I, H, 1.) with inline Feather
+   SVGs; give the text buttons weight/italics and size the SVG icons. */
 .markdown-editor-dialog .editor-toolbar button {
   min-width: 30px;
   font-weight: 600;
@@ -1173,4 +1174,10 @@ dialog p {
 
 .markdown-editor-dialog .editor-toolbar button[title='Italic'] {
   font-style: italic;
+}
+
+.markdown-editor-dialog .editor-toolbar button svg {
+  width: 16px;
+  height: 16px;
+  vertical-align: middle;
 }

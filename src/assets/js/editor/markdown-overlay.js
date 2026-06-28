@@ -26,10 +26,28 @@ let resolveOpen = null; // resolver for the in-flight open() promise
 let pendingResult = null; // value to resolve with when the dialog closes
 
 /**
+ * Toolbar icons, lifted verbatim from the site's Feather set in
+ * lib/layouts/icons/ so the overlay matches the rest of the admin. EasyMDE sets
+ * a button's innerHTML from its `icon` property; CSS sizes the SVG (see
+ * admin-styles.css). The letter and number buttons (B, I, H, 1.) stay as text.
+ */
+const ICONS = {
+  // quotes.njk — a filled icon; recolored to currentColor to theme with the button
+  quote:
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="currentColor"><path d="M221.216,43C130.487,49.375,0.072,63.86,0,241.546v223.561h202.455V225.913H135.23c-4.258-63.869,48.334-80.36,105.527-93.02L221.216,43z M492.458,43c-90.728,6.375-221.144,20.86-221.215,198.546v223.561h202.455V225.913h-67.226c-4.258-63.869,48.336-80.36,105.527-93.02L492.458,43L492.458,43z"/></svg>',
+  // list.njk
+  list: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>',
+  // link.njk
+  link: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>',
+  // eye.njk
+  eye: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>'
+};
+
+/**
  * Build the dialog's single EasyMDE instance and wire Save/Cancel/close. Runs
- * once, lazily, on the first open. The toolbar uses text glyphs rather than
- * FontAwesome classes, and autoDownloadFontAwesome is off, so nothing reaches
- * out to a CDN — the admin stays self-contained.
+ * once, lazily, on the first open. The toolbar uses text letters/numbers and
+ * inline Feather SVGs rather than FontAwesome classes, and autoDownloadFontAwesome
+ * is off, so nothing reaches out to a CDN — the admin stays self-contained.
  */
 function ensureEditor() {
   if (editor) {
@@ -55,13 +73,13 @@ function ensureEditor() {
       { name: 'italic', action: EasyMDE.toggleItalic, title: 'Italic', text: 'I' },
       { name: 'heading', action: EasyMDE.toggleHeadingSmaller, title: 'Heading', text: 'H' },
       '|',
-      { name: 'quote', action: EasyMDE.toggleBlockquote, title: 'Quote', text: '❝' },
-      { name: 'unordered-list', action: EasyMDE.toggleUnorderedList, title: 'Bulleted list', text: '•' },
+      { name: 'quote', action: EasyMDE.toggleBlockquote, title: 'Quote', icon: ICONS.quote },
+      { name: 'unordered-list', action: EasyMDE.toggleUnorderedList, title: 'Bulleted list', icon: ICONS.list },
       { name: 'ordered-list', action: EasyMDE.toggleOrderedList, title: 'Numbered list', text: '1.' },
       '|',
-      { name: 'link', action: EasyMDE.drawLink, title: 'Insert link', text: '🔗' },
+      { name: 'link', action: EasyMDE.drawLink, title: 'Insert link', icon: ICONS.link },
       '|',
-      { name: 'preview', action: EasyMDE.togglePreview, title: 'Toggle preview', text: '👁', noDisable: true }
+      { name: 'preview', action: EasyMDE.togglePreview, title: 'Toggle preview', icon: ICONS.eye, noDisable: true }
     ]
   });
 
