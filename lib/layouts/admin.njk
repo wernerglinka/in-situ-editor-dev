@@ -14,13 +14,14 @@
       href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;500&family=Open+Sans:wght@300;500&display=swap"
     />
     <!-- The site's bundled styles are the base; admin-styles.css only adds the
-         editor-specific styles on top. -->
+         editor-specific styles on top. Vendored sheets load before admin-styles
+         so the admin's own layer wins on equal-specificity collisions. -->
     <link rel="stylesheet" href="/assets/main.css" />
+    <!-- Vendored EasyMDE, scoped to the Markdown overlay dialog. -->
+    <link rel="stylesheet" href="/assets/js/easymde/easymde.min.css" />
     <link rel="stylesheet" href="/assets/css/admin-styles.css" />
     <!-- Vendored PrismJS theme for code blocks in the markdown preview. -->
     <link rel="stylesheet" href="/assets/js/prismjs/themes/prism-okaidia.css" />
-    <!-- Vendored EasyMDE for the Markdown overlay editor. -->
-    <link rel="stylesheet" href="/assets/js/easymde/easymde.min.css" />
     <script src="https://identity.netlify.com/v1/netlify-identity-widget.js" defer></script>
   </head>
 
