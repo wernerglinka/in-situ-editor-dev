@@ -1170,6 +1170,10 @@ dialog p {
 .markdown-editor-dialog .editor-toolbar button {
   min-width: 30px;
   font-weight: 600;
+  /* EasyMDE sets no color, so the buttons inherit a muted gray. The editor
+     surface is always light (even in dark mode), so use a fixed dark value
+     rather than --color-text, which flips to white and would disappear. */
+  color: #161616;
 }
 
 .markdown-editor-dialog .editor-toolbar button[title='Italic'] {
@@ -1180,4 +1184,7 @@ dialog p {
   width: 16px;
   height: 16px;
   vertical-align: middle;
+  /* A global svg rule paints icons the primary red; inherit the dark button
+     color instead so the icons match the B/I/H/1. letters. */
+  color: inherit;
 }
