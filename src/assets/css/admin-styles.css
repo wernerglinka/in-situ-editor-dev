@@ -444,6 +444,15 @@ body.admin {
   font-size: 0.85rem;
 }
 
+/* A checkbox/toggle inside a label sits next to its text, not pushed to the
+   far edge by space-between on wide forms. The `.form-group` variant is needed
+   so it outranks the `.form-group label` rule above. */
+.ai-toggle-label,
+.form-group .ai-toggle-label {
+  justify-content: flex-start;
+  gap: 0.5rem;
+}
+
 .help-icon {
   display: inline-flex;
   align-items: center;
