@@ -72,3 +72,20 @@ export const mdToHTML = ( mdString ) => {
     return mdString;
   }
 };
+
+/**
+ * Converts inline markdown (emphasis, links, inline code) to HTML without the
+ * block-level <p> wrapper that mdToHTML adds. For short one-line strings like
+ * the header's top-message banner, where a wrapping <p> would be invalid inside
+ * the surrounding <p> and would force a line break.
+ * @param {string} mdString - The markdown string to convert.
+ * @returns {string} The inline HTML output.
+ */
+export const mdInline = ( mdString ) => {
+  try {
+    return markedInstance.parseInline( mdString );
+  } catch ( e ) {
+    console.error( 'Error parsing inline markdown:', e );
+    return mdString;
+  }
+};

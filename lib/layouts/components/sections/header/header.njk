@@ -8,7 +8,7 @@
   {% if topMessage %}
     <div class="top-message">
       <p class="top-message-text">
-        {{ topMessage.text }}
+        {{ topMessage.text | mdInline | safe }}
         {% if topMessage.link %}
           <a href="{{ topMessage.link.url }}">{{ topMessage.link.label }}</a>
         {% endif %}

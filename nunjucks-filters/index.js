@@ -25,7 +25,7 @@ export {
 } from './date-filters.js';
 
 // Markdown processing
-export { mdToHTML } from './markdown-filter.js';
+export { mdToHTML, mdInline } from './markdown-filter.js';
 
 // Array manipulation filters
 export {
