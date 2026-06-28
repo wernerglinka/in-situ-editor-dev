@@ -100,15 +100,23 @@ const slugify = (title) =>
  * Page-type registry. Each type maps to its output directory (used by the
  * publish Function) and the published image directory root. A blog post lives
  * under `src/blog/` and carries a card + tags + collection membership; a page
- * lives at the top level and carries neither. Both share the sections layout.
+ * lives at the top level and carries neither. The layout depends on the draft's
+ * body mode (see bodyModeOf), not its page type: a section-built page renders
+ * with the sections layout, a content-body page with the simple layout.
  */
 export const PAGE_TYPES = {
   post: { dir: 'src/blog', imageRoot: '/assets/images/blog', layout: 'pages/sections.njk' },
   page: { dir: 'src', imageRoot: '/assets/images', layout: 'pages/sections.njk' }
 };
 
+/** The layout for a content-body page; section-built pages use PAGE_TYPES.layout. */
+export const CONTENT_LAYOUT = 'pages/simple.njk';
+
 /** Resolves a draft's page type, defaulting to a blog post. */
 export const pageTypeOf = (draft) => (draft && draft.pageType === 'page' ? 'page' : 'post');
+
+/** Resolves a draft's body mode, defaulting to the section builder. */
+export const bodyModeOf = (draft) => (draft && draft.bodyMode === 'content' ? 'content' : 'sections');
 
 /**
  * The post-only frontmatter blocks: the card (collections sort on card.date,
@@ -158,7 +166,7 @@ function pageBlocks(draft, title) {
  * @param {string} description - The description.
  * @param {string} date - The date (posts only).
  * @param {string} tagsValue - Comma-separated tags string (posts only).
- * @param {string} content - Unused; kept for signature compatibility.
+ * @param {string} content - The markdown body (content mode only; empty in sections mode).
  * @param {Array<Object>} [classifierResults=[]] - AI classifier results (posts only).
  * @return {string} The formatted Markdown string.
  */
@@ -168,6 +176,7 @@ export function generateMarkdown(draft, title, description, date, tagsValue, con
   const cfg = PAGE_TYPES[type];
   const imageBase = `${cfg.imageRoot}/${slug}`;
   const isPost = type === 'post';
+  const isContent = bodyModeOf(draft) === 'content';
 
   const tags = tagsValue
     .split(',')
@@ -175,10 +184,14 @@ export function generateMarkdown(draft, title, description, date, tagsValue, con
     .filter((t) => t);
 
   const editorSections = Array.isArray(draft.sections) ? draft.sections : [];
-  const thumbnail = firstSectionImage(editorSections, getSectionFields, imageBase);
+  // A content page has no sections to derive a card thumbnail from, so it
+  // carries an explicit thumbnail field (see the editor's content-post form).
+  const thumbnail = isContent
+    ? draft.thumbnail || ''
+    : firstSectionImage(editorSections, getSectionFields, imageBase);
 
   const doc = {
-    layout: cfg.layout,
+    layout: isContent ? CONTENT_LAYOUT : cfg.layout,
     draft: false,
     ...(isPost ? { bodyClass: '' } : {}),
     // Top-level keys the editor doesn't manage, preserved from the source page.
@@ -192,10 +205,12 @@ export function generateMarkdown(draft, title, description, date, tagsValue, con
     ...(isPost
       ? postBlocks(draft, title, description, date, tags, thumbnail, classifierResults)
       : pageBlocks(draft, title)),
-    sections: editorSections.map((s) => emitSection(s, imageBase))
+    // Content mode omits sections entirely; the body carries the page.
+    ...(isContent ? {} : { sections: editorSections.map((s) => emitSection(s, imageBase)) })
   };
 
-  return `---\n${toYaml(doc)}\n---\n`;
+  const body = isContent ? `${(content || '').trimEnd()}\n` : '';
+  return `---\n${toYaml(doc)}\n---\n${body}`;
 }
 
 /**

@@ -15,6 +15,8 @@ export const ui = {
   openSiteList: document.getElementById('open-site-list'),
   pageTypeSelect: document.getElementById('post-page-type'),
   pageTypeHint: document.getElementById('page-type-hint'),
+  bodyModeSelect: document.getElementById('post-body-mode'),
+  thumbnailInput: document.getElementById('post-thumbnail'),
   showInMenuToggle: document.getElementById('page-show-in-menu'),
   navLabelInput: document.getElementById('page-nav-label'),
   navIndexInput: document.getElementById('page-nav-index'),
@@ -81,6 +83,7 @@ export const ui = {
       .filter((t) => t && t !== 'posts'),
   getAuthors: () => (ui.authorsSelect ? Array.from(ui.authorsSelect.selectedOptions).map((o) => o.value) : []),
   getPageType: () => (ui.pageTypeSelect && ui.pageTypeSelect.value === 'page' ? 'page' : 'post'),
+  getBodyMode: () => (ui.bodyModeSelect && ui.bodyModeSelect.value === 'content' ? 'content' : 'sections'),
   getSlug: (title) =>
     (title || 'untitled')
       .toLowerCase()

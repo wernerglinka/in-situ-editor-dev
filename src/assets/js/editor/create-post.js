@@ -15,7 +15,7 @@ import { openFromSite } from '../drafts/open-from-site.js';
 import { initEditorActions } from './editor-actions.js';
 import { initEditor } from './editor-init.js';
 import { initSectionBuilder } from './section-builder.js';
-import { sync, renderList, loadDraft, applyPageType } from './editor-ui.js';
+import { sync, renderList, loadDraft, applyPageType, applyBodyMode } from './editor-ui.js';
 
 /**
  * Debounced version of updatePreview to prevent excessive re-renders.
@@ -53,6 +53,15 @@ if (ui.pageTypeSelect) {
     applyPageType(ui);
     doSync();
   };
+}
+if (ui.bodyModeSelect) {
+  ui.bodyModeSelect.onchange = () => {
+    applyBodyMode(ui);
+    doSync();
+  };
+}
+if (ui.thumbnailInput) {
+  ui.thumbnailInput.oninput = doSync;
 }
 if (ui.showInMenuToggle) {
   ui.showInMenuToggle.onchange = () => {

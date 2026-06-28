@@ -62,12 +62,34 @@ publishes and what fields it carries:
   label and order to put it in the main navigation. Images go under
   `/assets/images/<slug>/`.
 
-Both are built from the same sections. Switching type changes only which
-fields apply; your sections are untouched.
+Switching type changes only which fields apply; your work is untouched.
+
+## Body mode: sections or content
+
+The **Body mode** selector decides how the page is built. It is independent
+of page type, so a post or a page can be either:
+
+- **Section builder** (the default) — compose the page from the site's
+  components in the **Sections** area, described below.
+- **Markdown content** — write the page as a single Markdown body in the
+  **Content** field, with no sections. The page renders through the simple
+  layout, and the Markdown becomes the page body (headings, bold, lists,
+  code blocks, links).
+
+Switching mode swaps the editing surface: the section builder in section
+mode, the Content textarea in content mode. Your other fields (title,
+description, menu settings) carry across either way.
+
+A content **post** has no section image to draw a card thumbnail from, so it
+shows a **Thumbnail / social image** field; the path you enter becomes both
+the post's card thumbnail and its social image. Content **pages** have no
+card, so they don't show the field. Publishing a content page with an empty
+body is refused — the body is the page.
 
 ## Building a post
 
-A post is a stack of sections, composed in the **Sections** area. The
+In section mode, a post is a stack of sections, composed in the **Sections**
+area (in content mode, you write a Markdown body instead — see above). The
 **Add a section** menu lists every section the site's component library
 defines; each one generates its form straight from that component's schema,
 so it exposes exactly the fields the library section supports. A few of the

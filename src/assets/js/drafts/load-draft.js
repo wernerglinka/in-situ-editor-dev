@@ -44,13 +44,23 @@ export function draftFromMetadata(metadata, content, id) {
   const card = m.card || {};
   const seo = m.seo || {};
   const pageType = card.title || card.date || Array.isArray(m.tags) ? 'post' : 'page';
+  // A page is content-bodied when it renders with the simple layout, or (as a
+  // fallback for hand-authored files) when it has a body and no sections.
+  const bodyMode =
+    m.layout === 'pages/simple.njk' || (!Array.isArray(m.sections) && Boolean(content && content.trim()))
+      ? 'content'
+      : 'sections';
   const extra = Object.fromEntries(Object.entries(m).filter(([ k ]) => !MANAGED_KEYS.has(k)));
   return {
     id,
     pageType,
+    bodyMode,
     title: card.title || seo.title || m.title || '',
     description: seo.description || m.description || '',
     date: card.date || m.date || '',
+    // Explicit thumbnail for content pages (sections-mode pages derive it from
+    // the first section image, so it is not stored on the draft there).
+    thumbnail: card.thumbnail || seo.socialImage || '',
     tags: Array.isArray(m.tags) ? m.tags.join(', ') : m.tags || '',
     authors: Array.isArray(card.author) ? card.author : [],
     ...navFields(m.navigation || null),

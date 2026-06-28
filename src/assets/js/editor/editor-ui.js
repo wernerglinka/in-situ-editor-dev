@@ -53,6 +53,31 @@ export function applyPageType(ui) {
     const slug = ui.getSlug(ui.titleInput.value);
     ui.pageTypeHint.textContent = isPage ? `Publishes to src/${slug}.md` : `Publishes to src/blog/${slug}.md`;
   }
+  // Body mode visibility depends on page type (the content thumbnail is
+  // post-only), so re-apply it whenever the page type changes.
+  applyBodyMode(ui);
+}
+
+/**
+ * Shows the surface that belongs to the current body mode: the section builder
+ * in sections mode, the Markdown body textarea in content mode. The content
+ * thumbnail field is post-and-content-only, so it is handled explicitly rather
+ * than through the class loops (which would otherwise fight over `hidden`).
+ * @param {Object} ui - The UI elements.
+ */
+export function applyBodyMode(ui) {
+  const isContent = (ui.getBodyMode ? ui.getBodyMode() : 'sections') === 'content';
+  for (const el of document.querySelectorAll('.sections-only')) {
+    el.hidden = isContent;
+  }
+  for (const el of document.querySelectorAll('.content-only')) {
+    el.hidden = !isContent;
+  }
+  const thumbField = document.getElementById('content-thumbnail-field');
+  if (thumbField) {
+    const isPage = (ui.getPageType ? ui.getPageType() : 'post') === 'page';
+    thumbField.hidden = !isContent || isPage;
+  }
 }
 
 /**
@@ -64,6 +89,9 @@ export function applyPageType(ui) {
 function populatePageType(ui, d) {
   if (ui.pageTypeSelect) {
     ui.pageTypeSelect.value = d.pageType === 'page' ? 'page' : 'post';
+  }
+  if (ui.bodyModeSelect) {
+    ui.bodyModeSelect.value = d.bodyMode === 'content' ? 'content' : 'sections';
   }
   if (ui.showInMenuToggle) {
     ui.showInMenuToggle.checked = Boolean(d.showInMenu);
@@ -103,6 +131,9 @@ export async function loadDraft(id, ui, renderList, tagEditor) {
 
   if (ui.contentInput) {
     ui.contentInput.value = content;
+  }
+  if (ui.thumbnailInput) {
+    ui.thumbnailInput.value = d.thumbnail || '';
   }
   loadSections(d);
   ui.aiWriterInput.value = '';

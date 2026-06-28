@@ -131,6 +131,17 @@ seo:
         </div>
 
         <div class="form-group">
+          <label for="post-body-mode">Body mode</label>
+          <select id="post-body-mode">
+            <option value="sections">Section builder</option>
+            <option value="content">Markdown content</option>
+          </select>
+          <p class="field-hint">
+            Section builder composes the page from components; Markdown content is a single prose body.
+          </p>
+        </div>
+
+        <div class="form-group">
           <label for="post-title">Title</label>
           <div class="input-with-action">
             <input type="text" id="post-title" required placeholder="My Awesome Post" />
@@ -212,7 +223,7 @@ seo:
           <input type="number" id="page-nav-index" min="0" step="1" placeholder="0" />
         </div>
 
-        <div class="form-group">
+        <div class="form-group sections-only">
           <label>Sections</label>
           <p class="field-hint">
             Build the page from sections. Add, reorder, and remove below. Prose fields take Markdown.
@@ -225,10 +236,24 @@ seo:
               <option value="">+ Add a section…</option>
             </select>
           </div>
-          <!-- Hidden legacy body field: keeps dormant AI/paste modules
-					     that reference #post-content from crashing until they are
-					     re-scoped to sections. -->
-          <textarea id="post-content" style="display: none"></textarea>
+        </div>
+
+        <!-- Explicit thumbnail for content posts: a content page has no section
+             image to derive a card thumbnail from. Posts only (pages have no
+             card); revealed by applyBodyMode in content mode. -->
+        <div class="form-group" id="content-thumbnail-field" hidden>
+          <label for="post-thumbnail">Thumbnail / social image</label>
+          <p class="field-hint">Path to the card thumbnail and social image for this post.</p>
+          <input type="text" id="post-thumbnail" placeholder="/assets/images/blog/my-post/cover.jpg" />
+        </div>
+
+        <!-- The Markdown body. In sections mode this group is hidden, but the
+             textarea stays in the DOM so the AI/paste modules that reference
+             #post-content never crash. -->
+        <div class="form-group content-only">
+          <label for="post-content">Content</label>
+          <p class="field-hint">Write the page body in Markdown. It renders through the simple layout.</p>
+          <textarea id="post-content" rows="18"></textarea>
         </div>
 
         <div class="form-group ai-writer-section" style="display: none">

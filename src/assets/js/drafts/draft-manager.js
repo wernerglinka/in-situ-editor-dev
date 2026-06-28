@@ -49,6 +49,7 @@ export async function createNewDraft(ui, loadDraftFn, renderListFn) {
   const newDraft = {
     id,
     pageType: 'post',
+    bodyMode: 'sections',
     title: '',
     description: '',
     date: '',
@@ -118,6 +119,7 @@ export function updateDraftData(id, ui) {
     return;
   }
   draft.pageType = ui.getPageType ? ui.getPageType() : 'post';
+  draft.bodyMode = ui.getBodyMode ? ui.getBodyMode() : draft.bodyMode || 'sections';
   draft.title = ui.titleInput.value;
   draft.description = ui.descInput.value;
   draft.date = ui.dateInput.value;
@@ -130,6 +132,9 @@ export function updateDraftData(id, ui) {
   }
   if (ui.contentInput) {
     draft.content = ui.contentInput.value;
+  }
+  if (ui.thumbnailInput) {
+    draft.thumbnail = ui.thumbnailInput.value;
   }
   if (ui.getSections) {
     draft.sections = ui.getSections();
