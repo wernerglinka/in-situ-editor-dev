@@ -118,18 +118,42 @@ export const pageTypeOf = (draft) => (draft && draft.pageType === 'page' ? 'page
 /** Resolves a draft's body mode, defaulting to the section builder. */
 export const bodyModeOf = (draft) => (draft && draft.bodyMode === 'content' ? 'content' : 'sections');
 
-/** The body class a content page carries (section pages use 'sections-page'). */
-const CONTENT_BODY_CLASS = 'content-page';
+/** Default body class per body mode, used when the author leaves the field blank. */
+const DEFAULT_BODY_CLASS = { content: 'content-page', sections: 'sections-page' };
+
+/** The page's body class: the author's value, else the body-mode default. */
+const bodyClassesOf = (draft, isContent) =>
+  (draft.bodyClasses || '').trim() || DEFAULT_BODY_CLASS[ isContent ? 'content' : 'sections' ];
+
+/**
+ * The top-message banner block, or null when there is no message. The message
+ * text is Markdown (rendered by the header template); the link is optional.
+ * @param {Object} draft - The draft.
+ * @return {Object|null} `{ text, link?, dismissible }` or null.
+ */
+function topMessageOf(draft) {
+  const text = (draft.topMessageText || '').trim();
+  if (!text) {
+    return null;
+  }
+  const url = (draft.topMessageLinkUrl || '').trim();
+  const label = (draft.topMessageLinkLabel || '').trim();
+  return {
+    text,
+    ...(url ? { link: { url, label: label || url } } : {}),
+    dismissible: draft.topMessageDismissible !== false
+  };
+}
 
 /**
  * Section-layout-only frontmatter keys. The editor carries unknown top-level
- * keys through `draft.extra` so section pages round-trip losslessly, but these
- * are presentation hints that only mean something to the section layout. A
- * content page sheds them on emit so converting a section page to content mode
- * doesn't drag stale layout hints along (they accumulate and bite later). The
- * draft keeps them, so switching back to section mode re-emits them unchanged.
+ * keys through `draft.extra` so section pages round-trip losslessly, but
+ * `hasHero` is a presentation hint that only means something to the section
+ * layout. A content page sheds it on emit so converting a section page to
+ * content mode doesn't drag stale layout hints along (they accumulate and bite
+ * later). The draft keeps it, so switching back to section mode re-emits it.
  */
-const SECTION_LAYOUT_KEYS = [ 'hasHero', 'bodyClasses' ];
+const SECTION_LAYOUT_KEYS = [ 'hasHero' ];
 
 /**
  * The unmanaged top-level keys to carry onto the emitted page. Section mode
@@ -185,9 +209,10 @@ function pageBlocks(draft, title) {
  * Generates a structured-content markdown document (frontmatter only,
  * empty body) from draft data. The shape depends on the draft's page type:
  * a post carries seo + card + tags, a page carries seo and (optionally) a
- * navigation block. Top-level frontmatter the editor does not manage is
- * carried through `draft.extra` so an edited page never loses keys it does
- * not understand (navigation, bodyClasses, hasHero, ...).
+ * navigation block. The page-level metadata (social image, canonical URL,
+ * body classes, top message, menu) is edited in the Page meta section. Any
+ * remaining top-level key the editor does not manage (e.g. `hasHero`) is
+ * carried through `draft.extra` so an edited page never loses it.
  *
  * @param {Object} draft - The draft object.
  * @param {string} title - The title.
@@ -212,30 +237,32 @@ export function generateMarkdown(draft, title, description, date, tagsValue, con
     .filter((t) => t);
 
   const editorSections = Array.isArray(draft.sections) ? draft.sections : [];
-  // A content page has no sections to derive a card thumbnail from, so it
-  // carries an explicit thumbnail field (see the editor's content-post form).
-  const thumbnail = isContent
-    ? draft.thumbnail || ''
-    : firstSectionImage(editorSections, getSectionFields, imageBase);
+  // The social image: the author's explicit Page-meta value wins; otherwise a
+  // section page derives one from its first section image (a content page has
+  // no sections to derive from). It drives both seo.socialImage and, for posts,
+  // the card thumbnail, so there is a single source of truth.
+  const socialImage =
+    (draft.socialImage || '').trim() ||
+    (isContent ? '' : firstSectionImage(editorSections, getSectionFields, imageBase));
+  const topMessage = topMessageOf(draft);
 
   const doc = {
     layout: isContent ? CONTENT_LAYOUT : cfg.layout,
     draft: false,
     ...(isPost ? { bodyClass: '' } : {}),
-    // A content page sets its own clean body class; section pages carry theirs
-    // through `extra` (see carriedExtra), so this only applies in content mode.
-    ...(isContent ? { bodyClasses: CONTENT_BODY_CLASS } : {}),
+    bodyClasses: bodyClassesOf(draft, isContent),
+    ...(topMessage ? { topMessage } : {}),
     // Top-level keys the editor doesn't manage, preserved from the source page
     // (content mode sheds the section-layout presentation keys).
     ...carriedExtra(draft, isContent),
     seo: {
       title: title || '',
       description: description || '',
-      socialImage: thumbnail,
-      canonicalOverwrite: ''
+      socialImage,
+      canonicalURL: (draft.canonicalUrl || '').trim()
     },
     ...(isPost
-      ? postBlocks(draft, title, description, date, tags, thumbnail, classifierResults)
+      ? postBlocks(draft, title, description, date, tags, socialImage, classifierResults)
       : pageBlocks(draft, title)),
     // Content mode omits sections entirely; the body carries the page.
     ...(isContent ? {} : { sections: editorSections.map((s) => emitSection(s, imageBase)) })

@@ -14,7 +14,7 @@ import { hydrateSections } from '../editor/schema/hydrate.js';
 /** Top-level frontmatter keys the editor manages; everything else is kept in
  * `draft.extra` so an edited page round-trips its unknown keys unchanged. */
 const MANAGED_KEYS = new Set([
-  'layout', 'draft', 'bodyClass', 'seo', 'card', 'tags',
+  'layout', 'draft', 'bodyClass', 'bodyClasses', 'topMessage', 'seo', 'card', 'tags',
   'ad_categories', 'ad_confidences', 'navigation', 'sections'
 ]);
 
@@ -39,6 +39,18 @@ function navFields(nav) {
   };
 }
 
+/** Spreads a `topMessage` block back into the draft's flat editor fields. */
+function topMessageFields(tm) {
+  const m = tm || {};
+  const link = m.link || {};
+  return {
+    topMessageText: m.text || '',
+    topMessageLinkUrl: link.url || '',
+    topMessageLinkLabel: link.label || '',
+    topMessageDismissible: m.dismissible !== false
+  };
+}
+
 export function draftFromMetadata(metadata, content, id) {
   const m = metadata || {};
   const card = m.card || {};
@@ -58,9 +70,13 @@ export function draftFromMetadata(metadata, content, id) {
     title: card.title || seo.title || m.title || '',
     description: seo.description || m.description || '',
     date: card.date || m.date || '',
-    // Explicit thumbnail for content pages (sections-mode pages derive it from
-    // the first section image, so it is not stored on the draft there).
-    thumbnail: card.thumbnail || seo.socialImage || '',
+    // Page meta fields. socialImage is the single source for both the social
+    // image and (for posts) the card thumbnail; bodyClasses and the top message
+    // round-trip through their own fields now rather than the `extra` bag.
+    socialImage: seo.socialImage || card.thumbnail || '',
+    canonicalUrl: seo.canonicalURL || '',
+    bodyClasses: m.bodyClasses || '',
+    ...topMessageFields(m.topMessage),
     tags: Array.isArray(m.tags) ? m.tags.join(', ') : m.tags || '',
     authors: Array.isArray(card.author) ? card.author : [],
     ...navFields(m.navigation || null),

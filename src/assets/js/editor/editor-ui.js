@@ -53,16 +53,11 @@ export function applyPageType(ui) {
     const slug = ui.getSlug(ui.titleInput.value);
     ui.pageTypeHint.textContent = isPage ? `Publishes to src/${slug}.md` : `Publishes to src/blog/${slug}.md`;
   }
-  // Body mode visibility depends on page type (the content thumbnail is
-  // post-only), so re-apply it whenever the page type changes.
-  applyBodyMode(ui);
 }
 
 /**
  * Shows the surface that belongs to the current body mode: the section builder
- * in sections mode, the Markdown body textarea in content mode. The content
- * thumbnail field is post-and-content-only, so it is handled explicitly rather
- * than through the class loops (which would otherwise fight over `hidden`).
+ * in sections mode, the Markdown body textarea in content mode.
  * @param {Object} ui - The UI elements.
  */
 export function applyBodyMode(ui) {
@@ -72,11 +67,6 @@ export function applyBodyMode(ui) {
   }
   for (const el of document.querySelectorAll('.content-only')) {
     el.hidden = !isContent;
-  }
-  const thumbField = document.getElementById('content-thumbnail-field');
-  if (thumbField) {
-    const isPage = (ui.getPageType ? ui.getPageType() : 'post') === 'page';
-    thumbField.hidden = !isContent || isPage;
   }
 }
 
@@ -99,6 +89,7 @@ function populatePageType(ui, d) {
     ui.navIndexInput.value = d.navIndex ?? '';
   }
   applyPageType(ui);
+  applyBodyMode(ui);
 }
 
 /**
@@ -132,8 +123,14 @@ export async function loadDraft(id, ui, renderList, tagEditor) {
   if (ui.contentInput) {
     ui.contentInput.value = content;
   }
-  if (ui.thumbnailInput) {
-    ui.thumbnailInput.value = d.thumbnail || '';
+  if (ui.socialImageInput) {
+    ui.socialImageInput.value = d.socialImage || '';
+    ui.canonicalUrlInput.value = d.canonicalUrl || '';
+    ui.bodyClassesInput.value = d.bodyClasses || '';
+    ui.topMessageTextInput.value = d.topMessageText || '';
+    ui.topMessageLinkUrlInput.value = d.topMessageLinkUrl || '';
+    ui.topMessageLinkLabelInput.value = d.topMessageLinkLabel || '';
+    ui.topMessageDismissibleToggle.checked = d.topMessageDismissible !== false;
   }
   loadSections(d);
   ui.aiWriterInput.value = '';

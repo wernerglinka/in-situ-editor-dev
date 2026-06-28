@@ -60,8 +60,21 @@ if (ui.bodyModeSelect) {
     doSync();
   };
 }
-if (ui.thumbnailInput) {
-  ui.thumbnailInput.oninput = doSync;
+// Page meta fields all feed the same sync; the dismissible toggle is a change.
+for (const el of [
+  ui.socialImageInput,
+  ui.canonicalUrlInput,
+  ui.bodyClassesInput,
+  ui.topMessageTextInput,
+  ui.topMessageLinkUrlInput,
+  ui.topMessageLinkLabelInput
+]) {
+  if (el) {
+    el.oninput = doSync;
+  }
+}
+if (ui.topMessageDismissibleToggle) {
+  ui.topMessageDismissibleToggle.onchange = doSync;
 }
 if (ui.showInMenuToggle) {
   ui.showInMenuToggle.onchange = () => {

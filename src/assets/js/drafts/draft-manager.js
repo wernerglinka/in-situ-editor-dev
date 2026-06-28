@@ -56,6 +56,13 @@ export async function createNewDraft(ui, loadDraftFn, renderListFn) {
     authors: [],
     tags: '',
     content: '',
+    socialImage: '',
+    canonicalUrl: '',
+    bodyClasses: '',
+    topMessageText: '',
+    topMessageLinkUrl: '',
+    topMessageLinkLabel: '',
+    topMessageDismissible: true,
     sections: [],
     imageFiles: [],
     lastModified: Date.now()
@@ -133,8 +140,15 @@ export function updateDraftData(id, ui) {
   if (ui.contentInput) {
     draft.content = ui.contentInput.value;
   }
-  if (ui.thumbnailInput) {
-    draft.thumbnail = ui.thumbnailInput.value;
+  // Page meta fields
+  if (ui.socialImageInput) {
+    draft.socialImage = ui.socialImageInput.value;
+    draft.canonicalUrl = ui.canonicalUrlInput.value;
+    draft.bodyClasses = ui.bodyClassesInput.value;
+    draft.topMessageText = ui.topMessageTextInput.value;
+    draft.topMessageLinkUrl = ui.topMessageLinkUrlInput.value;
+    draft.topMessageLinkLabel = ui.topMessageLinkLabelInput.value;
+    draft.topMessageDismissible = ui.topMessageDismissibleToggle.checked;
   }
   if (ui.getSections) {
     draft.sections = ui.getSections();
