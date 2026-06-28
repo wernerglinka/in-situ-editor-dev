@@ -58,8 +58,8 @@ publishes and what fields it carries:
   collection, and carries a date, authors, and tags. Images go under
   `/assets/images/blog/<slug>/`.
 - **Page** — publishes to `src/<slug>.md` (a top-level page like `/about/`),
-  with no date/authors/tags. Turn on **🧭 Show in site menu** and set a menu
-  label and order to put it in the main navigation. Images go under
+  with no date/authors/tags. Use **Show in site menu** in the Page meta
+  section (below) to put it in the main navigation. Images go under
   `/assets/images/<slug>/`.
 
 Switching type changes only which fields apply; your work is untouched.
@@ -78,13 +78,28 @@ of page type, so a post or a page can be either:
 
 Switching mode swaps the editing surface: the section builder in section
 mode, the Content textarea in content mode. Your other fields (title,
-description, menu settings) carry across either way.
+description, page meta) carry across either way. Publishing a content page
+with an empty body is refused — the body is the page.
 
-A content **post** has no section image to draw a card thumbnail from, so it
-shows a **Thumbnail / social image** field; the path you enter becomes both
-the post's card thumbnail and its social image. Content **pages** have no
-card, so they don't show the field. Publishing a content page with an empty
-body is refused — the body is the page.
+## Page meta
+
+The collapsible **Page meta** section at the top of the form holds the
+page-level metadata that you set once and rarely revisit. It applies to both
+posts and pages, in either body mode:
+
+- **Social image** — the share/social image (Open Graph). For a **post** it
+  also becomes the card thumbnail, so there's one path to keep current. Leave
+  it blank and a section-built page falls back to its first section image.
+- **Canonical URL** — overrides the page's canonical link. Leave blank to use
+  the page's own URL.
+- **Body classes** — classes added to the page's `<body>`. Defaults to
+  `sections-page` or `content-page` by body mode when left blank.
+- **Top message** — a dismissible banner shown above the site header. The
+  message body takes Markdown (bold, italics, an inline link), and you can
+  add a separate **Link URL** and **Link label** for a trailing call to
+  action. Clear the message to remove the banner.
+- **Show in site menu** (pages only) — adds the page to the main navigation
+  with a menu label and order.
 
 ## Building a post
 

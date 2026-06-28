@@ -124,6 +124,12 @@ post-mode UI and `postBlocks()`
 (`src/assets/js/utils/markdown-utils.js:118-135`), but it is the one piece
 that does not fall out for free.
 
+**Update:** this standalone thumbnail field was later folded into the
+**Page meta** section's single **Social image** field, which drives
+`seo.socialImage` for every page and `card.thumbnail` for posts (falling back
+to the first section image when blank in section mode). See the Page meta work
+for the unified field.
+
 ## Before relying on the render path
 
 Confirm the build actually runs `metalsmith-markdown` over body content in
