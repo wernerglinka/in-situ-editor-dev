@@ -18,6 +18,7 @@ package-lock.json
 *.njk
 # Vendored browser libs shipped with the admin editor
 src/assets/js/browser-fs-access/
+src/assets/js/easymde/
 src/assets/js/jszip/
 src/assets/js/marked/
 src/assets/js/prismjs/
