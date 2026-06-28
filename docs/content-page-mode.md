@@ -8,6 +8,20 @@ already done. The build has no markdown plugin (by design), so `simple.njk`'s
 `{{ contents | safe }}` shipped raw markdown. It now pipes the body through
 `string | mdToHTML`. Everything else below matched the implementation.
 
+## Stale extras are cleaned on conversion
+
+The editor carries unmanaged top-level frontmatter through `draft.extra` so a
+section page round-trips losslessly. Some of those keys are section-layout
+presentation hints (`hasHero`, and a `bodyClasses` of `sections-page`) that are
+meaningless on a content page. Converting a section page to content mode would
+otherwise drag them along, and that kind of cruft accumulates and bites later.
+
+So content mode sheds the section-layout keys on emit (`SECTION_LAYOUT_KEYS` in
+`markdown-utils.js`) and sets a clean `bodyClasses: content-page`; genuinely
+unknown keys are still preserved. The cleanup is emit-only — the draft keeps
+the keys, so switching back to section mode re-emits them unchanged, and the
+generic round-trip guarantee for section pages is untouched.
+
 ## Why
 
 Some authors want to create a simple page or post that is just frontmatter

@@ -118,6 +118,34 @@ export const pageTypeOf = (draft) => (draft && draft.pageType === 'page' ? 'page
 /** Resolves a draft's body mode, defaulting to the section builder. */
 export const bodyModeOf = (draft) => (draft && draft.bodyMode === 'content' ? 'content' : 'sections');
 
+/** The body class a content page carries (section pages use 'sections-page'). */
+const CONTENT_BODY_CLASS = 'content-page';
+
+/**
+ * Section-layout-only frontmatter keys. The editor carries unknown top-level
+ * keys through `draft.extra` so section pages round-trip losslessly, but these
+ * are presentation hints that only mean something to the section layout. A
+ * content page sheds them on emit so converting a section page to content mode
+ * doesn't drag stale layout hints along (they accumulate and bite later). The
+ * draft keeps them, so switching back to section mode re-emits them unchanged.
+ */
+const SECTION_LAYOUT_KEYS = [ 'hasHero', 'bodyClasses' ];
+
+/**
+ * The unmanaged top-level keys to carry onto the emitted page. Section mode
+ * carries them all; content mode drops the section-layout presentation keys.
+ * @param {Object} draft - The draft.
+ * @param {boolean} isContent - Whether the page is a content-body page.
+ * @return {Object} The keys to spread into the frontmatter.
+ */
+function carriedExtra(draft, isContent) {
+  const extra = draft.extra && typeof draft.extra === 'object' ? draft.extra : {};
+  if (!isContent) {
+    return extra;
+  }
+  return Object.fromEntries(Object.entries(extra).filter(([ k ]) => !SECTION_LAYOUT_KEYS.includes(k)));
+}
+
 /**
  * The post-only frontmatter blocks: the card (collections sort on card.date,
  * collection-list renders it), tags, and any ad classifier results.
@@ -194,8 +222,12 @@ export function generateMarkdown(draft, title, description, date, tagsValue, con
     layout: isContent ? CONTENT_LAYOUT : cfg.layout,
     draft: false,
     ...(isPost ? { bodyClass: '' } : {}),
-    // Top-level keys the editor doesn't manage, preserved from the source page.
-    ...(draft.extra && typeof draft.extra === 'object' ? draft.extra : {}),
+    // A content page sets its own clean body class; section pages carry theirs
+    // through `extra` (see carriedExtra), so this only applies in content mode.
+    ...(isContent ? { bodyClasses: CONTENT_BODY_CLASS } : {}),
+    // Top-level keys the editor doesn't manage, preserved from the source page
+    // (content mode sheds the section-layout presentation keys).
+    ...carriedExtra(draft, isContent),
     seo: {
       title: title || '',
       description: description || '',
