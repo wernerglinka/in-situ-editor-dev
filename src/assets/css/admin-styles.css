@@ -1118,6 +1118,11 @@ dialog p {
   max-width: 92vw;
   height: 82vh;
   padding: 0;
+}
+
+/* Only lay the dialog out when open; otherwise this author-origin display would
+   override the UA `dialog:not([open]) { display: none }` and show it on load. */
+.markdown-editor-dialog[open] {
   display: flex;
   flex-direction: column;
 }
