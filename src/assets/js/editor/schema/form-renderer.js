@@ -370,9 +370,11 @@ function hint(text) {
  * @return {HTMLElement} The array widget element.
  */
 function renderArray(node, obj, key, onChange, ctx) {
-  // CTA arrays render each entry as a collapsible card with a remove-only
-  // control; other arrays keep the move/remove controls and render flat.
+  // Every entry renders as a collapsible card. CTA entries carry a remove-only
+  // control (their order is irrelevant); every other array keeps move/remove.
   const isCtas = key === 'ctas';
+  const singular = (node.label || groupLabel(key)).replace(/s$/, '');
+  const childCtx = { ...ctx, depth: (ctx.depth || 0) + 1 };
   const wrap = document.createElement('div');
   wrap.className = 'section-array';
 
@@ -389,43 +391,12 @@ function renderArray(node, obj, key, onChange, ctx) {
     obj[key] = [];
   }
 
-  // Tracks which CTA items are open across re-renders (existing entries start
+  // Tracks which entries are open across re-renders (existing entries start
   // collapsed; a newly added one is opened by the add handler below).
   const expanded = new Set();
 
-  const renderPlainItem = (itemEl, item, index) => {
-    const controls = document.createElement('div');
-    controls.className = 'section-array-item-controls';
-    for (const [ act, symbol, title ] of [
-      [ 'up', '↑', 'Move up' ],
-      [ 'down', '↓', 'Move down' ],
-      [ 'remove', '✕', 'Remove' ]
-    ]) {
-      const b = document.createElement('button');
-      b.type = 'button';
-      b.className = 'button secondary small section-card-control';
-      b.textContent = symbol;
-      b.title = title;
-      b.disabled = (act === 'up' && index === 0) || (act === 'down' && index === obj[key].length - 1);
-      b.onclick = () => {
-        if (act === 'remove') {
-          obj[key].splice(index, 1);
-        } else {
-          const to = act === 'up' ? index - 1 : index + 1;
-          [ obj[key][index], obj[key][to] ] = [ obj[key][to], obj[key][index] ];
-        }
-        renderItems();
-        onChange();
-      };
-      controls.append(b);
-    }
-    itemEl.append(controls);
-    itemEl.append(renderFields(node.items, item, onChange, ctx));
-  };
-
-  const renderCtaItem = (itemEl, item, index) => {
+  const renderItem = (itemEl, item, index) => {
     const isOpen = expanded.has(item);
-    itemEl.classList.add('section-array-item-collapsible');
     itemEl.classList.toggle('is-collapsed', !isOpen);
 
     const header = document.createElement('div');
@@ -441,7 +412,7 @@ function renderArray(node, obj, key, onChange, ctx) {
     caret.textContent = '▸';
     caret.setAttribute('aria-hidden', 'true');
     const label = document.createElement('span');
-    label.textContent = `CTA ${index + 1}`;
+    label.textContent = isCtas ? `CTA ${index + 1}` : `${singular} ${index + 1}`;
     typeEl.append(caret, label);
 
     const toggle = () => {
@@ -465,23 +436,36 @@ function renderArray(node, obj, key, onChange, ctx) {
     const controls = document.createElement('div');
     controls.className = 'section-card-controls';
     controls.onclick = (e) => e.stopPropagation();
-    const remove = document.createElement('button');
-    remove.type = 'button';
-    remove.className = 'button secondary small section-card-control';
-    remove.textContent = '✕';
-    remove.title = 'Remove';
-    remove.onclick = () => {
-      expanded.delete(item);
-      obj[key].splice(index, 1);
-      renderItems();
-      onChange();
-    };
-    controls.append(remove);
+    const actions = isCtas
+      ? [ [ 'remove', '✕', 'Remove' ] ]
+      : [ [ 'up', '↑', 'Move up' ], [ 'down', '↓', 'Move down' ], [ 'remove', '✕', 'Remove' ] ];
+    for (const [ act, symbol, title ] of actions) {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'button secondary small section-card-control';
+      b.textContent = symbol;
+      b.title = title;
+      if (act !== 'remove') {
+        b.disabled = (act === 'up' && index === 0) || (act === 'down' && index === obj[key].length - 1);
+      }
+      b.onclick = () => {
+        if (act === 'remove') {
+          expanded.delete(item);
+          obj[key].splice(index, 1);
+        } else {
+          const to = act === 'up' ? index - 1 : index + 1;
+          [ obj[key][index], obj[key][to] ] = [ obj[key][to], obj[key][index] ];
+        }
+        renderItems();
+        onChange();
+      };
+      controls.append(b);
+    }
     header.append(typeEl, controls);
 
     const body = document.createElement('div');
     body.className = 'section-array-item-body';
-    body.append(renderFields(node.items, item, onChange, ctx));
+    body.append(renderFields(node.items, item, onChange, childCtx));
 
     itemEl.append(header, body);
   };
@@ -491,11 +475,7 @@ function renderArray(node, obj, key, onChange, ctx) {
     obj[key].forEach((item, index) => {
       const itemEl = document.createElement('div');
       itemEl.className = 'section-array-item';
-      if (isCtas) {
-        renderCtaItem(itemEl, item, index);
-      } else {
-        renderPlainItem(itemEl, item, index);
-      }
+      renderItem(itemEl, item, index);
       list.append(itemEl);
     });
   };
@@ -504,13 +484,11 @@ function renderArray(node, obj, key, onChange, ctx) {
   const addBtn = document.createElement('button');
   addBtn.type = 'button';
   addBtn.className = `button ${isCtas ? 'tertiary' : 'secondary'} small section-array-add`;
-  addBtn.textContent = isCtas ? 'Add CTA' : `+ Add ${(node.label || key).replace(/s$/, '')}`;
+  addBtn.textContent = isCtas ? 'Add CTA' : `+ Add ${singular}`;
   addBtn.onclick = () => {
     const item = materializeDefaults(node.items);
     obj[key].push(item);
-    if (isCtas) {
-      expanded.add(item);
-    }
+    expanded.add(item);
     renderItems();
     onChange();
   };
@@ -587,32 +565,31 @@ function findDiscriminator(fields) {
 }
 
 /**
- * Renders a group of nested fields. `containerFields` collapses into a
- * <details> disclosure; other groups render as a titled field group.
+ * Renders a group of nested fields as a collapsible <details> disclosure.
+ * `containerFields` keeps its own styling and stays closed; other groups open
+ * by default at the top level of a section and collapse when nested (inside an
+ * array entry or another group), so deep forms stay scannable.
  * @param {string} key - The group's key.
  * @param {Object} node - The group's field tree.
  * @param {Object} groupValues - The group's values object.
  * @param {Function} onChange - Called after every edit.
- * @param {Object} ctx - Editor context, threaded to nested fields.
+ * @param {Object} ctx - Editor context, threaded to nested fields. `ctx.depth`
+ *   is the group's nesting level (0 at the top of a section body).
  * @return {HTMLElement} The group element.
  */
 function renderGroup(key, node, groupValues, onChange, ctx) {
+  const depth = ctx.depth || 0;
+  const details = document.createElement('details');
   if (key === 'containerFields') {
-    const details = document.createElement('details');
     details.className = 'section-container-settings';
-    const summary = document.createElement('summary');
-    summary.textContent = groupLabel(key);
-    details.append(summary);
-    details.append(renderFields(node, groupValues, onChange, ctx));
-    return details;
+  } else {
+    details.className = 'section-field-group';
+    details.open = depth === 0;
   }
-
-  const fieldset = document.createElement('div');
-  fieldset.className = 'section-field-group';
-  const title = document.createElement('div');
-  title.className = 'section-field-group-label';
-  title.textContent = groupLabel(key);
-  fieldset.append(title);
-  fieldset.append(renderFields(node, groupValues, onChange, ctx));
-  return fieldset;
+  const summary = document.createElement('summary');
+  summary.className = 'section-field-group-label';
+  summary.textContent = node.label || groupLabel(key);
+  details.append(summary);
+  details.append(renderFields(node, groupValues, onChange, { ...ctx, depth: depth + 1 }));
+  return details;
 }

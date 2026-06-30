@@ -141,12 +141,19 @@ Every section generates its form from the component library's schema rather
 than from hand-written editor code, which is why each exposes the full set of
 fields its library section supports and is named after that section. The menu
 is built from the schema the build emits, so the editor offers whatever
-components a site defines with no per-type editor code. Within a section,
-repeatable fields add, remove, and reorder the same way the section stack
-does. Call-to-action buttons are the exception: a section starts with none,
-**Add CTA** appends one as its own collapsible card (which opens so you can
-fill it in), and each CTA carries only a remove control, since their order
-does not matter.
+components a site defines with no per-type editor code.
+
+Within a section, the form collapses the same way the section stack does, at
+every level. Repeatable entries (a hero slider's slides, for instance) are
+collapsible cards that add, remove, and reorder like the section stack; an
+existing entry loads collapsed and a newly added one opens. Field groups
+(Text, Image, Background, and so on) are collapsible disclosures too: a group
+at the top of a section opens by default, while a group nested inside an entry
+or another group starts collapsed, so a long form like a hero slide reads as a
+short list of parts you open as needed. Call-to-action buttons are the one
+variant: a section starts with none, **Add CTA** appends one as its own
+collapsible card, and each CTA carries only a remove control, since their
+order does not matter.
 
 Above the sections sit the post's metadata: title, description, date,
 authors, and tags. The title doubles as the post's URL slug

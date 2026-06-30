@@ -960,6 +960,21 @@ dialog p {
   opacity: 0.75;
 }
 
+/* Groups are <details> disclosures; the summary is the toggle. */
+.section-field-group > summary {
+  cursor: pointer;
+}
+
+.section-field-group > summary:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* A collapsed group keeps no trailing gap below its lone summary. */
+.section-field-group:not([open]) > summary {
+  margin-bottom: 0;
+}
+
 .section-field-checkbox .checkbox-label {
   display: flex;
   align-items: center;
@@ -988,28 +1003,13 @@ dialog p {
   margin-bottom: 0.75rem;
 }
 
+/* Array entries are collapsible cards (like a section card): the header is the
+   toggle, the body holds the form, and the controls sit beside the label. */
 .section-array-item {
-  position: relative;
   border: 1px solid var(--color-border-light);
   border-radius: 4px;
-  padding: 0.6rem;
-  padding-top: 1.8rem;
   margin-bottom: 0.5rem;
   background: rgba(0, 0, 0, 0.02);
-}
-
-.section-array-item-controls {
-  position: absolute;
-  top: 0.35rem;
-  right: 0.35rem;
-  display: flex;
-  gap: 0.25rem;
-}
-
-/* CTA entries are collapsible cards (like a section card): the header is the
-   toggle, the body holds the form, and only a remove control sits beside it. */
-.section-array-item.section-array-item-collapsible {
-  padding: 0;
   overflow: hidden;
 }
 
