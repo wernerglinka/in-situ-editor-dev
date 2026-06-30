@@ -509,7 +509,16 @@ function renderArray(node, obj, key, onChange, ctx) {
 export function renderFields(fields, values, onChange, ctx = {}) {
   const frag = document.createDocumentFragment();
   const discriminator = findDiscriminator(fields);
+  // The section-level disable toggle is hoisted to the top of the section body
+  // (right under the card header) instead of rendering in its schema position.
+  const isTopLevel = (ctx.depth || 0) === 0;
+  if (isTopLevel && isLeaf(fields.isDisabled)) {
+    frag.append(renderLeaf(fields.isDisabled, values, 'isDisabled', onChange, ctx));
+  }
   for (const [ key, node ] of Object.entries(fields)) {
+    if (isTopLevel && key === 'isDisabled') {
+      continue; // already rendered first, above
+    }
     // A discriminator's variant groups are mutually exclusive: show only the
     // one the discriminator currently selects (e.g. multi-media's mediaType
     // picks image / video / audio / icon / lottie).
