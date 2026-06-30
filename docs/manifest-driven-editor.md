@@ -119,8 +119,9 @@ Composition has two forms, both expanded by the bundler:
   and `"ctas": { "$use": "ctas" }` yields that array field.
 - `$extends` spreads one or more partials' fields **into the current level**
   rather than nesting them. The section-root fields every section shares
-  (the `containerFields` wrapper and `isDisabled`) live on the `commons`
-  partial, and each section pulls them in with `"$extends": ["commons"]`.
+  (`isDisabled`, the wrapper element fields `containerTag`/`id`/`classes`, and
+  the `containerFields` group) live on the `commons` partial, and each section
+  pulls them in with `"$extends": ["commons"]`.
 
 Every `$use` and `$extends` target should also appear in `requires`.
 
@@ -157,6 +158,9 @@ section-root wrapper:
 // sections/commons
 "fields": {
   "isDisabled": { "widget": "checkbox", "label": "Disable section (hide from build)", "default": false },
+  "containerTag": { "widget": "select", "label": "Container tag", "enum": ["section","article","aside","div"], "default": "section" },
+  "id":      { "widget": "text", "label": "Section ID", "default": "" },
+  "classes": { "widget": "text", "label": "CSS classes", "default": "" },
   "containerFields": {
     "inContainer": { "widget": "checkbox", "label": "Constrain to container width", "default": true },
     "background": {
@@ -297,10 +301,14 @@ The change spans three repos, so it is staged to keep each shippable.
    loader (`schema/schema-loader.js`) fetches the artifact once and caches
    it; a generic recursive form renderer (`schema/form-renderer.js`) renders
    any field tree (text, markdown, select, checkbox, image-as-text, and the
-   repeatable `array` widget, with `containerFields` collapsing into a
-   disclosure pane); a generic serializer (`schema/serializer.js`) walks the
-   same tree to emit nested library frontmatter, filling defaults and adding
-   the wrapper fields the template needs (`containerTag`, `id`, `classes`).
+   repeatable `array` widget; every group collapses into a disclosure pane and
+   each array entry into its own collapsible card); a generic serializer
+   (`schema/serializer.js`) walks the same tree to emit nested library
+   frontmatter, filling defaults along the way. The section wrapper fields
+   (`containerTag`, `id`, `classes`) are part of the schema now (commons), so
+   they serialize like any other leaf; their per-type defaults (e.g. `banner`
+   -> `aside`/`cta-banner`) are seeded when a section is created, not at
+   serialize time.
    `rich-text`, `image-only`, and `banner` run end to end on this path: their
    add buttons materialize defaults from the schema, the form binds into a
    library-shaped values object, and the emitter serializes it (notably
