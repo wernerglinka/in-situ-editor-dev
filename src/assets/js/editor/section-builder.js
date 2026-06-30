@@ -120,14 +120,15 @@ function renderCard(section, index) {
   const card = document.createElement('div');
   card.className = `section-card section-card-${kind}${isOpen ? '' : ' is-collapsed'}`;
 
+  // The whole header is the collapse toggle (like a <summary>); the controls
+  // sit inside it and stop propagation so moving/removing never also toggles.
   const header = document.createElement('div');
   header.className = 'section-card-header';
-  // The type label doubles as the collapse toggle; controls sit beside it and
-  // stop propagation so moving/removing never also toggles the body.
-  const typeEl = document.createElement('button');
-  typeEl.type = 'button';
+  header.setAttribute('role', 'button');
+  header.setAttribute('tabindex', '0');
+  header.setAttribute('aria-expanded', String(isOpen));
+  const typeEl = document.createElement('span');
   typeEl.className = 'section-card-type';
-  typeEl.setAttribute('aria-expanded', String(isOpen));
   const caret = document.createElement('span');
   caret.className = 'section-card-caret';
   caret.textContent = '▸';
@@ -135,7 +136,7 @@ function renderCard(section, index) {
   const label = document.createElement('span');
   label.textContent = typeLabel(kind);
   typeEl.append(caret, label);
-  typeEl.onclick = () => {
+  const toggle = () => {
     const nowOpen = !expanded.has(section);
     if (nowOpen) {
       expanded.add(section);
@@ -143,10 +144,19 @@ function renderCard(section, index) {
       expanded.delete(section);
     }
     card.classList.toggle('is-collapsed', !nowOpen);
-    typeEl.setAttribute('aria-expanded', String(nowOpen));
+    header.setAttribute('aria-expanded', String(nowOpen));
+  };
+  header.onclick = toggle;
+  header.onkeydown = (e) => {
+    // Only the header itself, not its control buttons, toggles on key press.
+    if (e.target === header && (e.key === 'Enter' || e.key === ' ')) {
+      e.preventDefault();
+      toggle();
+    }
   };
   const controls = document.createElement('div');
   controls.className = 'section-card-controls';
+  controls.onclick = (e) => e.stopPropagation();
   for (const [ act, symbol, title ] of [
     [ 'up', '↑', 'Move up' ],
     [ 'down', '↓', 'Move down' ],
@@ -154,7 +164,7 @@ function renderCard(section, index) {
   ]) {
     const b = document.createElement('button');
     b.type = 'button';
-    b.className = 'btn section-card-control';
+    b.className = 'button secondary small section-card-control';
     b.textContent = symbol;
     b.title = title;
     b.disabled = (act === 'up' && index === 0) || (act === 'down' && index === sections.length - 1);

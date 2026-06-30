@@ -127,9 +127,10 @@ Add a section from the **Add a section** menu below the stack; reorder with
 
 Each section's form is collapsible. A page opens with every section
 collapsed, so the stack reads as a short list of section types and you can
-see the page's makeup at a glance and jump to the one you want. Click a
-section's header to open or close its form; a section you just added opens
-automatically so you can fill it in.
+see the page's makeup at a glance and jump to the one you want. Click
+anywhere on a section's header to open or close its form (the ↑/↓/✕
+controls in the header act on the section without toggling it); a section
+you just added opens automatically so you can fill it in.
 
 The drafts panel on the left and the live preview on the right each collapse
 from the toolbar toggles (**Drafts** and **Preview**) above the form.

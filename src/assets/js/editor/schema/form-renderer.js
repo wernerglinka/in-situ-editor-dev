@@ -297,7 +297,7 @@ function renderImage(node, obj, key, onChange, ctx) {
 
   const btn = document.createElement('button');
   btn.type = 'button';
-  btn.className = 'btn';
+  btn.className = 'button secondary small';
   btn.textContent = 'Choose image';
 
   const fileInput = document.createElement('input');
@@ -401,7 +401,7 @@ function renderArray(node, obj, key, onChange, ctx) {
       ]) {
         const b = document.createElement('button');
         b.type = 'button';
-        b.className = 'btn section-card-control';
+        b.className = 'button secondary small section-card-control';
         b.textContent = symbol;
         b.title = title;
         b.disabled = (act === 'up' && index === 0) || (act === 'down' && index === obj[key].length - 1);
@@ -424,10 +424,11 @@ function renderArray(node, obj, key, onChange, ctx) {
   };
   renderItems();
 
+  const isCtas = key === 'ctas';
   const addBtn = document.createElement('button');
   addBtn.type = 'button';
-  addBtn.className = 'btn section-array-add';
-  addBtn.textContent = `+ Add ${(node.label || key).replace(/s$/, '')}`;
+  addBtn.className = `button ${isCtas ? 'tertiary' : 'secondary'} small section-array-add`;
+  addBtn.textContent = isCtas ? 'Add CTA' : `+ Add ${(node.label || key).replace(/s$/, '')}`;
   addBtn.onclick = () => {
     obj[key].push(materializeDefaults(node.items));
     renderItems();
