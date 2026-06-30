@@ -42,6 +42,10 @@ const GROUP_LABELS = {
   ctas: 'Call-to-action buttons'
 };
 
+/** Section-level setting leaves, hoisted above the content fields in this
+ * order so every section's settings sit together at the top. */
+const SECTION_SETTING_KEYS = [ 'isDisabled', 'containerTag', 'id', 'classes' ];
+
 /** @param {string} key @return {string} A heading for a group with no label. */
 function groupLabel(key) {
   return GROUP_LABELS[key] || key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, ' $1');
@@ -509,14 +513,20 @@ function renderArray(node, obj, key, onChange, ctx) {
 export function renderFields(fields, values, onChange, ctx = {}) {
   const frag = document.createDocumentFragment();
   const discriminator = findDiscriminator(fields);
-  // The section-level disable toggle is hoisted to the top of the section body
-  // (right under the card header) instead of rendering in its schema position.
+  // Section-level settings are hoisted to the top of the section body (right
+  // under the card header), in this order, so all of them sit above the
+  // content fields. containerFields keeps its own place (the collapsed
+  // CONTAINER SETTINGS group, normally at the bottom).
   const isTopLevel = (ctx.depth || 0) === 0;
-  if (isTopLevel && isLeaf(fields.isDisabled)) {
-    frag.append(renderLeaf(fields.isDisabled, values, 'isDisabled', onChange, ctx));
+  if (isTopLevel) {
+    for (const key of SECTION_SETTING_KEYS) {
+      if (isLeaf(fields[key])) {
+        frag.append(renderLeaf(fields[key], values, key, onChange, ctx));
+      }
+    }
   }
   for (const [ key, node ] of Object.entries(fields)) {
-    if (isTopLevel && key === 'isDisabled') {
+    if (isTopLevel && SECTION_SETTING_KEYS.includes(key)) {
       continue; // already rendered first, above
     }
     // A discriminator's variant groups are mutually exclusive: show only the

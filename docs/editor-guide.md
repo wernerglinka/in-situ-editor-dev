@@ -155,14 +155,15 @@ variant: a section starts with none, **Add CTA** appends one as its own
 collapsible card, and each CTA carries only a remove control, since their
 order does not matter.
 
-Every section also carries the same wrapper settings, regardless of type.
-The **Disable section** toggle sits at the top, right under the header.
-Lower down, **Container tag** chooses the HTML element the section renders
-as (`section`, `article`, `aside`, or `div`; `section` by default, though a
-few types seed their own, e.g. a banner starts as `aside`), and **Section
-ID** and **CSS classes** set an `id` and extra classes on that element for
-linking and styling. **Container settings** (the collapsed group) holds the
-layout options: containment, animation, margins, padding, and background.
+Every section also carries the same wrapper settings, regardless of type,
+grouped together at the top of the form before any content. **Disable
+section** comes first, then **Container tag** (the HTML element the section
+renders as: `section`, `article`, `aside`, or `div`; `section` by default,
+though a few types seed their own, e.g. a banner starts as `aside`), then
+**Section ID** and **CSS classes**, which set an `id` and extra classes on
+that element for linking and styling. **Container settings** (the collapsed
+group at the bottom) holds the layout options: containment, animation,
+margins, padding, and background.
 
 Above the sections sit the post's metadata: title, description, date,
 authors, and tags. The title doubles as the post's URL slug
