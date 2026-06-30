@@ -142,8 +142,11 @@ than from hand-written editor code, which is why each exposes the full set of
 fields its library section supports and is named after that section. The menu
 is built from the schema the build emits, so the editor offers whatever
 components a site defines with no per-type editor code. Within a section,
-repeatable fields like call-to-action buttons add, remove, and reorder the
-same way the section stack does.
+repeatable fields add, remove, and reorder the same way the section stack
+does. Call-to-action buttons are the exception: a section starts with none,
+**Add CTA** appends one as its own collapsible card (which opens so you can
+fill it in), and each CTA carries only a remove control, since their order
+does not matter.
 
 Above the sections sit the post's metadata: title, description, date,
 authors, and tags. The title doubles as the post's URL slug

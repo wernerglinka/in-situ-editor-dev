@@ -1006,6 +1006,38 @@ dialog p {
   gap: 0.25rem;
 }
 
+/* CTA entries are collapsible cards (like a section card): the header is the
+   toggle, the body holds the form, and only a remove control sits beside it. */
+.section-array-item.section-array-item-collapsible {
+  padding: 0;
+  overflow: hidden;
+}
+
+.section-array-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.4rem 0.6rem;
+  cursor: pointer;
+}
+
+.section-array-item-header:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: -2px;
+}
+
+.section-array-item.is-collapsed .section-card-caret {
+  transform: rotate(0deg);
+}
+
+.section-array-item.is-collapsed .section-array-item-body {
+  display: none;
+}
+
+.section-array-item-body {
+  padding: 0 0.6rem 0.6rem;
+}
+
 .sections-empty {
   margin: 0;
 }

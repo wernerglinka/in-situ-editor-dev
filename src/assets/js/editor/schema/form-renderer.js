@@ -370,6 +370,9 @@ function hint(text) {
  * @return {HTMLElement} The array widget element.
  */
 function renderArray(node, obj, key, onChange, ctx) {
+  // CTA arrays render each entry as a collapsible card with a remove-only
+  // control; other arrays keep the move/remove controls and render flat.
+  const isCtas = key === 'ctas';
   const wrap = document.createElement('div');
   wrap.className = 'section-array';
 
@@ -386,51 +389,128 @@ function renderArray(node, obj, key, onChange, ctx) {
     obj[key] = [];
   }
 
+  // Tracks which CTA items are open across re-renders (existing entries start
+  // collapsed; a newly added one is opened by the add handler below).
+  const expanded = new Set();
+
+  const renderPlainItem = (itemEl, item, index) => {
+    const controls = document.createElement('div');
+    controls.className = 'section-array-item-controls';
+    for (const [ act, symbol, title ] of [
+      [ 'up', '↑', 'Move up' ],
+      [ 'down', '↓', 'Move down' ],
+      [ 'remove', '✕', 'Remove' ]
+    ]) {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'button secondary small section-card-control';
+      b.textContent = symbol;
+      b.title = title;
+      b.disabled = (act === 'up' && index === 0) || (act === 'down' && index === obj[key].length - 1);
+      b.onclick = () => {
+        if (act === 'remove') {
+          obj[key].splice(index, 1);
+        } else {
+          const to = act === 'up' ? index - 1 : index + 1;
+          [ obj[key][index], obj[key][to] ] = [ obj[key][to], obj[key][index] ];
+        }
+        renderItems();
+        onChange();
+      };
+      controls.append(b);
+    }
+    itemEl.append(controls);
+    itemEl.append(renderFields(node.items, item, onChange, ctx));
+  };
+
+  const renderCtaItem = (itemEl, item, index) => {
+    const isOpen = expanded.has(item);
+    itemEl.classList.add('section-array-item-collapsible');
+    itemEl.classList.toggle('is-collapsed', !isOpen);
+
+    const header = document.createElement('div');
+    header.className = 'section-array-item-header';
+    header.setAttribute('role', 'button');
+    header.setAttribute('tabindex', '0');
+    header.setAttribute('aria-expanded', String(isOpen));
+
+    const typeEl = document.createElement('span');
+    typeEl.className = 'section-card-type';
+    const caret = document.createElement('span');
+    caret.className = 'section-card-caret';
+    caret.textContent = '▸';
+    caret.setAttribute('aria-hidden', 'true');
+    const label = document.createElement('span');
+    label.textContent = `CTA ${index + 1}`;
+    typeEl.append(caret, label);
+
+    const toggle = () => {
+      const nowOpen = !expanded.has(item);
+      if (nowOpen) {
+        expanded.add(item);
+      } else {
+        expanded.delete(item);
+      }
+      itemEl.classList.toggle('is-collapsed', !nowOpen);
+      header.setAttribute('aria-expanded', String(nowOpen));
+    };
+    header.onclick = toggle;
+    header.onkeydown = (e) => {
+      if (e.target === header && (e.key === 'Enter' || e.key === ' ')) {
+        e.preventDefault();
+        toggle();
+      }
+    };
+
+    const controls = document.createElement('div');
+    controls.className = 'section-card-controls';
+    controls.onclick = (e) => e.stopPropagation();
+    const remove = document.createElement('button');
+    remove.type = 'button';
+    remove.className = 'button secondary small section-card-control';
+    remove.textContent = '✕';
+    remove.title = 'Remove';
+    remove.onclick = () => {
+      expanded.delete(item);
+      obj[key].splice(index, 1);
+      renderItems();
+      onChange();
+    };
+    controls.append(remove);
+    header.append(typeEl, controls);
+
+    const body = document.createElement('div');
+    body.className = 'section-array-item-body';
+    body.append(renderFields(node.items, item, onChange, ctx));
+
+    itemEl.append(header, body);
+  };
+
   const renderItems = () => {
     list.replaceChildren();
     obj[key].forEach((item, index) => {
       const itemEl = document.createElement('div');
       itemEl.className = 'section-array-item';
-
-      const controls = document.createElement('div');
-      controls.className = 'section-array-item-controls';
-      for (const [ act, symbol, title ] of [
-        [ 'up', '↑', 'Move up' ],
-        [ 'down', '↓', 'Move down' ],
-        [ 'remove', '✕', 'Remove' ]
-      ]) {
-        const b = document.createElement('button');
-        b.type = 'button';
-        b.className = 'button secondary small section-card-control';
-        b.textContent = symbol;
-        b.title = title;
-        b.disabled = (act === 'up' && index === 0) || (act === 'down' && index === obj[key].length - 1);
-        b.onclick = () => {
-          if (act === 'remove') {
-            obj[key].splice(index, 1);
-          } else {
-            const to = act === 'up' ? index - 1 : index + 1;
-            [ obj[key][index], obj[key][to] ] = [ obj[key][to], obj[key][index] ];
-          }
-          renderItems();
-          onChange();
-        };
-        controls.append(b);
+      if (isCtas) {
+        renderCtaItem(itemEl, item, index);
+      } else {
+        renderPlainItem(itemEl, item, index);
       }
-      itemEl.append(controls);
-      itemEl.append(renderFields(node.items, item, onChange, ctx));
       list.append(itemEl);
     });
   };
   renderItems();
 
-  const isCtas = key === 'ctas';
   const addBtn = document.createElement('button');
   addBtn.type = 'button';
   addBtn.className = `button ${isCtas ? 'tertiary' : 'secondary'} small section-array-add`;
   addBtn.textContent = isCtas ? 'Add CTA' : `+ Add ${(node.label || key).replace(/s$/, '')}`;
   addBtn.onclick = () => {
-    obj[key].push(materializeDefaults(node.items));
+    const item = materializeDefaults(node.items);
+    obj[key].push(item);
+    if (isCtas) {
+      expanded.add(item);
+    }
     renderItems();
     onChange();
   };
