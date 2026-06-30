@@ -8,7 +8,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
 import { materializeDefaults, isLeaf, isGroup, isArrayField } from '../src/assets/js/editor/schema/field-utils.js';
-import { serializeSection, firstSectionImage } from '../src/assets/js/editor/schema/serializer.js';
+import { serializeSection, firstSectionImage, WRAPPER } from '../src/assets/js/editor/schema/serializer.js';
 import { hydrateSection, hydrateSections } from '../src/assets/js/editor/schema/hydrate.js';
 
 // A field tree shaped like a real section: a group, an array of objects,
@@ -32,6 +32,9 @@ const fields = {
     }
   },
   isDisabled: { widget: 'checkbox', label: 'Disable', default: false },
+  containerTag: { widget: 'select', label: 'Container tag', enum: [ 'section', 'article', 'aside', 'div' ], default: 'section' },
+  id: { widget: 'text', label: 'Section ID', default: '' },
+  classes: { widget: 'text', label: 'CSS classes', default: '' },
   containerFields: {
     inContainer: { widget: 'checkbox', label: 'In container', default: true },
     background: {
@@ -56,11 +59,16 @@ test('materializeDefaults builds the nested default tree', () => {
     image: { src: '', alt: '' },
     ctas: [],
     isDisabled: false,
+    containerTag: 'section',
+    id: '',
+    classes: '',
     containerFields: { inContainer: true, background: { color: '', image: '' } }
   });
 });
 
-test('serializeSection adds wrapper fields and keeps the nested shape', () => {
+test('serializeSection emits the schema wrapper fields and keeps the nested shape', () => {
+  // containerTag/id/classes are ordinary schema leaves now, so they serialize
+  // from their defaults (or the values) like any other field.
   const values = materializeDefaults(fields);
   values.text.title = 'Hello';
   const out = serializeSection('rich-text', values, fields, 'my-post');
@@ -73,8 +81,13 @@ test('serializeSection adds wrapper fields and keeps the nested shape', () => {
   assert.deepEqual(out.ctas, []);
 });
 
-test('banner gets its aside/cta-banner wrapper override', () => {
-  const out = serializeSection('banner', materializeDefaults(fields), fields, 'my-post');
+test('WRAPPER seeds per-type creation defaults; serialize is faithful to them', () => {
+  // The per-type override (banner -> aside/cta-banner) is applied when a
+  // section is created (section-builder's newSection), not at serialize time;
+  // serialize just emits whatever the values hold.
+  assert.deepEqual(WRAPPER.banner, { containerTag: 'aside', classes: 'cta-banner' });
+  const values = { ...materializeDefaults(fields), ...WRAPPER.banner };
+  const out = serializeSection('banner', values, fields, 'my-post');
   assert.equal(out.containerTag, 'aside');
   assert.equal(out.classes, 'cta-banner');
 });

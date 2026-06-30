@@ -16,6 +16,7 @@ import { loadSchema, getSectionFields, getSectionTypes } from './schema/schema-l
 import { loadSiteData } from './schema/site-data-loader.js';
 import { materializeDefaults } from './schema/field-utils.js';
 import { renderFields } from './schema/form-renderer.js';
+import { WRAPPER } from './schema/serializer.js';
 
 /**
  * The card header label for a section type: its section name, title-cased
@@ -53,7 +54,9 @@ const expanded = new WeakSet();
  * @return {Object} The section values object, tagged with sectionType.
  */
 function newSection(type) {
-  return { sectionType: type, ...materializeDefaults(getSectionFields(type)) };
+  // Seed the per-type wrapper defaults (e.g. banner -> aside/cta-banner) over
+  // the schema defaults; containerTag/id/classes are editable from there.
+  return { sectionType: type, ...materializeDefaults(getSectionFields(type)), ...WRAPPER[type] };
 }
 
 /**

@@ -11,6 +11,22 @@
       "label": "Disable section (hide from build)",
       "default": false
     },
+    "containerTag": {
+      "widget": "select",
+      "label": "Container tag",
+      "enum": ["section", "article", "aside", "div"],
+      "default": "section"
+    },
+    "id": {
+      "widget": "text",
+      "label": "Section ID",
+      "default": ""
+    },
+    "classes": {
+      "widget": "text",
+      "label": "CSS classes",
+      "default": ""
+    },
     "containerFields": {
       "inContainer": {
         "widget": "checkbox",
