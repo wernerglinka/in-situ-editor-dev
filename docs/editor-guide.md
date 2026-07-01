@@ -188,6 +188,20 @@ The rendered view needs the local preview server running. Start the site with
 `netlify dev` (not the plain dev server) so the render endpoint is available; if
 it is not reachable the pane says so and the YAML view still works.
 
+## Editing in the preview
+
+In the rendered view you can edit a section's text straight on the page. Hover a
+title, lead-in, or subtitle and it highlights; click to place the cursor, type,
+and click away (or press Enter) to commit. The change flows to the matching form
+field, so the two stay in step and it saves like any other edit. Prose is
+Markdown, so clicking a prose block opens the Markdown editor overlay rather than
+editing in place.
+
+This edits text that is already there; adding a field that's currently empty, or
+anything structural (adding, reordering, or removing sections, choosing images),
+is still done in the form on the left. A structural change takes the moment the
+preview needs to re-render; a text tweak shows as you type.
+
 ## The Markdown editor
 
 Every Markdown field — a section's prose fields and the **Content** body in

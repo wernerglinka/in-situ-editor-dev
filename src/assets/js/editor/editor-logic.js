@@ -86,10 +86,116 @@ async function renderPreviewFrame(ui, ...args) {
       if (frame.contentWindow) {
         frame.contentWindow.scrollTo(0, prevScroll);
       }
+      wireInlineEditing(frame);
     },
     { once: true }
   );
   frame.srcdoc = html;
+}
+
+/**
+ * The style injected into the preview frame to signal which text is editable
+ * in place and to give focus a clear affordance.
+ */
+const INLINE_EDIT_STYLE = `
+  [data-field][contenteditable]:hover { outline: 1px dashed rgba(80,120,255,.55); outline-offset: 3px; }
+  [data-field][contenteditable]:focus { outline: 2px solid rgba(80,120,255,.9); outline-offset: 3px; cursor: text; }
+  [data-field-markdown] { cursor: pointer; }
+  [data-field-markdown]:hover { outline: 1px dashed rgba(80,120,255,.55); outline-offset: 3px; }
+`;
+
+/**
+ * Makes the rendered preview editable in place. Plain-string fields (marked
+ * data-field) become contenteditable and commit on blur; Markdown prose
+ * (data-field-markdown) opens the field's Markdown overlay on click. Both route
+ * the edit through the matching form control, so the existing bind →
+ * persist → re-render pipeline does the actual work. Re-run on every frame load
+ * since each render replaces the document.
+ * @param {HTMLIFrameElement} frame - The preview iframe.
+ */
+function wireInlineEditing(frame) {
+  const doc = frame.contentDocument;
+  if (!doc || !doc.body) {
+    return;
+  }
+  if (doc.head) {
+    const style = doc.createElement('style');
+    style.textContent = INLINE_EDIT_STYLE;
+    doc.head.append(style);
+  }
+
+  for (const el of doc.querySelectorAll('[data-field]:not([data-field-markdown])')) {
+    el.contentEditable = 'plaintext-only';
+    el.spellcheck = false;
+    let original = '';
+    el.addEventListener('focus', () => {
+      original = el.textContent.trim();
+    });
+    // These fields are single-line; Enter commits rather than inserting a break.
+    el.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        el.blur();
+      }
+    });
+    el.addEventListener('blur', () => {
+      const value = el.textContent.trim();
+      if (value !== original) {
+        commitInlineEdit(el, value);
+      }
+    });
+  }
+
+  for (const el of doc.querySelectorAll('[data-field-markdown]')) {
+    el.title = 'Click to edit in the Markdown editor';
+    el.addEventListener('click', () => openProseEditor(el));
+  }
+}
+
+/**
+ * Finds the form control that backs a preview element, matching on the
+ * section index (nearest data-section-index ancestor) and the field path.
+ * @param {Element} el - The edited element in the preview frame.
+ * @return {HTMLElement|null} The form input/textarea, or null if not found.
+ */
+function formControlFor(el) {
+  const wrap = el.closest('[data-section-index]');
+  if (!wrap) {
+    return null;
+  }
+  const index = wrap.getAttribute('data-section-index');
+  const path = el.getAttribute('data-field');
+  return document.querySelector(`#sections-list [data-section-index="${index}"] [data-field-path="${path}"]`);
+}
+
+/**
+ * Writes an inline text edit back through its form control: set the value and
+ * dispatch `input`, which fires the control's existing handler (mutate model,
+ * sync, re-render preview). No-op if the control can't be found.
+ * @param {Element} el - The edited preview element.
+ * @param {string} value - The new text.
+ */
+function commitInlineEdit(el, value) {
+  const input = formControlFor(el);
+  if (!input) {
+    return;
+  }
+  input.value = value;
+  input.dispatchEvent(new Event('input', { bubbles: true }));
+}
+
+/**
+ * Opens the Markdown overlay for a prose field by triggering its form field's
+ * Expand button. The overlay writes back by dispatching `input` on the
+ * textarea, so saving flows through the same pipeline as a form edit.
+ * @param {Element} el - The clicked prose element in the preview frame.
+ */
+function openProseEditor(el) {
+  const textarea = formControlFor(el);
+  const expandBtn = textarea && textarea.parentElement && textarea.parentElement.querySelector('button');
+  if (expandBtn) {
+    expandBtn.click();
+  }
 }
 
 /**
