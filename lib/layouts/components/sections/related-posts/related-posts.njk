@@ -53,7 +53,7 @@
 {% if resolved.length %}
   <div class="content container{% if renderCards %} has-card-list{% endif %}">
     {% if section.text %}
-      {{ text(section.text) }}
+      {{ text(section.text, "text") }}
     {% endif %}
 
     {% if renderCards %}

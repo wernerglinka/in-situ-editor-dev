@@ -30,7 +30,7 @@
   {% if section.text | length > 0 %}
     <div class="text flow">
       {% if section.text %}
-        {{ text(section.text)}}
+        {{ text(section.text, "text")}}
       {% endif %}
       {% if processedCtas | hasCtas %}
         {{ ctas(processedCtas) }}

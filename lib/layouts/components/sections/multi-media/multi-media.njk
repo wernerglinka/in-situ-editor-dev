@@ -31,7 +31,7 @@
   {% if section.text | hasText %}
     <div class="text flow">
       {% if section.text %}
-        <div class="prose flow">{{ text(section.text)}}</div>
+        <div class="prose flow">{{ text(section.text, "text")}}</div>
       {% endif %}
       {% if section.ctas | hasCtas %}
         {{ ctas(section.ctas) }}

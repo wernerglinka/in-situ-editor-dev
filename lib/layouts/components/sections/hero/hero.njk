@@ -16,7 +16,7 @@
   {% if section.text or (section.ctas | hasCtas) %}
     <div class="text flow">
       {% if section.text %}
-        <div class="flow">{{ text(section.text)}}</div>
+        <div class="flow">{{ text(section.text, "text")}}</div>
       {% endif %}
       {% if section.ctas | hasCtas %}
         {{ ctas(section.ctas) }}

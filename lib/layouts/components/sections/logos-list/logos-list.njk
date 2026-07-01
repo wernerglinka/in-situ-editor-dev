@@ -34,7 +34,7 @@
 {# if there is text render the text block #}
 {% if section.text | hasText %}
   <div class="text flow {% if section.hasCenteredContent %}is-centered{% endif %}">
-    {{ text(section.text)}}
+    {{ text(section.text, "text")}}
   </div>
 {% endif %}
 

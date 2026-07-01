@@ -100,6 +100,12 @@ export function renderPage(frontmatter = {}, opts = {}) {
   const { previewMode = true } = opts;
   const nj = getEnv();
 
+  // Nunjucks macros (the shared text/ctas/image partials) can't see the render
+  // context, only env globals — so previewMode must be a global for those to
+  // emit their data-field source-mapping markers. Set per call since the env is
+  // cached. Absent in the production build's env, so builds emit no markers.
+  nj.addGlobal('previewMode', previewMode);
+
   const isContent = frontmatter.bodyMode === 'content';
   const template = isContent ? 'pages/simple.njk' : 'pages/sections.njk';
 
