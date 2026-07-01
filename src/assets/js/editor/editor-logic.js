@@ -9,6 +9,36 @@ import { buildFrontmatter, generateMarkdown } from '../utils/markdown-utils.js';
 const PREVIEW_ENDPOINT = '/.netlify/functions/preview';
 
 /**
+ * Whether the admin is running against a local dev server rather than the
+ * deployed site. This decides the audience for any "backend unavailable"
+ * messaging: on localhost the reader is a developer who likely forgot
+ * `netlify dev` (actionable); on the deployed site the reader is a content
+ * editor with only a browser and a Netlify login, for whom the backend is
+ * deployed by Netlify and any outage is transient and not theirs to fix.
+ */
+export const IS_LOCAL_DEV =
+  /^(localhost|127\.0\.0\.1|::1)$/.test(window.location.hostname) || window.location.hostname.endsWith('.local');
+
+/**
+ * Editor-facing message for an unreachable render backend. No dev jargon: a
+ * content editor cannot act on `netlify dev`, so point at the YAML fallback and
+ * a reload, and defer anything real to the site administrator.
+ */
+const RENDER_UNAVAILABLE_EDITOR =
+  'The live preview is temporarily unavailable. Your content is safe and the YAML view still ' +
+  'shows it. Try again in a moment or reload the page; if it keeps happening, let your site ' +
+  'administrator know.';
+
+/**
+ * Picks the audience-appropriate detail for an unreachable-backend notice.
+ * @param {string} devDetail - The developer-facing detail (localhost only).
+ * @return {string} The detail to show given the current environment.
+ */
+function unavailableDetail(devDetail) {
+  return IS_LOCAL_DEV ? devDetail : RENDER_UNAVAILABLE_EDITOR;
+}
+
+/**
  * Short hint for the disabled Rendered toggle's hover tooltip. The plain
  * `npm start` dev server serves the site but not the Functions runtime the
  * render backend lives in.
@@ -111,14 +141,17 @@ async function renderPreviewFrame(ui, ...args) {
     if (res.status === 404) {
       // Server is up (e.g. plain `npm start`) but the Functions runtime isn't,
       // so the request 404s with the dev server's own error page rather than a
-      // rendered document. The function itself never returns 404.
-      html = renderNotice('Preview render needs `netlify dev`', NETLIFY_DEV_HINT);
+      // rendered document. The function itself never returns 404, so in
+      // production this branch effectively doesn't happen.
+      html = renderNotice('Live preview unavailable', unavailableDetail(NETLIFY_DEV_HINT));
     } else if (!res.ok) {
-      html = renderNotice('Preview render failed', html);
+      // A real backend error (e.g. 500). Show the raw body to a developer; keep
+      // it plain for a content editor.
+      html = renderNotice('Live preview unavailable', unavailableDetail(html));
     }
   } catch {
     // Nothing is listening at the endpoint at all.
-    html = renderNotice('Rendered preview unavailable', NETLIFY_DEV_HINT);
+    html = renderNotice('Live preview unavailable', unavailableDetail(NETLIFY_DEV_HINT));
   }
 
   const prevScroll = frame.contentWindow ? frame.contentWindow.scrollY : 0;
