@@ -4,7 +4,7 @@
 <div class="content container">
   {% if section.image %}
     <div class="media">
-      {{ image(section.image) }}
+      {{ image(section.image, "image") }}
     </div>
   {% endif %}
   {% if section.ctas | hasCtas %}

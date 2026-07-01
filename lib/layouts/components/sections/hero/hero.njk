@@ -10,7 +10,7 @@
   aria-label="{% if section.text.title %}{{ section.text.title }}{% else %}Hero section{% endif %}"
 >
   {% if section.image | hasImage %}
-    <div class="image">{{ image(section.image)}}</div>
+    <div class="image">{{ image(section.image, "image")}}</div>
   {% endif %}
 
   {% if section.text or (section.ctas | hasCtas) %}

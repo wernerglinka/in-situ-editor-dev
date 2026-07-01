@@ -76,7 +76,7 @@
             <div class="hero-content {% if slide.text.isCentered %}is-text-centered{% endif %}">
               {% if hasText %}
                 <div class="text-wrapper">
-                  {{ text(slide.text) }}
+                  {{ text(slide.text, "slides." ~ loop.index0 ~ ".text") }}
                 </div>
               {% endif %}
 
@@ -89,7 +89,7 @@
 
             {% if hasImage %}
               <div class="hero-content has-image">
-                {{ image(slide.image) }}
+                {{ image(slide.image, "slides." ~ loop.index0 ~ ".image") }}
               </div>
             {% endif %}
           </div>

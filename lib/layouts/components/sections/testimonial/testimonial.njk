@@ -4,7 +4,7 @@
 <div class="content container {% if section.isReverse %}is-reverse{% endif %}">
   <div class="quotee">
     {% if section.quotee.portrait.src %}
-    <div class="portrait">{{ image(section.quotee.portrait)}}</div>
+    <div class="portrait">{{ image(section.quotee.portrait, "quotee.portrait")}}</div>
     {% endif %}
 
     <div class="name">{{ section.quotee.name }}</div>

@@ -1,18 +1,25 @@
 {# Image macro may render an image with a caption #}
-{% macro image(info) %}
+{#
+  `path` is the in-situ editor's field path to this image object (e.g. "image"
+  for section.image). When set and the preview turns on previewMode, the caption
+  carries a data-field marker so it can be edited in place. The image src/alt are
+  edited in the form (they involve uploads), so only the caption is marked.
+#}
+{% macro image(info, path=null) %}
+  {% set fieldBase = path if previewMode else null %}
 
   {% if info.url | hasUrl %}
     <a href="{{ info.url }}" {% if info.url | isExternal %} target="_blank" rel="noopener noreferrer" aria-label="{{ info.alt }} (opens in new window)" {% endif %} >
       <img src="{{ info.src }}" alt="{{ info.alt }}"/>
       {% if info.caption %}
-        <p class="caption">{{ info.caption }}</p>
+        <p class="caption"{% if fieldBase %} data-field="{{ fieldBase }}.caption"{% endif %}>{{ info.caption }}</p>
       {% endif %}
     </a>
   {% else %}
     <img src="{{ info.src }}" alt="{{ info.alt }}"/>
     {% if info.caption %}
-      <p class="caption">{{ info.caption }}</p>
+      <p class="caption"{% if fieldBase %} data-field="{{ fieldBase }}.caption"{% endif %}>{{ info.caption }}</p>
     {% endif %}
   {% endif %}
-  
+
 {% endmacro %}
