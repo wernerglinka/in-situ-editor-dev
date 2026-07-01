@@ -172,10 +172,21 @@ it before you publish — image URLs are derived from it, and an untitled
 draft files its images under `untitled/`. Everything re-derives live as
 you type, so renaming before publish is harmless.
 
-The right-hand pane shows the document that publishing will commit: the
-post's structured frontmatter in YAML. (An in-browser preview of the
-rendered page is planned to replace it.) It updates a moment after every
-edit. Note that long lines are clipped at the pane's edge.
+The right-hand pane previews the page, updating a moment after every edit.
+It has two views, switched by the **Rendered** / **YAML** buttons at its top:
+
+- **Rendered** (the default) shows the actual page, drawn by the site's own
+  templates and styles inside a frame — the same render publishing produces, so
+  the preview is what you get. Sections that fill themselves from the site at
+  build time (related posts, collection lists, the author block) show a labeled
+  placeholder here, since a draft has no site-wide content to draw from yet.
+- **YAML** shows the structured frontmatter document that publishing will
+  commit, handy for checking exactly what a section emits. Long lines are
+  clipped at the pane's edge.
+
+The rendered view needs the local preview server running. Start the site with
+`netlify dev` (not the plain dev server) so the render endpoint is available; if
+it is not reachable the pane says so and the YAML view still works.
 
 ## The Markdown editor
 
