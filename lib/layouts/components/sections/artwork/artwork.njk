@@ -7,12 +7,12 @@
   {% if section.image %}
     {% if section.text %}
       <div class="artwork-header flow">
-        {{ text(section.text, "text")}}
+        {{ text(section.text)}}
       </div>
     {% endif %}
 
     <div class="media">
-      {{ image(section.image, "image") }}
+      {{ image(section.image) }}
     </div>
 
     {% if section.artworkProperties %}

@@ -58,6 +58,7 @@ async function renderPreviewFrame(ui, ...args) {
   if (!frame) {
     return;
   }
+  const draft = args[0];
   const { doc, body, isContent } = buildFrontmatter(...args);
   const frontmatter = { ...doc, bodyMode: isContent ? 'content' : 'sections', contents: body };
 
@@ -86,6 +87,7 @@ async function renderPreviewFrame(ui, ...args) {
       if (frame.contentWindow) {
         frame.contentWindow.scrollTo(0, prevScroll);
       }
+      annotateInlineFields(frame, draft);
       wireInlineEditing(frame);
     },
     { once: true }
@@ -103,6 +105,114 @@ const INLINE_EDIT_STYLE = `
   [data-field-markdown] { cursor: pointer; }
   [data-field-markdown]:hover { outline: 1px dashed rgba(80,120,255,.55); outline-offset: 3px; }
 `;
+
+/**
+ * Injects the source-mapping attributes (data-section-index, data-field) into
+ * the rendered preview. The library components are generic and emit none of
+ * this — all editor knowledge lives here. It walks the draft's sections against
+ * the rendered section wrappers (in order, skipping disabled ones), then tags
+ * the editable fields inside each using the generic partials' stable class
+ * names (`.title`, `.lead-in`, `.sub-title`, `.prose`, `.caption`, `.ctas a`),
+ * guarded by the section's own values so a section that doesn't own a field at
+ * top level (a slider, whose text lives per-slide) is never mis-tagged.
+ * @param {HTMLIFrameElement} frame - The preview iframe.
+ * @param {Object} draft - The current draft (its `sections` array).
+ */
+function annotateInlineFields(frame, draft) {
+  const doc = frame.contentDocument;
+  const main = doc && doc.querySelector('main');
+  if (!main) {
+    return;
+  }
+  const sections = Array.isArray(draft.sections) ? draft.sections : [];
+  const rendered = sections.filter((s) => !s.isDisabled);
+  const wrappers = Array.from(main.children).filter((el) => /^(SECTION|ARTICLE|ASIDE|DIV)$/.test(el.tagName));
+
+  wrappers.forEach((wrap, i) => {
+    const section = rendered[i];
+    if (!section) {
+      return;
+    }
+    wrap.dataset.sectionIndex = String(sections.indexOf(section));
+    annotateSectionFields(wrap, section);
+  });
+}
+
+/** Tags the first matching element under `wrap` with a field path, once. */
+function tagField(wrap, selector, path, isMarkdown) {
+  const el = wrap.querySelector(selector);
+  if (el && !el.dataset.field) {
+    el.dataset.field = path;
+    if (isMarkdown) {
+      el.dataset.fieldMarkdown = 'true';
+    }
+  }
+}
+
+/**
+ * Tags a section's own top-level editable fields, guarded by the section values
+ * so nested content (a slide's text) isn't picked up as the section's.
+ * @param {Element} wrap - The rendered section wrapper.
+ * @param {Object} section - The draft section values.
+ */
+function annotateSectionFields(wrap, section) {
+  const text = section.text;
+  if (text && typeof text === 'object') {
+    if (text.leadIn) {
+      tagField(wrap, '.lead-in', 'text.leadIn');
+    }
+    if (text.title) {
+      tagField(wrap, '.title', 'text.title');
+    }
+    if (text.subTitle) {
+      tagField(wrap, '.sub-title', 'text.subTitle');
+    }
+    if (text.prose) {
+      tagField(wrap, '.prose', 'text.prose', true);
+    }
+  }
+  if (section.image && section.image.caption) {
+    tagField(wrap, '.caption', 'image.caption');
+  }
+  if (Array.isArray(section.ctas)) {
+    // Only ctas with a url render, in order; map each rendered anchor back to
+    // its true index in the section's ctas array (the form's index).
+    const validIndexes = section.ctas.map((c, idx) => (c && c.url ? idx : -1)).filter((idx) => idx >= 0);
+    const anchors = wrap.querySelectorAll('.ctas a');
+    anchors.forEach((a, n) => {
+      if (n < validIndexes.length) {
+        wrapCtaLabel(a, `ctas.${validIndexes[n]}.label`);
+      }
+    });
+  }
+}
+
+/**
+ * Wraps a cta anchor's label text in a data-field span (leaving any icon
+ * element in place) so the label alone is editable.
+ * @param {HTMLAnchorElement} a - The rendered cta anchor.
+ * @param {string} path - The label's field path (e.g. "ctas.0.label").
+ */
+function wrapCtaLabel(a, path) {
+  if (a.querySelector('span[data-field]')) {
+    return;
+  }
+  let label = '';
+  for (const node of Array.from(a.childNodes)) {
+    if (node.nodeType === 3) {
+      label += node.textContent;
+      a.removeChild(node);
+    }
+  }
+  label = label.trim();
+  if (!label) {
+    return;
+  }
+  const span = a.ownerDocument.createElement('span');
+  span.dataset.field = path;
+  span.textContent = label;
+  a.appendChild(span);
+}
 
 /**
  * Makes the rendered preview editable in place. Plain-string fields (marked

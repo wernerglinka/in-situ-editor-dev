@@ -1,33 +1,25 @@
 {# Text macro may render a lead-in, title, subTitle and prose #}
 {# NOTE: This file is excluded from Prettier formatting due to dynamic HTML tags #}
 {# See .prettierignore and CONTRIBUTING.md for details #}
-{#
-  `path` is the in-situ editor's field path to this text object within the
-  page's frontmatter (e.g. "text" for section.text). When set AND the preview
-  render turns on the previewMode global, each field carries a data-field marker
-  so the editor can map an inline edit back to its source. Both are absent in a
-  normal build, so production output is unchanged.
-#}
-{% macro text(info, path=null) %}
-  {% set fieldBase = path if previewMode else null %}
+{% macro text(info) %}
 
   {% if info.leadIn %}
-    <p class="lead-in"{% if fieldBase %} data-field="{{ fieldBase }}.leadIn"{% endif %}>{{ info.leadIn }}</p>
+    <p class="lead-in">{{ info.leadIn }}</p>
   {% endif %}
 
   {% if info.title %}
     {% set titleTag = info.titleTag or "h2" %}
-    <{{ titleTag }} class="title {% if info.isCentered %}is-centered{% endif %}"{% if fieldBase %} data-field="{{ fieldBase }}.title"{% endif %}>
+    <{{ titleTag }} class="title {% if info.isCentered %}is-centered{% endif %}">
       {{ info.title}}
     </{{ titleTag }}>
   {% endif %}
 
   {% if info.subTitle %}
-    <p class="sub-title"{% if fieldBase %} data-field="{{ fieldBase }}.subTitle"{% endif %}>{{ info.subTitle }}</p>
+    <p class="sub-title">{{ info.subTitle }}</p>
   {% endif %}
 
   {% if info.prose %}
-    <div class="prose flow"{% if fieldBase %} data-field="{{ fieldBase }}.prose" data-field-markdown="true"{% endif %}>
+    <div class="prose flow">
       {{ info.prose | mdToHTML | safe }}
     </div>
   {% endif %}

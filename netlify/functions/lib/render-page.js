@@ -36,16 +36,6 @@ const DATA_DIR = path.join(ROOT, 'lib', 'data');
 const SITE_DATA_FILE = path.join(ROOT, 'build', 'assets', 'site-data.json');
 const PAGES_FILE = path.join(ROOT, 'build', 'assets', 'pages.json');
 
-/**
- * Section types that still render a placeholder in preview because they need
- * build-time context a lone draft can't reconstruct: collection-list needs the
- * pagination plugin's pagingParams, collection-links needs the draft's own
- * previous/next position in a collection, and compound/multi-tab compose other
- * sections. (blog-author and related-posts render for real — see the context in
- * renderPage — so they are not listed here.)
- */
-export const PLACEHOLDER_TYPES = new Set(['collection-list', 'collection-links', 'compound', 'multi-tab']);
-
 let env;
 
 /**
@@ -150,32 +140,26 @@ function loadCollections() {
 }
 
 /**
- * Render a draft's frontmatter to a full HTML page string.
+ * Render a draft's frontmatter to a full HTML page string, through the site's
+ * own generic components — no editor-specific markup. The in-situ editor's
+ * source-mapping attributes are injected client-side, after this renders, so the
+ * library components stay generic (see the editor's preview wiring).
  *
  * @param {Object} frontmatter - The serialized draft (same object publishing
  *   commits): `sections`, `bodyClasses`, `hasHero`, etc. In content mode it
  *   carries `contents` (the Markdown body) and `bodyMode: 'content'`.
- * @param {Object} [opts]
- * @param {boolean} [opts.previewMode=true] - Gates editor-only markup
- *   (placeholders now, source-mapping attributes later). Off reproduces the
- *   production render exactly.
  * @return {string} The rendered HTML document.
  */
-export function renderPage(frontmatter = {}, opts = {}) {
-  const { previewMode = true } = opts;
+export function renderPage(frontmatter = {}) {
   const nj = getEnv();
-
-  // Nunjucks macros (the shared text/ctas/image partials) can't see the render
-  // context, only env globals — so previewMode must be a global for those to
-  // emit their data-field source-mapping markers. Set per call since the env is
-  // cached. Absent in the production build's env, so builds emit no markers.
-  nj.addGlobal('previewMode', previewMode);
 
   const isContent = frontmatter.bodyMode === 'content';
   const template = isContent ? 'pages/simple.njk' : 'pages/sections.njk';
 
   // Context mirrors a Metalsmith page: the frontmatter IS the context, plus the
-  // global `data` and the collection-derived bits stubbed empty.
+  // global `data` and the reconstructed `collections` (so collection-driven
+  // sections render real content). The remaining collection-derived bits a lone
+  // draft has no position in are stubbed.
   const context = {
     ...frontmatter,
     data: loadData(),
@@ -184,9 +168,7 @@ export function renderPage(frontmatter = {}, opts = {}) {
     mainMenu: [],
     navigation: { breadcrumbs: [] },
     urlPath: frontmatter.urlPath || '/',
-    bodyClasses: frontmatter.bodyClasses || (isContent ? 'content-page' : 'sections-page'),
-    previewMode,
-    placeholderTypes: [...PLACEHOLDER_TYPES]
+    bodyClasses: frontmatter.bodyClasses || (isContent ? 'content-page' : 'sections-page')
   };
 
   return nj.render(template, context);

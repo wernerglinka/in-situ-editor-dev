@@ -12,7 +12,7 @@
   {% endif %}
 
   {% if section.mediaType === "image" %}
-    <div class="media">{{ image(section.image, "image")}}</div>
+    <div class="media">{{ image(section.image)}}</div>
   {% endif %}
 
   {% if section.mediaType === "video"%}
@@ -31,10 +31,10 @@
   {% if section.text | hasText %}
     <div class="text flow">
       {% if section.text %}
-        <div class="prose flow">{{ text(section.text, "text")}}</div>
+        <div class="prose flow">{{ text(section.text)}}</div>
       {% endif %}
       {% if section.ctas | hasCtas %}
-        {{ ctas(section.ctas, "ctas") }}
+        {{ ctas(section.ctas) }}
       {% endif %}
     </div><!-- .text -->
   {% endif %}

@@ -1,15 +1,10 @@
 {# Call To Actions macro may render multiple button and/or text links #}
-{#
-  `path` is the in-situ editor's field path to this cta (e.g. "ctas.0"), set only
-  in a preview render; when present the label is wrapped in a data-field span for
-  inline editing, otherwise it renders bare so production output is unchanged.
-#}
-{% macro textLink(info, path=null) %}
-  <a
-    class="text-link"
-    href="{{info.url}}"
+{% macro textLink(info) %}
+  <a 
+    class="text-link" 
+    href="{{info.url}}" 
     {% if info.url | isExternal %}target="_blank" rel="noopener noreferrer" aria-label="{{ info.label }} (opens in new window)" {% endif %}
   >
-    {% if path %}<span data-field="{{ path }}.label">{{ info.label }}</span>{% else %}{{ info.label}}{% endif %}
-  </a>
+    {{ info.label}}
+  </a>   
 {% endmacro %}

@@ -20,18 +20,18 @@
         role="group"
         aria-label="{% if slide.text.title %}{{ slide.text.title }}{% else %}Slide {{ loop.index }} of {{ section.slides | length }}{% endif %}"
       >
-          <div class="image">{{ image(slide.image, "slides." ~ loop.index0 ~ ".image")}}</div>
+          <div class="image">{{ image(slide.image)}}</div>
 
           <!-- .image -->
 
           <div class="slide-content">
             {% if slide.text %}
-              <div class="text">{{ text(slide.text, "slides." ~ loop.index0 ~ ".text") }}</div>
+              <div class="text">{{ text(slide.text)}}</div>
 
               <!-- .text -->
             {% endif %}
             {% if slide.ctas | hasCtas %}
-              {{ ctas(slide.ctas, "slides." ~ loop.index0 ~ ".ctas") }}
+              {{ ctas(slide.ctas) }}
             {% endif %}
           </div>
 

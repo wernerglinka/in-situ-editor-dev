@@ -29,7 +29,7 @@ export const handler = async (event) => {
   }
 
   try {
-    const html = renderPage(frontmatter, { previewMode: true });
+    const html = renderPage(frontmatter);
     return {
       statusCode: 200,
       headers: { 'Content-Type': 'text/html; charset=utf-8' },

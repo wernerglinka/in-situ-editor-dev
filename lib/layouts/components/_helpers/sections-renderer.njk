@@ -28,8 +28,7 @@
   {% if not section.isDisabled %}
 
     {# section wrapper may be article, aside, section or div depending on section.containerTag setting #}
-    {# previewMode adds data-section-index so the in-situ editor can map edits in the rendered page back to this section; it is absent from production builds #}
-    <{{ section.containerTag }} id="{{ section.id }}"  {{ buildContainerAttributes(section, loop.first, firstSectionClass) }}{% if previewMode %} data-section-index="{{ loop.index0 }}"{% endif %}>
+    <{{ section.containerTag }} id="{{ section.id }}"  {{ buildContainerAttributes(section, loop.first, firstSectionClass) }}>
 
       {# if section has background add a background image #}
       {% if section.containerFields.background.image %}
@@ -37,15 +36,7 @@
       {% endif %}
 
       {# section content #}
-      {# in previewMode, data-driven sections have no site-wide context to render from, so show a labeled placeholder instead of the real component #}
-      {% if previewMode and section.sectionType in placeholderTypes %}
-        <div class="preview-placeholder">
-          <p class="preview-placeholder-label">{{ section.sectionType }}</p>
-          <p class="preview-placeholder-note">Populated from site collections at build time</p>
-        </div>
-      {% else %}
-        {{ renderSection(section, context) }}
-      {% endif %}
+      {{ renderSection(section, context) }}
 
       {% set containerTag = section.containerTag %}
     </{{ containerTag }}>
