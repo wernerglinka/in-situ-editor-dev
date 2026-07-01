@@ -6,7 +6,7 @@
     <div class="text flow">
       {{ text(section.text, "text")}}
       {% if section.ctas | hasCtas %}
-        {{ ctas(section.ctas) }}
+        {{ ctas(section.ctas, "ctas") }}
       {% endif %}
     </div>
   {% endif %}

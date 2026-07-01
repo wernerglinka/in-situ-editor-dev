@@ -64,7 +64,7 @@
   {# if ctas render them #}
   {% if section.ctas | hasCtas %}
     <div class="ctas flow {% if section.hasCenteredContent %}is-centered{% endif %}">
-      {{ ctas(section.ctas) }}
+      {{ ctas(section.ctas, "ctas") }}
     </div>
   {% endif %}
 </div>

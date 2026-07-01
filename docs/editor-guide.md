@@ -191,9 +191,10 @@ it is not reachable the pane says so and the YAML view still works.
 ## Editing in the preview
 
 In the rendered view you can edit a section's text straight on the page. Hover a
-title, lead-in, subtitle, or image caption and it highlights; click to place the
-cursor, type, and click away (or press Enter) to commit. This works for slider
-slides too. The change flows to the matching form field, so the two stay in step
+title, lead-in, subtitle, image caption, or call-to-action button label and it
+highlights; click to place the cursor, type, and click away (or press Enter) to
+commit. This works for slider slides too, and clicking a button in the preview
+edits its label rather than following the link. The change flows to the matching form field, so the two stay in step
 and it saves like any other edit. Prose is Markdown, so clicking a prose block
 opens the Markdown editor overlay rather than editing in place.
 

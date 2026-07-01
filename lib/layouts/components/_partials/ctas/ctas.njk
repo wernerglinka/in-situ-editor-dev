@@ -2,7 +2,16 @@
 {% from "components/_partials/button/button.njk" import button %}
 {% from "components/_partials/text-link/text-link.njk" import textLink %}
 
-{% macro ctas(info) %}
+{#
+  `path` is the in-situ editor's field path to this cta array (e.g. "ctas" for
+  section.ctas). Rendering iterates the ORIGINAL array so loop.index0 is the true
+  index the editor form uses; url-less entries are skipped inline rather than
+  filtered into a reindexed list, so each rendered label maps back to the right
+  form control. The per-cta path is threaded to button/textLink, gated by
+  previewMode.
+#}
+{% macro ctas(info, path=null) %}
+  {% set fieldBase = path if previewMode else null %}
   {% set validCtas = [] %}
 
   {% for cta in info %}
@@ -13,11 +22,14 @@
 
   {% if validCtas | length > 0 %}
     <div class="ctas">
-      {% for cta in validCtas %}
-        {% if cta.isButton %}
-          {{ button(cta) }}
-        {% else %}
-          {{ textLink(cta) }}
+      {% for cta in info %}
+        {% if cta.url and cta.url != "" %}
+          {% set ctaPath = (fieldBase ~ "." ~ loop.index0) if fieldBase else null %}
+          {% if cta.isButton %}
+            {{ button(cta, ctaPath) }}
+          {% else %}
+            {{ textLink(cta, ctaPath) }}
+          {% endif %}
         {% endif %}
       {% endfor %}
     </div>

@@ -19,7 +19,7 @@
         <div class="flow">{{ text(section.text, "text")}}</div>
       {% endif %}
       {% if section.ctas | hasCtas %}
-        {{ ctas(section.ctas) }}
+        {{ ctas(section.ctas, "ctas") }}
       {% endif %}
       {% if section.date or section.author %}
         <div class="author-date">{{ authorDate({ date: section.date, author: section.author }) }}</div>

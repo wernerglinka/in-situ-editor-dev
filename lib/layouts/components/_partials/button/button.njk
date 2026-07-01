@@ -1,5 +1,11 @@
 {# Call To Actions macro may render multiple button and/or text links #}
-{% macro button(info) %}
+{#
+  `path` is the in-situ editor's field path to this cta (e.g. "ctas.0"), set only
+  in a preview render. When present, the label is wrapped in a data-field span so
+  it can be edited in place; otherwise the label renders bare, so production
+  output is unchanged.
+#}
+{% macro button(info, path=null) %}
   {% if info.url %}
     {# Render as anchor link when URL is provided #}
     <a
@@ -9,7 +15,7 @@
       {% if info.ariaLabel %}aria-label="{{ info.ariaLabel }}"{% endif %}
     >
       {% if info.icon %}{% include "icons/" + info.icon + ".njk" %}{% endif %}
-      {{ info.label}}
+      {% if path %}<span data-field="{{ path }}.label">{{ info.label }}</span>{% else %}{{ info.label}}{% endif %}
     </a>
   {% else %}
     {# Render as button element when no URL (for JavaScript actions) #}
@@ -21,7 +27,7 @@
       {% if info.disabled %}disabled{% endif %}
     >
       {% if info.icon %}{% include "icons/" + info.icon + ".njk" %}{% endif %}
-      {{ info.label}}
+      {% if path %}<span data-field="{{ path }}.label">{{ info.label }}</span>{% else %}{{ info.label}}{% endif %}
     </button>
   {% endif %}
 {% endmacro %}

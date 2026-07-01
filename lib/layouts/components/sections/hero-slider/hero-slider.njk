@@ -82,7 +82,7 @@
 
               {% if hasCtas %}
                 <div class="ctas-container">
-                  {{ ctas(slide.ctas) }}
+                  {{ ctas(slide.ctas, "slides." ~ loop.index0 ~ ".ctas") }}
                 </div>
               {% endif %}
             </div>

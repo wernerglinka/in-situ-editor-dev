@@ -124,6 +124,20 @@ function wireInlineEditing(frame) {
     doc.head.append(style);
   }
 
+  // The preview is for editing, not navigating: swallow link clicks so editing a
+  // CTA label or a linked image caption (both live inside an <a>) never loads
+  // another page into the frame. Capture phase, so it wins over the default.
+  doc.addEventListener(
+    'click',
+    (e) => {
+      const link = e.target.closest && e.target.closest('a[href]');
+      if (link) {
+        e.preventDefault();
+      }
+    },
+    true
+  );
+
   for (const el of doc.querySelectorAll('[data-field]:not([data-field-markdown])')) {
     el.contentEditable = 'plaintext-only';
     el.spellcheck = false;

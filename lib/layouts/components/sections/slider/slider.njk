@@ -31,7 +31,7 @@
               <!-- .text -->
             {% endif %}
             {% if slide.ctas | hasCtas %}
-              {{ ctas(slide.ctas) }}
+              {{ ctas(slide.ctas, "slides." ~ loop.index0 ~ ".ctas") }}
             {% endif %}
           </div>
 
