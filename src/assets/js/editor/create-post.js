@@ -5,7 +5,7 @@
 
 import { ui } from './ui-elements.js';
 import { drafts, createNewDraft } from '../drafts/draft-manager.js';
-import { updatePreview } from './editor-logic.js';
+import { updatePreview, probeRenderBackend, RENDER_BACKEND_HINT } from './editor-logic.js';
 import { handleFiles } from './image-handler.js';
 import { initPasteHandler } from './paste-handler.js';
 import { initTagEditor } from './tag-editor.js';
@@ -141,7 +141,7 @@ function initPreviewModeToggle() {
   if (!previewFrame || !previewContent || !previewModeRenderedBtn || !previewModeYamlBtn) {
     return;
   }
-  const apply = (mode) => {
+  const apply = (mode, persist = true) => {
     const rendered = mode !== 'yaml';
     previewFrame.hidden = !rendered;
     previewContent.hidden = rendered;
@@ -149,11 +149,34 @@ function initPreviewModeToggle() {
     previewModeYamlBtn.classList.toggle('is-active', !rendered);
     previewModeRenderedBtn.setAttribute('aria-pressed', String(rendered));
     previewModeYamlBtn.setAttribute('aria-pressed', String(!rendered));
-    localStorage.setItem('editor-preview-mode', mode);
+    if (persist) {
+      localStorage.setItem('editor-preview-mode', mode);
+    }
   };
-  previewModeRenderedBtn.onclick = () => apply('rendered');
+  // Guard the click with aria-disabled rather than the disabled attribute:
+  // Chrome suppresses hover (and the title tooltip) on truly disabled buttons,
+  // and this editor is Chrome-only, so the hint would never show.
+  previewModeRenderedBtn.onclick = () => {
+    if (previewModeRenderedBtn.getAttribute('aria-disabled') !== 'true') {
+      apply('rendered');
+    }
+  };
   previewModeYamlBtn.onclick = () => apply('yaml');
   apply(localStorage.getItem('editor-preview-mode') === 'yaml' ? 'yaml' : 'rendered');
+
+  // The rendered view needs the render backend, which only `netlify dev`
+  // serves. Probe once; if it's absent, disable the Rendered toggle (keeping it
+  // hoverable so the hint shows) and fall back to YAML without overwriting the
+  // saved preference, so it returns when the backend is back.
+  probeRenderBackend().then((available) => {
+    if (available) {
+      return;
+    }
+    previewModeRenderedBtn.classList.add('is-disabled');
+    previewModeRenderedBtn.setAttribute('aria-disabled', 'true');
+    previewModeRenderedBtn.title = RENDER_BACKEND_HINT;
+    apply('yaml', false);
+  });
 }
 initPreviewModeToggle();
 

@@ -9,6 +9,44 @@ import { buildFrontmatter, generateMarkdown } from '../utils/markdown-utils.js';
 const PREVIEW_ENDPOINT = '/.netlify/functions/preview';
 
 /**
+ * Short hint for the disabled Rendered toggle's hover tooltip. The plain
+ * `npm start` dev server serves the site but not the Functions runtime the
+ * render backend lives in.
+ */
+const RENDER_BACKEND_HINT =
+  'Rendered preview needs the render backend, which only `netlify dev` serves. ' +
+  'Stop `npm start`, run `netlify dev`, and reopen the admin on the port it prints ' +
+  '(default http://localhost:8888/admin/?admin=true).';
+
+/**
+ * Longer guidance for the in-frame fallback notice, used if the backend drops
+ * out after the initial probe (rare).
+ */
+const NETLIFY_DEV_HINT =
+  'The preview render runs as a Netlify Function, which the plain `npm start` dev server ' +
+  'does not serve. Stop it and run `netlify dev` instead, then open the admin on the port ' +
+  'it prints (default http://localhost:8888/admin/?admin=true). The YAML view stays available ' +
+  'in the meantime.';
+
+/**
+ * Cheap availability probe for the render backend. A HEAD to the endpoint is
+ * routed to the Function under `netlify dev` (which answers 405 for non-POST,
+ * so the route exists); the plain dev server has no such route and 404s;
+ * nothing listening throws. Only a reachable route counts as available.
+ * @return {Promise<boolean>} Whether the render backend is serving.
+ */
+export async function probeRenderBackend() {
+  try {
+    const res = await fetch(PREVIEW_ENDPOINT, { method: 'HEAD' });
+    return res.status !== 404;
+  } catch {
+    return false;
+  }
+}
+
+export { RENDER_BACKEND_HINT };
+
+/**
  * Updates the preview pane. The rendered view POSTs the draft's frontmatter to
  * the render endpoint, which returns the page rendered through the site's own
  * Nunjucks templates and filters, and injects it into an iframe so it carries
@@ -70,14 +108,17 @@ async function renderPreviewFrame(ui, ...args) {
       body: JSON.stringify({ frontmatter })
     });
     html = await res.text();
-    if (!res.ok) {
+    if (res.status === 404) {
+      // Server is up (e.g. plain `npm start`) but the Functions runtime isn't,
+      // so the request 404s with the dev server's own error page rather than a
+      // rendered document. The function itself never returns 404.
+      html = renderNotice('Preview render needs `netlify dev`', NETLIFY_DEV_HINT);
+    } else if (!res.ok) {
       html = renderNotice('Preview render failed', html);
     }
   } catch {
-    html = renderNotice(
-      'Rendered preview unavailable',
-      'The preview server is not running. Start it with `netlify dev`, or use the YAML view.'
-    );
+    // Nothing is listening at the endpoint at all.
+    html = renderNotice('Rendered preview unavailable', NETLIFY_DEV_HINT);
   }
 
   const prevScroll = frame.contentWindow ? frame.contentWindow.scrollY : 0;

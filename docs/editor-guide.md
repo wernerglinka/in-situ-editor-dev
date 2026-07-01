@@ -188,8 +188,11 @@ It has two views, switched by the **Rendered** / **YAML** buttons at its top:
   clipped at the pane's edge.
 
 The rendered view needs the local preview server running. Start the site with
-`netlify dev` (not the plain dev server) so the render endpoint is available; if
-it is not reachable the pane says so and the YAML view still works.
+`netlify dev` (not the plain `npm start` dev server) so the render endpoint is
+available. If it is not reachable, the editor greys out the **Rendered** button
+and falls back to YAML; hover the greyed button for a one-line reminder of what
+to run. Once you restart under `netlify dev` and reload the admin, the Rendered
+view returns to whichever mode you last used.
 
 ## Editing in the preview
 
