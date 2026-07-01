@@ -177,9 +177,12 @@ It has two views, switched by the **Rendered** / **YAML** buttons at its top:
 
 - **Rendered** (the default) shows the actual page, drawn by the site's own
   templates and styles inside a frame — the same render publishing produces, so
-  the preview is what you get. Sections that fill themselves from the site at
-  build time (related posts, collection lists, the author block) show a labeled
-  placeholder here, since a draft has no site-wide content to draw from yet.
+  the preview is what you get. Sections that pull from the site's own content
+  (related posts, the author block) render with real data from the last deploy.
+  A few that need build-time context a draft can't supply — collection lists
+  (they depend on the pagination the build generates) and previous/next
+  collection links (they depend on where the page lands in its collection) —
+  show a labeled placeholder instead.
 - **YAML** shows the structured frontmatter document that publishing will
   commit, handy for checking exactly what a section emits. Long lines are
   clipped at the pane's edge.

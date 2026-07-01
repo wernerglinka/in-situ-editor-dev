@@ -29,20 +29,22 @@ import * as nunjucksFilters from '../../../nunjucks-filters/index.js';
 const ROOT = process.env.LAMBDA_TASK_ROOT || process.cwd();
 const LAYOUTS_DIR = path.join(ROOT, 'lib', 'layouts');
 const DATA_DIR = path.join(ROOT, 'lib', 'data');
+// Build artifacts (emitted by metalsmith-site-data / the pages snapshot). They
+// let the preview reconstruct the site's collections so collection-driven
+// sections render real content instead of a placeholder. Shipped into the
+// function bundle via netlify.toml included_files.
+const SITE_DATA_FILE = path.join(ROOT, 'build', 'assets', 'site-data.json');
+const PAGES_FILE = path.join(ROOT, 'build', 'assets', 'pages.json');
 
 /**
- * Section types that render from site-wide collections/data a lone draft does
- * not have. In preview these render a placeholder instead of the real
- * component, which would either error or show nothing without that context.
+ * Section types that still render a placeholder in preview because they need
+ * build-time context a lone draft can't reconstruct: collection-list needs the
+ * pagination plugin's pagingParams, collection-links needs the draft's own
+ * previous/next position in a collection, and compound/multi-tab compose other
+ * sections. (blog-author and related-posts render for real — see the context in
+ * renderPage — so they are not listed here.)
  */
-export const PLACEHOLDER_TYPES = new Set([
-  'collection-list',
-  'collection-links',
-  'related-posts',
-  'blog-author',
-  'compound',
-  'multi-tab'
-]);
+export const PLACEHOLDER_TYPES = new Set(['collection-list', 'collection-links', 'compound', 'multi-tab']);
 
 let env;
 
@@ -85,6 +87,69 @@ function loadData() {
 }
 
 /**
+ * Reads and parses a build artifact, or returns null when it's missing (a site
+ * that doesn't emit it, or an unbuilt tree). Never throws.
+ * @param {string} file - Absolute path to the JSON artifact.
+ * @return {Object|null} The parsed object, or null.
+ */
+function readArtifact(file) {
+  try {
+    return JSON.parse(fs.readFileSync(file, 'utf8'));
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * The permalink a source path maps to, matching the build's permalink shape:
+ * drop the .md extension and any trailing index segment (blog/hello.md ->
+ * blog/hello). Templates wrap it as `/{permalink}/`.
+ * @param {string} srcPath - The source path (a pages.json key).
+ * @return {string} The permalink (no leading or trailing slash).
+ */
+function permalinkFromPath(srcPath) {
+  return srcPath
+    .replace(/\.md$/, '')
+    .replace(/\/index$/, '')
+    .replace(/^index$/, '');
+}
+
+/**
+ * Reconstructs the `collections` render context from the build artifacts, so
+ * collection-driven sections (related-posts, and any that walk collections)
+ * render real members instead of a placeholder. Each collection name maps to an
+ * array of member objects — the page's source frontmatter plus a derived
+ * permalink — sorted newest first by card.date, mirroring the blog collection.
+ * Returns {} when the artifacts aren't available, so those sections degrade to
+ * empty rather than erroring.
+ * @return {Object} name -> array of member objects.
+ */
+function loadCollections() {
+  const siteData = readArtifact(SITE_DATA_FILE);
+  const pages = readArtifact(PAGES_FILE);
+  if (!siteData || !siteData.collections || !pages) {
+    return {};
+  }
+  const collections = {};
+  for (const [name, paths] of Object.entries(siteData.collections)) {
+    if (!Array.isArray(paths)) {
+      continue;
+    }
+    collections[name] = paths
+      .map((p) => {
+        const entry = pages[p];
+        if (!entry || !entry.frontmatter) {
+          return null;
+        }
+        return { ...entry.frontmatter, permalink: permalinkFromPath(p) };
+      })
+      .filter(Boolean)
+      .sort((a, b) => String((b.card || {}).date || '').localeCompare(String((a.card || {}).date || '')));
+  }
+  return collections;
+}
+
+/**
  * Render a draft's frontmatter to a full HTML page string.
  *
  * @param {Object} frontmatter - The serialized draft (same object publishing
@@ -114,7 +179,7 @@ export function renderPage(frontmatter = {}, opts = {}) {
   const context = {
     ...frontmatter,
     data: loadData(),
-    collections: {},
+    collections: loadCollections(),
     collection: {},
     mainMenu: [],
     navigation: { breadcrumbs: [] },
